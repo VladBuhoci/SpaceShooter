@@ -1,0 +1,3 @@
+F:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\SpaceShooter.Build.cs
+F:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter.Target.cs
+F:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooterEditor.Target.cs
