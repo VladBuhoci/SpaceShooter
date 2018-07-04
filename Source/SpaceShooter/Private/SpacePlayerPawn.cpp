@@ -1,34 +1,26 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// This application is the final year project (2018-2019) of a Computer Science student (me - Vlad Buhoci).
 
 #include "SpacePlayerPawn.h"
 
 
-// Sets default values
+/** Sets default values. */
 ASpacePlayerPawn::ASpacePlayerPawn()
 {
- 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	// TODO: should this tick?
+	//PrimaryActorTick.bCanEverTick = true;
 
 }
 
-// Called when the game starts or when spawned
+/** Called when the game starts or when spawned. */
 void ASpacePlayerPawn::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
-// Called every frame
+/** Called every frame. */
 void ASpacePlayerPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 }
-
-// Called to bind functionality to input
-void ASpacePlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-}
-
