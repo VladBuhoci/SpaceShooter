@@ -19,6 +19,10 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Player Controller", Meta = (AllowPrivateAccess = "true"))
 	class ASpacePlayerPawn * PossessedSpacePawn;
 
+	/** The HUD instance this controller owns. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Player Controller", Meta = (AllowPrivateAccess = "true"))
+	class ASpaceHUD * OwnedHUD;
+
 public:
 	/** Sets default values. */
 	ASpacePlayerController();
@@ -34,6 +38,9 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	/** Updates the target icon according to the current position of the user's cursor on screen. */
+	void HandlePlayerTargetIconOnScreen();
+	
 	/** Gets the position of the cursor on the game screen and asks the player to rotate towards it. */
 	void HandlePlayerSpaceshipRotation();
 
