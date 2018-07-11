@@ -3,6 +3,7 @@
 #include "SpaceGameMode.h"
 #include "SpacePlayerPawn.h"
 #include "SpacePlayerController.h"
+#include "SpaceHUD.h"
 
 
 /** Sets default values. */
@@ -10,4 +11,5 @@ ASpaceGameMode::ASpaceGameMode()
 {
 	DefaultPawnClass = ASpacePlayerPawn::StaticClass();
 	PlayerControllerClass = ASpacePlayerController::StaticClass();
+	HUDClass = ASpaceHUD::StaticClass();
 }

@@ -2,6 +2,7 @@
 
 #include "SpacePlayerController.h"
 #include "SpacePlayerPawn.h"
+#include "SpaceHUD.h"
 
 
 /** Sets default values. */
@@ -18,6 +19,9 @@ void ASpacePlayerController::BeginPlay()
 
 	// Cast the pawn to our custom player type so we can make use of its public methods.
 	PossessedSpacePawn = Cast<ASpacePlayerPawn>(GetPawn());
+
+	// Cast the HUD to our custom HUD type so we can make use of its public methods.
+	OwnedHUD = Cast<ASpaceHUD>(GetHUD());
 }
 
 /** Called every frame. */
@@ -25,6 +29,7 @@ void ASpacePlayerController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	HandlePlayerTargetIconOnScreen();
 	HandlePlayerSpaceshipRotation();
 }
 
@@ -35,6 +40,16 @@ void ASpacePlayerController::SetupInputComponent()
 
 	InputComponent->BindAxis("Move Forward", this, &ASpacePlayerController::MovePawnForward);
 	InputComponent->BindAxis("Move Backward", this, &ASpacePlayerController::MovePawnBackward);
+}
+
+void ASpacePlayerController::HandlePlayerTargetIconOnScreen()
+{
+	float posX, posY;
+
+	if (GetMousePosition(posX, posY) && OwnedHUD)
+	{
+		OwnedHUD->UpdateTargetImagePosition(posX, posY);
+	}
 }
 
 /** Gets the position of the cursor on the game screen and asks the player to rotate towards it. */
