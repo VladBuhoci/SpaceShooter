@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<None Include="..\..\SpaceShooter.uproject" />
+		<Filter Include="Source">
+			<UniqueIdentifier>{0DF3E7B5-FAF6-4B12-AC3E-B1DC79D224AC}</UniqueIdentifier>
+		</Filter>
+		<None Include="..\..\Source\SpaceShooter.Target.cs">
+			<Filter>Source</Filter>
+		</None >
+		<None Include="..\..\Source\SpaceShooterEditor.Target.cs">
+			<Filter>Source</Filter>
+		</None >
+		<Filter Include="Config">
+			<UniqueIdentifier>{6B30C019-D6B2-40B5-93B3-47A6F08BC0A4}</UniqueIdentifier>
+		</Filter>
+		<None Include="..\..\Config\DefaultEditor.ini">
+			<Filter>Config</Filter>
+		</None >
+		<None Include="..\..\Config\DefaultEngine.ini">
+			<Filter>Config</Filter>
+		</None >
+		<None Include="..\..\Config\DefaultGame.ini">
+			<Filter>Config</Filter>
+		</None >
+		<None Include="..\..\Config\DefaultInput.ini">
+			<Filter>Config</Filter>
+		</None >
+		<Filter Include="Source\SpaceShooter">
+			<UniqueIdentifier>{19D723E3-3600-42D6-99EC-C522D6DAE0F8}</UniqueIdentifier>
+		</Filter>
+		<None Include="..\..\Source\SpaceShooter\SpaceShooter.Build.cs">
+			<Filter>Source\SpaceShooter</Filter>
+		</None >
+		<ClCompile Include="..\..\Source\SpaceShooter\SpaceShooter.cpp">
+			<Filter>Source\SpaceShooter</Filter>
+		</ClCompile >
+		<ClInclude Include="..\..\Source\SpaceShooter\SpaceShooter.h">
+			<Filter>Source\SpaceShooter</Filter>
+		</ClInclude >
+		<Filter Include="Source\SpaceShooter\Private">
+			<UniqueIdentifier>{A0945CF5-F6F3-4EB1-8CF4-3F632179EC5B}</UniqueIdentifier>
+		</Filter>
+		<ClCompile Include="..\..\Source\SpaceShooter\Private\MainMenuGameMode.cpp">
+			<Filter>Source\SpaceShooter\Private</Filter>
+		</ClCompile >
+		<ClCompile Include="..\..\Source\SpaceShooter\Private\MainMenuPlayerPawn.cpp">
+			<Filter>Source\SpaceShooter\Private</Filter>
+		</ClCompile >
+		<ClCompile Include="..\..\Source\SpaceShooter\Private\SpaceGameMode.cpp">
+			<Filter>Source\SpaceShooter\Private</Filter>
+		</ClCompile >
+		<ClCompile Include="..\..\Source\SpaceShooter\Private\SpacePlayerController.cpp">
+			<Filter>Source\SpaceShooter\Private</Filter>
+		</ClCompile >
+		<ClCompile Include="..\..\Source\SpaceShooter\Private\SpacePlayerPawn.cpp">
+			<Filter>Source\SpaceShooter\Private</Filter>
+		</ClCompile >
+		<Filter Include="Source\SpaceShooter\Public">
+			<UniqueIdentifier>{106FCA4C-444A-46A4-A6F4-54B442FBF323}</UniqueIdentifier>
+		</Filter>
+		<ClInclude Include="..\..\Source\SpaceShooter\Public\MainMenuGameMode.h">
+			<Filter>Source\SpaceShooter\Public</Filter>
+		</ClInclude >
+		<ClInclude Include="..\..\Source\SpaceShooter\Public\MainMenuPlayerPawn.h">
+			<Filter>Source\SpaceShooter\Public</Filter>
+		</ClInclude >
+		<ClInclude Include="..\..\Source\SpaceShooter\Public\SpaceGameMode.h">
+			<Filter>Source\SpaceShooter\Public</Filter>
+		</ClInclude >
+		<ClInclude Include="..\..\Source\SpaceShooter\Public\SpacePlayerController.h">
+			<Filter>Source\SpaceShooter\Public</Filter>
+		</ClInclude >
+		<ClInclude Include="..\..\Source\SpaceShooter\Public\SpacePlayerPawn.h">
+			<Filter>Source\SpaceShooter\Public</Filter>
+		</ClInclude >
+	</ItemGroup>
+</Project>

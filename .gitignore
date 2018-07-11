@@ -262,5 +262,6 @@ __pycache__/
 
 # UE4 things
 Binaries/
-Intermediate/
+Intermediate/Build
+Intermediate/*.*
 Saved/
