@@ -32,6 +32,14 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Player", Meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent * SpaceshipMeshComponent;
 
+	/** Movement component governing the movement of this pawn. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Player", Meta = (AllowPrivateAccess = "true"))
+	class UFloatingPawnMovement * SpaceshipMovementComponent;
+
+	/** The camera that is used to view the player and the world it belongs to. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Player | Player Camera", Meta = (AllowPrivateAccess = "true"))
+	UCameraComponent * CameraComponent;
+
 	/**
 	 * The spring arm is used to keep the camera away at a certain distance from the player,
 	 *		retracting or extending when (opaque) obstacles of any sort obstruct the camera's view.
@@ -39,13 +47,13 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Player | Player Camera", Meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent * SpringArmComponent;
 
-	/** The camera that is used to view the player and the world it belongs to. */
+	/** Spring Arm Component offset relative to the Central Player Scene Component. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Player | Player Camera", Meta = (AllowPrivateAccess = "true"))
-	UCameraComponent * CameraComponent;
+	FVector SpringArmOffset;
 
-	/** Movement component governing the movement of this pawn. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Player", Meta = (AllowPrivateAccess = "true"))
-	class UFloatingPawnMovement * SpaceshipMovementComponent;
+	/** Spring Arm Component rotation relative to the Central Player Scene Component. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Player | Player Camera", Meta = (AllowPrivateAccess = "true"))
+	FRotator SpringArmRotation;
 
 public:
 	/** Sets default values. */

@@ -9,7 +9,7 @@
 /** Sets default values. */
 ASpaceGameMode::ASpaceGameMode()
 {
-	DefaultPawnClass = ASpacePlayerPawn::StaticClass();
+	DefaultPawnClass      = ASpacePlayerPawn::StaticClass();
 	PlayerControllerClass = ASpacePlayerController::StaticClass();
-	HUDClass = ASpaceHUD::StaticClass();
+	HUDClass              = ASpaceHUD::StaticClass();
 }

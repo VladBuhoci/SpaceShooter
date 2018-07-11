@@ -22,13 +22,16 @@ ASpacePlayerPawn::ASpacePlayerPawn()
 	PrimaryActorTick.bCanEverTick = true;
 
 	// Initialize components.
-	SpaceshipMeshComponent        = CreateDefaultSubobject<UStaticMeshComponent>("Spaceship Mesh Component");
-	CentralPlayerSceneComponent   = CreateDefaultSubobject<USceneComponent>("Central Player Scene Component");
-	SpringArmComponent            = CreateDefaultSubobject<USpringArmComponent>("Spring Arm Component");
-	CameraComponent               = CreateDefaultSubobject<UCameraComponent>("Camera Component");
+	SpaceshipMeshComponent        = CreateDefaultSubobject<UStaticMeshComponent >("Spaceship Mesh Component");
+	CentralPlayerSceneComponent   = CreateDefaultSubobject<USceneComponent      >("Central Player Scene Component");
+	SpringArmComponent            = CreateDefaultSubobject<USpringArmComponent  >("Spring Arm Component");
+	CameraComponent               = CreateDefaultSubobject<UCameraComponent     >("Camera Component");
 	SpaceshipMovementComponent    = CreateDefaultSubobject<UFloatingPawnMovement>("Spaceship Movement Component");
 
-	RootComponent = SpaceshipMeshComponent;
+	RootComponent                 = SpaceshipMeshComponent;
+
+	SpringArmOffset               = FVector(-500.0f, 0.0f, 600.0f);
+	SpringArmRotation             = FRotator(-50.0f, 0.0f, 0.0f);
 
 	// CentralPlayerSceneComponent setup:
 	CentralPlayerSceneComponent->SetupAttachment(SpaceshipMeshComponent);
@@ -45,12 +48,12 @@ ASpacePlayerPawn::ASpacePlayerPawn()
 
 	// SpringArmComponent setup:
 	SpringArmComponent->SetupAttachment(CentralPlayerSceneComponent);
-	SpringArmComponent->SetRelativeLocation(FVector(-500.0f, 0.0f, 600.0f));
-	SpringArmComponent->SetRelativeRotation(FRotator(-50.0f, 0.0f, 0.0f));
-	SpringArmComponent->TargetArmLength = 0.0f;
-	SpringArmComponent->bEnableCameraLag = true;						// Enable spring arm lag.
-	SpringArmComponent->bEnableCameraRotationLag = false;				// Disable spring arm rotation lag. (camera never rotates)
-	SpringArmComponent->CameraLagSpeed = 20.0f;
+	SpringArmComponent->SetRelativeLocation(SpringArmOffset);
+	SpringArmComponent->SetRelativeRotation(SpringArmRotation);
+	SpringArmComponent->TargetArmLength          = 0.0f;
+	SpringArmComponent->bEnableCameraLag         = true;						// Enable spring arm lag.
+	SpringArmComponent->bEnableCameraRotationLag = false;						// Disable spring arm rotation lag. (camera never rotates)
+	SpringArmComponent->CameraLagSpeed           = 20.0f;
 	// ~ end of SpringArmComponent setup.
 
 	// CameraComponent setup:
