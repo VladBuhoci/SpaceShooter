@@ -66,10 +66,10 @@ void ASpacePlayerController::HandlePlayerSpaceshipRotation()
 
 		if (bHitSuccessful)
 		{
-			targetRotation = (hitResult.ImpactPoint - PossessedSpacePawn->GetActorLocation()).ToOrientationRotator();
+			targetRotation       = (hitResult.ImpactPoint - PossessedSpacePawn->GetActorLocation()).ToOrientationRotator();
 			targetRotation.Pitch = 0.0f;
 
-			PossessedSpacePawn->RotateShip(targetRotation);
+			PossessedSpacePawn->RotateSpaceship(targetRotation);
 		}
 	}
 }

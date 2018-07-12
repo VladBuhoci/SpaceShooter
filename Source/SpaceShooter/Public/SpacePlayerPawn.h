@@ -9,6 +9,8 @@
 // Forward declarations.
 class USpringArmComponent;
 class UCameraComponent;
+class UFloatingPawnMovement;
+class UParticleSystemComponent;
 
 /**
  * Represents the player in the space levels.
@@ -34,7 +36,23 @@ private:
 
 	/** Movement component governing the movement of this pawn. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Player", Meta = (AllowPrivateAccess = "true"))
-	class UFloatingPawnMovement * SpaceshipMovementComponent;
+	UFloatingPawnMovement * SpaceshipMovementComponent;
+
+	/** True if the spaceship is flying forward. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Player", Meta = (AllowPrivateAccess = "true"))
+	bool bIsMovingForward;
+
+	/** True if the spaceship is flying backward. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Player", Meta = (AllowPrivateAccess = "true"))
+	bool bIsMovingBackward;
+
+	/** Speed of the spaceship when flying forward. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Player", Meta = (AllowPrivateAccess = "true"))
+	float MoveForwardSpeed;
+
+	/** Speed of the spaceship when flying backward. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Player", Meta = (AllowPrivateAccess = "true"))
+	float MoveBackwardSpeed;
 
 	/** The camera that is used to view the player and the world it belongs to. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Player | Player Camera", Meta = (AllowPrivateAccess = "true"))
@@ -55,6 +73,26 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Player | Player Camera", Meta = (AllowPrivateAccess = "true"))
 	FRotator SpringArmRotation;
 
+	/** A higher value means the spaceship turns left or right quicker. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Player", Meta = (AllowPrivateAccess = "true", ClampMin = "8", UIMin = "8", ClampMax = "20", UIMax = "20"))
+	float SpaceshipTurnSpeed;
+
+	/** Particle system which is activated when the spaceship is moving forward. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Player", Meta = (AllowPrivateAccess = "true"))
+	UParticleSystemComponent * BackSideThrusterParticleEmitter;
+
+	/** Particle system which is activated when the spaceship is moving backward. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Player", Meta = (AllowPrivateAccess = "true"))
+	UParticleSystemComponent * FrontSideThrusterParticleEmitter;
+
+	/** Particle system which is activated when the spaceship is rotating clockwise. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Player", Meta = (AllowPrivateAccess = "true"))
+	UParticleSystemComponent * LeftSideThrusterParticleEmitter;
+
+	/** Particle system which is activated when the spaceship is rotating counterclockwise. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Player", Meta = (AllowPrivateAccess = "true"))
+	UParticleSystemComponent * RightSideThrusterParticleEmitter;
+
 public:
 	/** Sets default values. */
 	ASpacePlayerPawn();
@@ -68,15 +106,18 @@ protected:
 
 	// Movement methods.
 public:
-	void RotateShip(FRotator rotator);
 	void MoveForward(float Value);
 	void MoveBackward(float Value);
+	void RotateSpaceship(FRotator rotator);
 
+	// Override this for the Movement Component logic to work.
 	virtual UPawnMovementComponent * GetMovementComponent() const override;
 
 private:	
-	void RotateShipClockwise();
-	void RotateShipCounterclockwise();
+	void RotateSpaceshipClockwise(FRotator newRotation);
+	void RotateSpaceshipCounterclockwise(FRotator newRotation);
+	void StopRotatingSpaceship();
+	void StopMovingSpaceship();
 	// ~ end of movement methods.
 
 	// GETTERS

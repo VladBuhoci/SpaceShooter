@@ -9,11 +9,13 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/FloatingPawnMovement.h"
 
-#include "Kismet/KismetMathLibrary.h"
-
 #include "Components/StaticMeshComponent.h"
 
+#include "Particles/ParticleSystemComponent.h"
+
 #include "Camera/CameraComponent.h"
+
+#include "Kismet/KismetMathLibrary.h"
 
 
 /** Sets default values. */
@@ -22,16 +24,25 @@ ASpacePlayerPawn::ASpacePlayerPawn()
 	PrimaryActorTick.bCanEverTick = true;
 
 	// Initialize components.
-	SpaceshipMeshComponent        = CreateDefaultSubobject<UStaticMeshComponent >("Spaceship Mesh Component");
-	CentralPlayerSceneComponent   = CreateDefaultSubobject<USceneComponent      >("Central Player Scene Component");
-	SpringArmComponent            = CreateDefaultSubobject<USpringArmComponent  >("Spring Arm Component");
-	CameraComponent               = CreateDefaultSubobject<UCameraComponent     >("Camera Component");
-	SpaceshipMovementComponent    = CreateDefaultSubobject<UFloatingPawnMovement>("Spaceship Movement Component");
+	CentralPlayerSceneComponent      = CreateDefaultSubobject<USceneComponent         >("Central Player Scene Component");
+	SpaceshipMeshComponent           = CreateDefaultSubobject<UStaticMeshComponent    >("Spaceship Mesh Component");
+	SpaceshipMovementComponent       = CreateDefaultSubobject<UFloatingPawnMovement   >("Spaceship Movement Component");
+	CameraComponent                  = CreateDefaultSubobject<UCameraComponent        >("Camera Component");
+	SpringArmComponent               = CreateDefaultSubobject<USpringArmComponent     >("Spring Arm Component");
+	BackSideThrusterParticleEmitter      = CreateDefaultSubobject<UParticleSystemComponent>("Back Thruster Particle Emitter");
+	FrontSideThrusterParticleEmitter     = CreateDefaultSubobject<UParticleSystemComponent>("Front Thruster Particle Emitter");
+	LeftSideThrusterParticleEmitter  = CreateDefaultSubobject<UParticleSystemComponent>("Left Side Thruster Particle Emitter");
+	RightSideThrusterParticleEmitter = CreateDefaultSubobject<UParticleSystemComponent>("Right Side Thruster Particle Emitter");
 
-	RootComponent                 = SpaceshipMeshComponent;
+	RootComponent                    = SpaceshipMeshComponent;
 
-	SpringArmOffset               = FVector(-500.0f, 0.0f, 600.0f);
-	SpringArmRotation             = FRotator(-50.0f, 0.0f, 0.0f);
+	bIsMovingForward                 = false;
+	bIsMovingBackward                = false;
+	MoveForwardSpeed                 = 1200.0f;
+	MoveBackwardSpeed                = 900.0f;
+	SpringArmOffset                  = FVector(-500.0f, 0.0f, 600.0f);
+	SpringArmRotation                = FRotator(-50.0f, 0.0f, 0.0f);
+	SpaceshipTurnSpeed               = 10.0f;
 
 	// CentralPlayerSceneComponent setup:
 	CentralPlayerSceneComponent->SetupAttachment(SpaceshipMeshComponent);
@@ -64,6 +75,26 @@ ASpacePlayerPawn::ASpacePlayerPawn()
 	// FloatingPawnMovementComponent setup:
 	SpaceshipMovementComponent->UpdatedComponent = SpaceshipMeshComponent;
 	// ~ end of FloatingPawnMovementComponent setup.
+
+	// BackSideThrusterParticleEmitter setup:
+	BackSideThrusterParticleEmitter->SetupAttachment(SpaceshipMeshComponent, "BackThruster");
+	//BackSideThrusterParticleEmitter->SetTemplate();
+	// ~ end of BackSideThrusterParticleEmitter setup.
+
+	// FrontSideThrusterParticleEmitter setup:
+	FrontSideThrusterParticleEmitter->SetupAttachment(SpaceshipMeshComponent, "FrontThruster");
+	//FrontSideThrusterParticleEmitter->SetTemplate();
+	// ~ end of FrontSideThrusterParticleEmitter setup.
+
+	// LeftSideThrusterParticleEmitter setup:
+	LeftSideThrusterParticleEmitter->SetupAttachment(SpaceshipMeshComponent, "LeftThruster");
+	//LeftSideThrusterParticleEmitter->SetTemplate();
+	// ~ end of LeftSideThrusterParticleEmitter setup.
+
+	// RightSideThrusterParticleEmitter setup:
+	RightSideThrusterParticleEmitter->SetupAttachment(SpaceshipMeshComponent, "RightThruster");
+	//RightSideThrusterParticleEmitter->SetTemplate();
+	// ~ end of RightSideThrusterParticleEmitter setup.
 }
 
 /** Called when the game starts or when spawned. */
@@ -81,14 +112,34 @@ void ASpacePlayerPawn::Tick(float DeltaTime)
 	// Keep the helper scene component's rotation at a fixed zero value on all axis so the
 	//		camera's spring arm (that is attached to it) never rotates its children (i.e. the camera).
 	CentralPlayerSceneComponent->SetWorldRotation(FRotator::ZeroRotator);
-}
 
-void ASpacePlayerPawn::RotateShip(FRotator rotator)
-{
-	// TODO: should turn the InterpSpeed param into a class variable.
-	FRotator finalRotation = UKismetMathLibrary::RInterpTo(SpaceshipMeshComponent->GetComponentRotation(), rotator, FApp::GetDeltaTime(), 10.0f);
-	
-	SpaceshipMeshComponent->SetWorldRotation(finalRotation);
+	// Check if we are moving and activate thrusters' particle emitters accordingly.
+	if (SpaceshipMovementComponent->Velocity.Size() > 0.0f)
+	{
+		if (bIsMovingForward)
+		{
+			FrontSideThrusterParticleEmitter->DeactivateSystem();
+
+			if (BackSideThrusterParticleEmitter->Template && !BackSideThrusterParticleEmitter->bIsActive)
+			{
+				BackSideThrusterParticleEmitter->ActivateSystem();
+			}
+		}
+		else if (bIsMovingBackward)
+		{
+			BackSideThrusterParticleEmitter->DeactivateSystem();
+
+			if (FrontSideThrusterParticleEmitter->Template && !FrontSideThrusterParticleEmitter->bIsActive)
+			{
+				FrontSideThrusterParticleEmitter->ActivateSystem();
+			}
+		}
+	}
+	// If we are not moving, stop thrusters' particle emitters.
+	else
+	{
+		StopMovingSpaceship();
+	}
 }
 
 void ASpacePlayerPawn::MoveForward(float Value)
@@ -96,8 +147,12 @@ void ASpacePlayerPawn::MoveForward(float Value)
 	if (Value > 0.0f)
 	{
 		// Add movement in the correct direction.
-		
 		AddMovementInput(GetActorForwardVector(), Value);
+
+		bIsMovingForward = true;
+		bIsMovingBackward = false;
+
+		SpaceshipMovementComponent->MaxSpeed = MoveForwardSpeed;
 	}
 }
 
@@ -107,6 +162,11 @@ void ASpacePlayerPawn::MoveBackward(float Value)
 	{
 		// Add movement in the correct direction.
 		AddMovementInput(GetActorForwardVector(), Value);
+
+		bIsMovingBackward = true;
+		bIsMovingForward = false;
+
+		SpaceshipMovementComponent->MaxSpeed = MoveBackwardSpeed;
 	}
 }
 
@@ -115,12 +175,69 @@ UPawnMovementComponent * ASpacePlayerPawn::GetMovementComponent() const
 	return SpaceshipMovementComponent;
 }
 
-void ASpacePlayerPawn::RotateShipClockwise()
+void ASpacePlayerPawn::RotateSpaceship(FRotator rotator)
 {
+	FRotator previousRotation = SpaceshipMeshComponent->GetComponentRotation();
+	FRotator newRotation      = UKismetMathLibrary::RInterpTo(previousRotation, rotator, FApp::GetDeltaTime(), SpaceshipTurnSpeed);
+	
+	// If the yaw happens to be negative, calculate the positive value it could have been instead (e.g.: for -40 it is 320).
+	previousRotation.Yaw = previousRotation.Yaw >= 0.0f ? previousRotation.Yaw : 360.0f + previousRotation.Yaw;
+	newRotation.Yaw      = newRotation.Yaw      >= 0.0f ? newRotation.Yaw      : 360.0f + newRotation.Yaw;
 
+	if (UKismetMathLibrary::Round(previousRotation.Yaw) != UKismetMathLibrary::Round(newRotation.Yaw))
+	{
+		bool bRotateClockwise = UKismetMathLibrary::Abs(previousRotation.Yaw - newRotation.Yaw) <= 180.0f ? previousRotation.Yaw < newRotation.Yaw : previousRotation.Yaw > newRotation.Yaw;
+
+		if (bRotateClockwise)
+		{
+			RotateSpaceshipClockwise(newRotation);
+		}
+		else
+		{
+			RotateSpaceshipCounterclockwise(newRotation);
+		}
+	}
+	else
+	{
+		StopRotatingSpaceship();
+	}
 }
 
-void ASpacePlayerPawn::RotateShipCounterclockwise()
+void ASpacePlayerPawn::RotateSpaceshipClockwise(FRotator newRotation)
 {
+	RightSideThrusterParticleEmitter->DeactivateSystem();
+	
+	if (LeftSideThrusterParticleEmitter->Template && !LeftSideThrusterParticleEmitter->bIsActive)
+	{
+		LeftSideThrusterParticleEmitter->ActivateSystem();
+	}
 
+	SpaceshipMeshComponent->SetWorldRotation(newRotation);
+}
+
+void ASpacePlayerPawn::RotateSpaceshipCounterclockwise(FRotator newRotation)
+{
+	LeftSideThrusterParticleEmitter->DeactivateSystem();
+
+	if (RightSideThrusterParticleEmitter->Template && !RightSideThrusterParticleEmitter->bIsActive)
+	{
+		RightSideThrusterParticleEmitter->ActivateSystem();
+	}
+
+	SpaceshipMeshComponent->SetWorldRotation(newRotation);
+}
+
+void ASpacePlayerPawn::StopRotatingSpaceship()
+{
+	LeftSideThrusterParticleEmitter->DeactivateSystem();
+	RightSideThrusterParticleEmitter->DeactivateSystem();
+}
+
+void ASpacePlayerPawn::StopMovingSpaceship()
+{
+	BackSideThrusterParticleEmitter->DeactivateSystem();
+	FrontSideThrusterParticleEmitter->DeactivateSystem();
+
+	bIsMovingForward = false;
+	bIsMovingBackward = false;
 }

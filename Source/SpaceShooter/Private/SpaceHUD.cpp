@@ -26,7 +26,7 @@ void ASpaceHUD::DrawHUD()
 	if (TargetImage)
 	{
 		// Is there any way to determine the width and height programatically?
-		DrawMaterialSimple(TargetImage, TargetPosX, TargetPosY, 32, 32);
+		DrawMaterialSimple(TargetImage, TargetPosX - 16, TargetPosY - 16, 32, 32);
 	}
 }
 
