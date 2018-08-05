@@ -46,11 +46,26 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Player", Meta = (AllowPrivateAccess = "true"))
 	bool bIsMovingBackward;
 
-	/** Speed of the spaceship when flying forward. */
+	/**
+	 * True if the spaceship is in turbo mode, significantly increasing the movement speed of the spaceship.
+	 * Only available for forward flight.
+	 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Player", Meta = (AllowPrivateAccess = "true"))
+	bool bIsTurboModeActive;
+
+	/** Maximum speed of the spaceship while turbo mode is active. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Player", Meta = (AllowPrivateAccess = "true"))
+	float MoveForwardMaxSpeed;
+
+	/** Maximum speed of the spaceship while flying normally. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Player", Meta = (AllowPrivateAccess = "true"))
+	float MoveForwardMaxTurboSpeed;
+
+	/** Current maximum speed of the spaceship when flying forward. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Player", Meta = (AllowPrivateAccess = "true"))
 	float MoveForwardSpeed;
 
-	/** Speed of the spaceship when flying backward. */
+	/** Current maximum speed of the spaceship when flying backward. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Player", Meta = (AllowPrivateAccess = "true"))
 	float MoveBackwardSpeed;
 
@@ -73,6 +88,10 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Player | Player Camera", Meta = (AllowPrivateAccess = "true"))
 	FRotator SpringArmRotation;
 
+	/** Spring arm's length (distance from the target - spaceship - to the camera) while turbo mode is active. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Player | Player Camera", Meta = (AllowPrivateAccess = "true"))
+	float SpringArmTurboLength;
+
 	/** A higher value means the spaceship turns left or right quicker. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Player", Meta = (AllowPrivateAccess = "true", ClampMin = "8", UIMin = "8", ClampMax = "20", UIMax = "20"))
 	float SpaceshipTurnSpeed;
@@ -93,6 +112,14 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Player", Meta = (AllowPrivateAccess = "true"))
 	UParticleSystemComponent * RightSideThrusterParticleEmitter;
 
+	/** Particle system template for normal forward flight mode. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Space Player", Meta = (AllowPrivateAccess = "true"))
+	UParticleSystem * BacksideNormalThrusterParticleSystem;
+
+	/** Particle system template for turbo forward flight mode. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Space Player", Meta = (AllowPrivateAccess = "true"))
+	UParticleSystem * BacksideTurboThrusterParticleSystem;
+
 public:
 	/** Sets default values. */
 	ASpacePlayerPawn();
@@ -109,6 +136,8 @@ public:
 	void MoveForward(float Value);
 	void MoveBackward(float Value);
 	void RotateSpaceship(FRotator rotator);
+	void ActivateTurboMode();
+	void DeactivateTurboMode();
 
 	// Override this for the Movement Component logic to work.
 	virtual UPawnMovementComponent * GetMovementComponent() const override;

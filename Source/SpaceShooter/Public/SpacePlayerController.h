@@ -47,5 +47,8 @@ private:
 	// Player pawn input handling:
 	void MovePawnForward(float Value);
 	void MovePawnBackward(float Value);
+
+	void ActivateTurboMode();
+	void DeactivateTurboMode();
 	// ~ end of player pawn input handling.
 };

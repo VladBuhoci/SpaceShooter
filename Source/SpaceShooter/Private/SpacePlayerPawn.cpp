@@ -29,8 +29,8 @@ ASpacePlayerPawn::ASpacePlayerPawn()
 	SpaceshipMovementComponent       = CreateDefaultSubobject<UFloatingPawnMovement   >("Spaceship Movement Component");
 	CameraComponent                  = CreateDefaultSubobject<UCameraComponent        >("Camera Component");
 	SpringArmComponent               = CreateDefaultSubobject<USpringArmComponent     >("Spring Arm Component");
-	BackSideThrusterParticleEmitter      = CreateDefaultSubobject<UParticleSystemComponent>("Back Thruster Particle Emitter");
-	FrontSideThrusterParticleEmitter     = CreateDefaultSubobject<UParticleSystemComponent>("Front Thruster Particle Emitter");
+	BackSideThrusterParticleEmitter  = CreateDefaultSubobject<UParticleSystemComponent>("Back Thruster Particle Emitter");
+	FrontSideThrusterParticleEmitter = CreateDefaultSubobject<UParticleSystemComponent>("Front Thruster Particle Emitter");
 	LeftSideThrusterParticleEmitter  = CreateDefaultSubobject<UParticleSystemComponent>("Left Side Thruster Particle Emitter");
 	RightSideThrusterParticleEmitter = CreateDefaultSubobject<UParticleSystemComponent>("Right Side Thruster Particle Emitter");
 
@@ -38,10 +38,14 @@ ASpacePlayerPawn::ASpacePlayerPawn()
 
 	bIsMovingForward                 = false;
 	bIsMovingBackward                = false;
-	MoveForwardSpeed                 = 1200.0f;
+	bIsTurboModeActive               = false;
+	MoveForwardMaxTurboSpeed         = 1600.0f;
+	MoveForwardMaxSpeed              = 1200.0f;
+	MoveForwardSpeed                 = MoveForwardMaxSpeed;
 	MoveBackwardSpeed                = 900.0f;
 	SpringArmOffset                  = FVector(-500.0f, 0.0f, 600.0f);
 	SpringArmRotation                = FRotator(-50.0f, 0.0f, 0.0f);
+	SpringArmTurboLength             = 100.0f;
 	SpaceshipTurnSpeed               = 10.0f;
 
 	// CentralPlayerSceneComponent setup:
@@ -78,7 +82,7 @@ ASpacePlayerPawn::ASpacePlayerPawn()
 
 	// BackSideThrusterParticleEmitter setup:
 	BackSideThrusterParticleEmitter->SetupAttachment(SpaceshipMeshComponent, "BackThruster");
-	//BackSideThrusterParticleEmitter->SetTemplate();
+	BackSideThrusterParticleEmitter->SetTemplate(BacksideNormalThrusterParticleSystem);
 	// ~ end of BackSideThrusterParticleEmitter setup.
 
 	// FrontSideThrusterParticleEmitter setup:
@@ -119,7 +123,7 @@ void ASpacePlayerPawn::Tick(float DeltaTime)
 		if (bIsMovingForward)
 		{
 			FrontSideThrusterParticleEmitter->DeactivateSystem();
-
+			
 			if (BackSideThrusterParticleEmitter->Template && !BackSideThrusterParticleEmitter->bIsActive)
 			{
 				BackSideThrusterParticleEmitter->ActivateSystem();
@@ -167,6 +171,9 @@ void ASpacePlayerPawn::MoveBackward(float Value)
 		bIsMovingForward = false;
 
 		SpaceshipMovementComponent->MaxSpeed = MoveBackwardSpeed;
+
+		if (bIsTurboModeActive)
+			DeactivateTurboMode();
 	}
 }
 
@@ -201,6 +208,45 @@ void ASpacePlayerPawn::RotateSpaceship(FRotator rotator)
 	{
 		StopRotatingSpaceship();
 	}
+}
+
+void ASpacePlayerPawn::ActivateTurboMode()
+{
+	// If the player is currently moving forward, we can enable turbo mode.
+
+	if (bIsMovingForward)
+	{
+		MoveForwardSpeed = MoveForwardMaxTurboSpeed;
+		
+		if (BacksideTurboThrusterParticleSystem != NULL)
+		{
+			BackSideThrusterParticleEmitter->DeactivateSystem();
+			BackSideThrusterParticleEmitter->SetTemplate(BacksideTurboThrusterParticleSystem);
+			BackSideThrusterParticleEmitter->ActivateSystem();
+		}
+
+		SpringArmComponent->TargetArmLength = SpringArmTurboLength;
+	}
+
+	bIsTurboModeActive = true;
+}
+
+void ASpacePlayerPawn::DeactivateTurboMode()
+{
+	MoveForwardSpeed = MoveForwardMaxSpeed;
+
+	if (bIsMovingForward)
+		BackSideThrusterParticleEmitter->DeactivateSystem();
+
+	if (BacksideNormalThrusterParticleSystem != NULL)
+		BackSideThrusterParticleEmitter->SetTemplate(BacksideNormalThrusterParticleSystem);
+
+	if (bIsMovingForward)
+		BackSideThrusterParticleEmitter->ActivateSystem();
+
+	SpringArmComponent->TargetArmLength = 0.0f;
+
+	bIsTurboModeActive = false;
 }
 
 void ASpacePlayerPawn::RotateSpaceshipClockwise(FRotator newRotation)
@@ -238,6 +284,8 @@ void ASpacePlayerPawn::StopMovingSpaceship()
 	BackSideThrusterParticleEmitter->DeactivateSystem();
 	FrontSideThrusterParticleEmitter->DeactivateSystem();
 
-	bIsMovingForward = false;
-	bIsMovingBackward = false;
+	bIsMovingForward   = false;
+	bIsMovingBackward  = false;
+	
+	DeactivateTurboMode();
 }

@@ -40,6 +40,9 @@ void ASpacePlayerController::SetupInputComponent()
 
 	InputComponent->BindAxis("Move Forward", this, &ASpacePlayerController::MovePawnForward);
 	InputComponent->BindAxis("Move Backward", this, &ASpacePlayerController::MovePawnBackward);
+
+	InputComponent->BindAction("Turbo Mode", EInputEvent::IE_Pressed, this, &ASpacePlayerController::ActivateTurboMode);
+	InputComponent->BindAction("Turbo Mode", EInputEvent::IE_Released, this, &ASpacePlayerController::DeactivateTurboMode);
 }
 
 void ASpacePlayerController::HandlePlayerTargetIconOnScreen()
@@ -58,7 +61,7 @@ void ASpacePlayerController::HandlePlayerSpaceshipRotation()
 	if (PossessedSpacePawn)
 	{
 		FRotator targetRotation;
-		TArray<TEnumAsByte<EObjectTypeQuery>> objectTypeArray({ EObjectTypeQuery::ObjectTypeQuery1 }, 1);	// ObjectTypeQuery1 = WorldStatic
+		TArray<TEnumAsByte<EObjectTypeQuery>> objectTypeArray({ EObjectTypeQuery::ObjectTypeQuery1 });	// ObjectTypeQuery1 = WorldStatic
 		FHitResult hitResult;
 		bool bHitSuccessful;
 		
@@ -87,5 +90,21 @@ void ASpacePlayerController::MovePawnBackward(float Value)
 	if (PossessedSpacePawn)
 	{
 		PossessedSpacePawn->MoveBackward(Value);
+	}
+}
+
+void ASpacePlayerController::ActivateTurboMode()
+{
+	if (PossessedSpacePawn)
+	{
+		PossessedSpacePawn->ActivateTurboMode();
+	}
+}
+
+void ASpacePlayerController::DeactivateTurboMode()
+{
+	if (PossessedSpacePawn)
+	{
+		PossessedSpacePawn->DeactivateTurboMode();
 	}
 }
