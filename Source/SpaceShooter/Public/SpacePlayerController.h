@@ -33,22 +33,32 @@ public:
 	/** Called to bind functionality to input. */
 	virtual void SetupInputComponent() override;
 
+	/** Sends a request to the spaceship to activate its primary weapons. */
+	void BeginFiringPrimaryWeapons();
+
+	/** Sends a request to the spaceship to deactivate its primary weapons. */
+	void EndFiringPrimaryWeapons();
+
 protected:
 	/** Called when the game starts or when spawned. */
 	virtual void BeginPlay() override;
 
 private:
+	/**********************************
+		   PLAYER INPUT HANDLING
+	**********************************/
+
 	/** Updates the target icon according to the current position of the user's cursor on screen. */
 	void HandlePlayerTargetIconOnScreen();
 	
 	/** Gets the position of the cursor on the game screen and asks the player to rotate towards it. */
 	void HandlePlayerSpaceshipRotation();
 
-	// Player pawn input handling:
 	void MovePawnForward(float Value);
 	void MovePawnBackward(float Value);
 
 	void ActivateTurboMode();
 	void DeactivateTurboMode();
-	// ~ end of player pawn input handling.
+
+
 };

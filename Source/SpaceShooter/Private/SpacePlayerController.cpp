@@ -41,8 +41,11 @@ void ASpacePlayerController::SetupInputComponent()
 	InputComponent->BindAxis("Move Forward", this, &ASpacePlayerController::MovePawnForward);
 	InputComponent->BindAxis("Move Backward", this, &ASpacePlayerController::MovePawnBackward);
 
-	InputComponent->BindAction("Turbo Mode", EInputEvent::IE_Pressed, this, &ASpacePlayerController::ActivateTurboMode);
-	InputComponent->BindAction("Turbo Mode", EInputEvent::IE_Released, this, &ASpacePlayerController::DeactivateTurboMode);
+	InputComponent->BindAction("Turbo Mode", IE_Pressed, this, &ASpacePlayerController::ActivateTurboMode);
+	InputComponent->BindAction("Turbo Mode", IE_Released, this, &ASpacePlayerController::DeactivateTurboMode);
+
+	InputComponent->BindAction("Use Primary Weapons", IE_Pressed, this, &ASpacePlayerController::BeginFiringPrimaryWeapons);
+	InputComponent->BindAction("Use Primary Weapons", IE_Released, this, &ASpacePlayerController::EndFiringPrimaryWeapons);
 }
 
 void ASpacePlayerController::HandlePlayerTargetIconOnScreen()
@@ -106,5 +109,21 @@ void ASpacePlayerController::DeactivateTurboMode()
 	if (PossessedSpacePawn)
 	{
 		PossessedSpacePawn->DeactivateTurboMode();
+	}
+}
+
+void ASpacePlayerController::BeginFiringPrimaryWeapons()
+{
+	if (PossessedSpacePawn)
+	{
+		PossessedSpacePawn->BeginFiringPrimaryWeapons();
+	}
+}
+
+void ASpacePlayerController::EndFiringPrimaryWeapons()
+{
+	if (PossessedSpacePawn)
+	{
+		PossessedSpacePawn->EndFiringPrimaryWeapons();
 	}
 }

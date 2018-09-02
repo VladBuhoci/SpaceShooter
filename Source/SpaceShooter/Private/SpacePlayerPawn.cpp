@@ -1,6 +1,8 @@
 // This application is the final year project (2018-2019) of a Computer Science student (me - Vlad Buhoci).
 
 #include "SpacePlayerPawn.h"
+#include "Weapon.h"
+#include "Projectile.h"
 
 #include "ConstructorHelpers.h"
 
@@ -21,7 +23,7 @@
 /** Sets default values. */
 ASpacePlayerPawn::ASpacePlayerPawn()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick    = true;
 
 	// Initialize components.
 	CentralPlayerSceneComponent      = CreateDefaultSubobject<USceneComponent         >("Central Player Scene Component");
@@ -47,6 +49,7 @@ ASpacePlayerPawn::ASpacePlayerPawn()
 	SpringArmRotation                = FRotator(-50.0f, 0.0f, 0.0f);
 	SpringArmTurboLength             = 100.0f;
 	SpaceshipTurnSpeed               = 10.0f;
+	bIsFiringPrimaryWeapons			 = false;
 
 	// CentralPlayerSceneComponent setup:
 	CentralPlayerSceneComponent->SetupAttachment(SpaceshipMeshComponent);
@@ -106,6 +109,7 @@ void ASpacePlayerPawn::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	InitializeWeaponry();
 }
 
 /** Called every frame. */
@@ -144,6 +148,8 @@ void ASpacePlayerPawn::Tick(float DeltaTime)
 	{
 		StopMovingSpaceship();
 	}
+
+	CheckIfWeaponsNeedToBeFired();
 }
 
 void ASpacePlayerPawn::MoveForward(float Value)
@@ -226,9 +232,12 @@ void ASpacePlayerPawn::ActivateTurboMode()
 		}
 
 		SpringArmComponent->TargetArmLength = SpringArmTurboLength;
-	}
 
-	bIsTurboModeActive = true;
+		bIsTurboModeActive = true;
+		
+		// Do not allow any kind of weapon to be used while in turbo mode.
+		EndFiringPrimaryWeapons();
+	}
 }
 
 void ASpacePlayerPawn::DeactivateTurboMode()
@@ -281,11 +290,60 @@ void ASpacePlayerPawn::StopRotatingSpaceship()
 
 void ASpacePlayerPawn::StopMovingSpaceship()
 {
-	BackSideThrusterParticleEmitter->DeactivateSystem();
-	FrontSideThrusterParticleEmitter->DeactivateSystem();
+	DeactivateTurboMode();
 
 	bIsMovingForward   = false;
 	bIsMovingBackward  = false;
-	
-	DeactivateTurboMode();
+
+	BackSideThrusterParticleEmitter->DeactivateSystem();
+	FrontSideThrusterParticleEmitter->DeactivateSystem();
+}
+
+void ASpacePlayerPawn::InitializeWeaponry()
+{
+	if (PrimaryWeaponClass)
+	{
+		UWorld* World = GetWorld();
+		if (World)
+		{
+			PrimaryWeapon = World->SpawnActor<AWeapon>(PrimaryWeaponClass);
+
+			if (PrimaryWeapon)
+			{
+				FAttachmentTransformRules AttachRules = FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true);
+
+				PrimaryWeapon->AttachToComponent(SpaceshipMeshComponent, AttachRules, TEXT("Weapon_AttachPoint_DEV"));
+			}
+		}
+	}
+}
+
+void ASpacePlayerPawn::BeginFiringPrimaryWeapons()
+{
+	// Only allow any kind of weapon to be used while not in turbo mode.
+	if (!bIsTurboModeActive)
+	{
+		bIsFiringPrimaryWeapons = true;
+	}
+}
+
+void ASpacePlayerPawn::EndFiringPrimaryWeapons()
+{
+	bIsFiringPrimaryWeapons = false;
+}
+
+void ASpacePlayerPawn::FirePrimaryWeapons_Internal()
+{
+	if (PrimaryWeapon)
+	{
+		PrimaryWeapon->FireWeapon(EProjectileOwnerType::Friendly);
+	}
+}
+
+void ASpacePlayerPawn::CheckIfWeaponsNeedToBeFired()
+{
+	if (bIsFiringPrimaryWeapons)
+	{
+		FirePrimaryWeapons_Internal();
+	}
 }
