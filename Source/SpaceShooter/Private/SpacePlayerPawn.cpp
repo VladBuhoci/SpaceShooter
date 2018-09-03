@@ -234,9 +234,6 @@ void ASpacePlayerPawn::ActivateTurboMode()
 		SpringArmComponent->TargetArmLength = SpringArmTurboLength;
 
 		bIsTurboModeActive = true;
-		
-		// Do not allow any kind of weapon to be used while in turbo mode.
-		EndFiringPrimaryWeapons();
 	}
 }
 
@@ -320,11 +317,7 @@ void ASpacePlayerPawn::InitializeWeaponry()
 
 void ASpacePlayerPawn::BeginFiringPrimaryWeapons()
 {
-	// Only allow any kind of weapon to be used while not in turbo mode.
-	if (!bIsTurboModeActive)
-	{
-		bIsFiringPrimaryWeapons = true;
-	}
+	bIsFiringPrimaryWeapons = true;
 }
 
 void ASpacePlayerPawn::EndFiringPrimaryWeapons()
@@ -342,7 +335,7 @@ void ASpacePlayerPawn::FirePrimaryWeapons_Internal()
 
 void ASpacePlayerPawn::CheckIfWeaponsNeedToBeFired()
 {
-	if (bIsFiringPrimaryWeapons)
+	if (bIsFiringPrimaryWeapons && !bIsTurboModeActive)
 	{
 		FirePrimaryWeapons_Internal();
 	}
