@@ -1,6 +1,7 @@
 // This application is the final year project (2018-2019) of a Computer Science student (me - Vlad Buhoci).
 
 #include "Projectile.h"
+#include "SpacecraftPawn.h"
 
 #include "Components/StaticMeshComponent.h"
 
@@ -69,13 +70,11 @@ void AProjectile::ExecuteOnProjectileStop_Implementation(const FHitResult& Impac
 
 void AProjectile::ExecuteOnProjectileBeginOverlap_Implementation(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	// We want to overlap ships and projectiles that belong to the same "faction" and hit everything else.
+	// We want to overlap spacecrafts and projectiles that belong to the same "faction" and hit everything else.
 	if (OtherActor != nullptr && OtherActor != this)
 	{
 		// Check if we hit another projectile.
-		AProjectile* OtherProjectile = Cast<AProjectile>(OtherActor);
-
-		if (OtherProjectile)
+		if (AProjectile* OtherProjectile = Cast<AProjectile>(OtherActor))
 		{
 			// Destroy this projectile if it collides with another one belonging to the enemy side.
 			if (OtherProjectile->GetOwnerType() != this->GetOwnerType())
@@ -86,8 +85,18 @@ void AProjectile::ExecuteOnProjectileBeginOverlap_Implementation(UPrimitiveCompo
 			return;
 		}
 
-		// Check if we hit another ship.
-		// @TODO: add this check.
+		// Check if we hit another spacecraft.
+		if (ASpacecraftPawn* OtherSpacecraft = Cast<ASpacecraftPawn>(OtherActor))
+		{
+			// Destroy this projectile if it collides with a spacecraft belonging to the enemy side,
+			//		but not before applying damage to it.
+			
+			/**
+			 * @TODO: add this stuff.
+			 */
+
+			return;
+		}
 	}
 }
 
