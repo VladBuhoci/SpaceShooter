@@ -26,7 +26,9 @@ AProjectile::AProjectile()
 	OwnerType                   = EProjectileOwnerType::Unspecified;
 	
 	// MeshComponent setup:
-	MeshComponent->OnComponentHit.AddDynamic(this, &AProjectile::ExecuteOnProjectileHit);
+	MeshComponent->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap);
+	// ...
+	MeshComponent->OnComponentBeginOverlap.AddDynamic(this, &AProjectile::ExecuteOnProjectileBeginOverlap);
 	// ~ end of MeshComponent setup.
 
 	// TrailingParticleEmitter setup:
@@ -39,11 +41,12 @@ AProjectile::AProjectile()
 	// ~ end of DestroyParticleEffect setup.
 
 	// ProjectileMovementComponent setup:
-	ProjectileMovementComponent->InitialSpeed = 3000.0f;
+	ProjectileMovementComponent->InitialSpeed           = 3000.0f;
 	ProjectileMovementComponent->MaxSpeed               = 3000.0f;
 	ProjectileMovementComponent->ProjectileGravityScale = 0.0f;
+	// ...
 	ProjectileMovementComponent->OnProjectileBounce.AddDynamic(this, &AProjectile::ExecuteOnProjectileBounce);
-	ProjectileMovementComponent->OnProjectileStop.AddDynamic(this, &AProjectile::ExecuteOnProjectileStop);
+	ProjectileMovementComponent->OnProjectileStop  .AddDynamic(this, &AProjectile::ExecuteOnProjectileStop);
 	// ~ end of ProjectileMovementComponent setup.
 }
 
@@ -64,23 +67,27 @@ void AProjectile::ExecuteOnProjectileStop_Implementation(const FHitResult& Impac
 	//UE_LOG(LogTemp, Log, TEXT("Projectile stopped!"));
 }
 
-void AProjectile::ExecuteOnProjectileHit_Implementation(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+void AProjectile::ExecuteOnProjectileBeginOverlap_Implementation(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	// We want to overlap ships and projectiles that belong to the same "faction" and hit everything else.
 	if (OtherActor != nullptr && OtherActor != this)
 	{
 		// Check if we hit another projectile.
 		AProjectile* OtherProjectile = Cast<AProjectile>(OtherActor);
-		
+
 		if (OtherProjectile)
 		{
-			// Destroy both projectiles if their owners belong to different factions.
+			// Destroy this projectile if it collides with another one belonging to the enemy side.
 			if (OtherProjectile->GetOwnerType() != this->GetOwnerType())
 			{
-				OtherProjectile->DestroyProjectile();
-
 				this->DestroyProjectile();
 			}
+
+			return;
 		}
+
+		// Check if we hit another ship.
+		// @TODO: add this check.
 	}
 }
 

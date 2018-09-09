@@ -80,10 +80,10 @@ protected:
 	void ExecuteOnProjectileStop               (const FHitResult& ImpactResult);
 	void ExecuteOnProjectileStop_Implementation(const FHitResult& ImpactResult);
 
-	/** Called when the projectile hits something. */
+	/** Called when the projectile overlaps something. */
 	UFUNCTION(BlueprintNativeEvent, Category = "Projectile", Meta = (DisplayName = "OnProjectileHit"))
-	void ExecuteOnProjectileHit               (UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
-	void ExecuteOnProjectileHit_Implementation(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+	void ExecuteOnProjectileBeginOverlap               (UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	void ExecuteOnProjectileBeginOverlap_Implementation(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 private:
 	/** Triggers a few effects (sounds, particles) and then destroys the projectile. */
