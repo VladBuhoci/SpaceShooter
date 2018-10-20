@@ -42,10 +42,6 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Player Camera", Meta = (AllowPrivateAccess = "true"))
 	FRotator SpringArmRotation;
 
-	/** Spring arm's length (distance from the target - spacecraft - to the camera) while turbo mode is active. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Player Camera", Meta = (AllowPrivateAccess = "true"))
-	float SpringArmTurboLength;
-
 public:
 	/** Sets default values. */
 	ASpacePlayerPawn();
@@ -62,11 +58,6 @@ public:
 		     MOVEMENT INTERFACE
 	**********************************/
 
-	/*virtual void MoveForward(float Value) override;
-	virtual void MoveBackward(float Value) override;
-	virtual void RotateSpacecraft(FRotator rotator) override;
-	virtual void ActivateTurboMode();
-	virtual void DeactivateTurboMode() override;*/
 
 protected:
 	virtual void OnTurboModeActivated() override;
@@ -89,5 +80,18 @@ public:
 				GETTERS
 	**********************************/
 
+private:
+	/**********************************
+			 CAMERA INTERFACE
+	**********************************/
 
+	/** The targeted length of the camera's spring arm. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Player Camera", Meta = (AllowPrivateAccess = "true"))
+	float DesiredCameraSpringArmLength;
+
+	/** The speed at which the spring arm of the camera changes its length during flight. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Player Camera", Meta = (AllowPrivateAccess = "true"))
+	float CameraZoomSpeed;
+
+	void CheckCameraOffset(float DeltaTime);
 };
