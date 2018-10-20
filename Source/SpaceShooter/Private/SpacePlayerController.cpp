@@ -64,12 +64,12 @@ void ASpacePlayerController::HandlePlayerSpaceshipRotation()
 	if (PossessedSpacePawn)
 	{
 		FRotator targetRotation;
-		TArray<TEnumAsByte<EObjectTypeQuery>> objectTypeArray({ EObjectTypeQuery::ObjectTypeQuery1 });	// ObjectTypeQuery1 = WorldStatic
 		FHitResult hitResult;
 		bool bHitSuccessful;
 		
-		bHitSuccessful = GetHitResultUnderCursorForObjects(objectTypeArray, true, hitResult);
-
+		// TraceTypeQuery3 is defined as Background trace channel in the Editor, so we're going to use that.
+		bHitSuccessful = GetHitResultUnderCursorByChannel(ETraceTypeQuery::TraceTypeQuery3, true, hitResult);
+		
 		if (bHitSuccessful)
 		{
 			targetRotation       = (hitResult.ImpactPoint - PossessedSpacePawn->GetActorLocation()).ToOrientationRotator();
