@@ -29,8 +29,8 @@ void ASpacePlayerController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	HandlePlayerTargetIconOnScreen();
-	HandlePlayerSpaceshipRotation();
+	HandleTargetIconOnScreen();
+	HandleSpaceshipRotation();
 }
 
 /** Called to bind functionality to input. */
@@ -48,7 +48,7 @@ void ASpacePlayerController::SetupInputComponent()
 	InputComponent->BindAction("Use Primary Weapons", IE_Released, this, &ASpacePlayerController::EndFiringPrimaryWeapons);
 }
 
-void ASpacePlayerController::HandlePlayerTargetIconOnScreen()
+void ASpacePlayerController::HandleTargetIconOnScreen()
 {
 	float posX, posY;
 
@@ -59,7 +59,7 @@ void ASpacePlayerController::HandlePlayerTargetIconOnScreen()
 }
 
 /** Gets the position of the cursor on the game screen and asks the player to rotate towards it. */
-void ASpacePlayerController::HandlePlayerSpaceshipRotation()
+void ASpacePlayerController::HandleSpaceshipRotation()
 {
 	if (PossessedSpacePawn)
 	{

@@ -124,10 +124,14 @@ protected:
 	/** Called when the game starts or when spawned. */
 	virtual void BeginPlay() override;
 
-public:
+
 	/**********************************
 			 MOVEMENT INTERFACE
 	**********************************/
+
+public:
+	void MaintainForwardMovementSetup();
+	void MaintainBackwardMovementSetup();
 
 	virtual void MoveForward(float Value);
 	virtual void MoveBackward(float Value);
@@ -171,10 +175,11 @@ private:
 	/** Checks if any type of weapon should be fired at the moment. */
 	void CheckIfWeaponsNeedToBeFired();
 
-public:
+
 	/**********************************
 				 GETTERS
 	**********************************/
 
+public:
 	UStaticMeshComponent* GetSpacecraftMeshComponent() const { return SpacecraftMeshComponent; }
 };

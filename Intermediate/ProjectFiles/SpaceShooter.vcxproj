@@ -262,8 +262,12 @@
     <None Include="..\..\Config\DefaultInput.ini" />
     <None Include="..\..\Source\SpaceShooter\SpaceShooter.Build.cs" />
     <ClCompile Include="..\..\Source\SpaceShooter\Private\SpacecraftPawn.cpp" />
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\SpaceEnemyController.cpp" />
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\SpaceEnemyPawn.cpp" />
     <ClCompile Include="..\..\Source\SpaceShooter\SpaceShooter.cpp" />
     <ClInclude Include="..\..\Source\SpaceShooter\Public\SpacecraftPawn.h" />
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\SpaceEnemyController.h" />
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\SpaceEnemyPawn.h" />
     <ClInclude Include="..\..\Source\SpaceShooter\SpaceShooter.h" />
     <ClCompile Include="..\..\Source\SpaceShooter\Private\MainMenuGameMode.cpp" />
     <ClCompile Include="..\..\Source\SpaceShooter\Private\MainMenuPlayerPawn.cpp" />

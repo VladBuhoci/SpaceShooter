@@ -129,6 +129,27 @@ void ASpacecraftPawn::Tick(float DeltaTime)
 	CheckIfWeaponsNeedToBeFired();
 }
 
+void ASpacecraftPawn::MaintainForwardMovementSetup()
+{
+	bIsMovingForward  = true;
+	bIsMovingBackward = false;
+
+	SpacecraftMovementComponent->MaxSpeed = MoveForwardSpeed;
+}
+
+void ASpacecraftPawn::MaintainBackwardMovementSetup()
+{
+	bIsMovingBackward = true;
+	bIsMovingForward  = false;
+
+	SpacecraftMovementComponent->MaxSpeed = MoveBackwardSpeed;
+
+	if (bIsTurboModeActive)
+	{
+		DeactivateTurboMode();
+	}
+}
+
 void ASpacecraftPawn::MoveForward(float Value)
 {
 	if (Value > 0.0f)
@@ -136,10 +157,7 @@ void ASpacecraftPawn::MoveForward(float Value)
 		// Add movement in the correct direction.
 		AddMovementInput(GetActorForwardVector(), Value);
 
-		bIsMovingForward = true;
-		bIsMovingBackward = false;
-
-		SpacecraftMovementComponent->MaxSpeed = MoveForwardSpeed;
+		MaintainForwardMovementSetup();
 	}
 }
 
@@ -150,13 +168,7 @@ void ASpacecraftPawn::MoveBackward(float Value)
 		// Add movement in the correct direction.
 		AddMovementInput(GetActorForwardVector(), Value);
 
-		bIsMovingBackward = true;
-		bIsMovingForward = false;
-
-		SpacecraftMovementComponent->MaxSpeed = MoveBackwardSpeed;
-
-		if (bIsTurboModeActive)
-			DeactivateTurboMode();
+		MaintainBackwardMovementSetup();
 	}
 }
 

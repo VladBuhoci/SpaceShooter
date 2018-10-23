@@ -6,8 +6,13 @@
 #include "GameFramework/PlayerController.h"
 #include "SpacePlayerController.generated.h"
 
+// Forward declarations.
+class ASpacePlayerPawn;
+class ASpaceHUD;
+
+
 /**
- * Space Player Pawn controller.
+ * Space Player Pawn Controller.
  */
 UCLASS()
 class SPACESHOOTER_API ASpacePlayerController : public APlayerController
@@ -17,11 +22,11 @@ class SPACESHOOTER_API ASpacePlayerController : public APlayerController
 private:
 	/** The controlled player pawn of this controller. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Player Controller", Meta = (AllowPrivateAccess = "true"))
-	class ASpacePlayerPawn * PossessedSpacePawn;
+	ASpacePlayerPawn * PossessedSpacePawn;
 
 	/** The HUD instance this controller owns. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Player Controller", Meta = (AllowPrivateAccess = "true"))
-	class ASpaceHUD * OwnedHUD;
+	ASpaceHUD * OwnedHUD;
 
 public:
 	/** Sets default values. */
@@ -33,32 +38,31 @@ public:
 	/** Called to bind functionality to input. */
 	virtual void SetupInputComponent() override;
 
+protected:
+	/** Called when the game starts or when spawned. */
+	virtual void BeginPlay() override;
+
 	/** Sends a request to the spaceship to activate its primary weapons. */
 	void BeginFiringPrimaryWeapons();
 
 	/** Sends a request to the spaceship to deactivate its primary weapons. */
 	void EndFiringPrimaryWeapons();
 
-protected:
-	/** Called when the game starts or when spawned. */
-	virtual void BeginPlay() override;
 
-private:
 	/**********************************
 		   PLAYER INPUT HANDLING
 	**********************************/
 
+private:
 	/** Updates the target icon according to the current position of the user's cursor on screen. */
-	void HandlePlayerTargetIconOnScreen();
+	void HandleTargetIconOnScreen();
 	
 	/** Gets the position of the cursor on the game screen and asks the player to rotate towards it. */
-	void HandlePlayerSpaceshipRotation();
+	void HandleSpaceshipRotation();
 
 	void MovePawnForward(float Value);
 	void MovePawnBackward(float Value);
 
 	void ActivateTurboMode();
 	void DeactivateTurboMode();
-
-
 };

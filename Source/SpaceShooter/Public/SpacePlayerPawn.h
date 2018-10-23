@@ -53,11 +53,10 @@ protected:
 	/** Called when the game starts or when spawned. */
 	virtual void BeginPlay() override;
 
-public:
+
 	/**********************************
 		     MOVEMENT INTERFACE
 	**********************************/
-
 
 protected:
 	virtual void OnTurboModeActivated() override;
@@ -75,16 +74,18 @@ public:
 	/** Deactivates primary weapons on the spacecraft. */
 	virtual void EndFiringPrimaryWeapons() override;
 
-public:
 	/**********************************
 				GETTERS
 	**********************************/
 
-private:
+public:
+
+
 	/**********************************
 			 CAMERA INTERFACE
 	**********************************/
 
+private:
 	/** The targeted length of the camera's spring arm. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Player Camera", Meta = (AllowPrivateAccess = "true"))
 	float DesiredCameraSpringArmLength;

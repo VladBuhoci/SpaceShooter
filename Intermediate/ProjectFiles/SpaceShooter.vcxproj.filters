@@ -97,9 +97,21 @@
     <ClInclude Include="..\..\Source\SpaceShooter\Public\SpacecraftPawn.h">
       <Filter>Source\SpaceShooter\Public</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\SpaceEnemyPawn.h">
+      <Filter>Source\SpaceShooter\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\SpaceEnemyController.h">
+      <Filter>Source\SpaceShooter\Public</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\SpaceShooter\Private\SpacecraftPawn.cpp">
+      <Filter>Source\SpaceShooter\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\SpaceEnemyPawn.cpp">
+      <Filter>Source\SpaceShooter\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\SpaceEnemyController.cpp">
       <Filter>Source\SpaceShooter\Private</Filter>
     </ClCompile>
   </ItemGroup>

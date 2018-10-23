@@ -102,7 +102,7 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Projectile")
 	float GetDamage() const { return Damage; }
 
-	/** Sets a new value for the damage of this projectile. */
+	/** Gets the type of owner that fired this projectile. */
 	UFUNCTION(BlueprintPure, Category = "Projectile")
 	EProjectileOwnerType GetOwnerType() const { return OwnerType; }
 
@@ -115,7 +115,7 @@ public:
 				SETTERS
 	**********************************/
 
-	/** Gets the type of owner that fired this projectile. */
+	/** Sets a new value for the damage of this projectile. */
 	UFUNCTION(BlueprintCallable, Category = "Projectile")
 	void SetDamage(float NewValue) { Damage = NewValue; }
 

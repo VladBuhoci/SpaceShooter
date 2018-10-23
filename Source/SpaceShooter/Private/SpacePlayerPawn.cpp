@@ -64,7 +64,8 @@ void ASpacePlayerPawn::Tick(float DeltaTime)
 
 void ASpacePlayerPawn::OnTurboModeActivated()
 {
-	
+	// TODO: add some camera shake effect?
+
 }
 
 void ASpacePlayerPawn::OnTurboModeDeactivated()

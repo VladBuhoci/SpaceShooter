@@ -95,6 +95,8 @@ void AProjectile::ExecuteOnProjectileBeginOverlap_Implementation(UPrimitiveCompo
 			 * @TODO: add this stuff.
 			 */
 
+			this->DestroyProjectile();
+
 			return;
 		}
 	}
@@ -113,7 +115,7 @@ void AProjectile::DestroyProjectile()
 	// Activate the destruction effect (particle system).
 	if (DestroyParticleEffect != NULL)
 	{
-		// @TODO: this should be moved somewhere else because destroying the Actor will destroy the particle emitter too.
+		// @TODO: this should be moved somewhere else because destroying the Actor will destroy the particle emitter too soon.
 		DestroyParticleEffect->ActivateSystem();
 	}
 
