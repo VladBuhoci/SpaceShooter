@@ -8,13 +8,16 @@
 
 // Forward declarations.
 class ASpaceEnemyPawn;
+class ASpacecraftPawn;
 class UNavigationSystem;
+
 
 UENUM(BlueprintType)
 enum class ESpacecraftState : uint8
 {
 	Idle,
-	Flying
+	Flying,
+	Attacking
 };
 
 
@@ -29,6 +32,9 @@ class SPACESHOOTER_API ASpaceEnemyController : public AAIController
 private:
 	/** The navigation system is used to gather navigation mesh data. */
 	UNavigationSystem* NavSystem;
+
+	/** Timer Handle used to work with timers. */
+	FTimerHandle TimerHandle;
 
 	/** The controlled enemy pawn of this controller. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Enemy Controller", Meta = (AllowPrivateAccess = "true"))
@@ -51,7 +57,11 @@ private:
 
 	/** The targeted location of this pawn. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Enemy Controller", Meta = (AllowPrivateAccess = "true"))
-	FVector TargetLocation;
+	FVector LocationToReach;
+
+	/** The targeted spacecraft of this pawn. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Enemy Controller", Meta = (AllowPrivateAccess = "true"))
+	ASpacecraftPawn* SpacecraftToReach;
 
 	/** The targeted location of this pawn. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Enemy Controller", Meta = (AllowPrivateAccess = "true"))
@@ -88,9 +98,13 @@ protected:
 			 MOVEMENT INTERFACE
 	**********************************/
 
+public:
+	void AttemptAttackOnPlayer(ASpacecraftPawn* SpacecraftToFollow);
+	void StayInPlace(bool bContinueAttack);
+
 private:
 	/** Gets the position of the cursor on the game screen and asks the player to rotate towards it. */
-	void HandleSpaceshipRotation();
+	void HandleSpaceshipRotation(FVector TargetLocation);
 	void BeginFlightToRandomLocation();
 
 	void MovePawnForward(float Value);

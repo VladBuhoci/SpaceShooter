@@ -85,19 +85,20 @@ void AProjectile::ExecuteOnProjectileBeginOverlap_Implementation(UPrimitiveCompo
 			return;
 		}
 
-		// Check if we hit another spacecraft.
+		// Check if we hit another spacecraft's ship mesh.
 		if (ASpacecraftPawn* OtherSpacecraft = Cast<ASpacecraftPawn>(OtherActor))
 		{
-			// Destroy this projectile if it collides with a spacecraft belonging to the enemy side,
-			//		but not before applying damage to it.
-			
-			/**
-			 * @TODO: add this stuff.
-			 */
+			if (UStaticMeshComponent* OtherSpacecraftMesh = Cast<UStaticMeshComponent>(OtherComp))
+			{
+				// Destroy this projectile if it collides with a spacecraft belonging to the enemy side,
+				//		but not before applying damage to it.
 
-			this->DestroyProjectile();
+				// TODO: add this stuff.
 
-			return;
+				this->DestroyProjectile();
+
+				return;
+			}
 		}
 	}
 }

@@ -42,14 +42,26 @@ void ASpaceEnemyController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (SpacecraftState == ESpacecraftState::Flying)
+	if (PossessedSpacePawn)
 	{
-		if (PossessedSpacePawn)
+		if (SpacecraftState == ESpacecraftState::Flying)
 		{
-			HandleSpaceshipRotation();
-
+			HandleSpaceshipRotation(LocationToReach);
+			
 			// TODO: maybe we can have the spacecrafts behave smarter by letting them can go backward too.
 			PossessedSpacePawn->MaintainForwardMovementSetup();
+		}
+		else if (SpacecraftState == ESpacecraftState::Attacking)
+		{
+			if (SpacecraftToReach)
+			{
+				HandleSpaceshipRotation(SpacecraftToReach->GetActorLocation());
+				PossessedSpacePawn->MaintainForwardMovementSetup();
+			}
+			else
+			{
+				StopMovement();
+			}
 		}
 	}
 }
@@ -58,12 +70,15 @@ void ASpaceEnemyController::OnMoveCompleted(FAIRequestID RequestID, const FPathF
 {
 	Super::OnMoveCompleted(RequestID, Result);
 	
-	SpacecraftState = ESpacecraftState::Idle;
+	if (SpacecraftState != ESpacecraftState::Attacking)
+	{
+		SpacecraftToReach = nullptr;
+		SpacecraftState   = ESpacecraftState::Idle;
 
-	FTimerHandle TimerHandle;
-	float IdleTime = UKismetMathLibrary::RandomFloatInRange(IdleTimeMin, IdleTimeMax);
+		float IdleTime = UKismetMathLibrary::RandomFloatInRange(IdleTimeMin, IdleTimeMax);
 
-	GetWorldTimerManager().SetTimer(TimerHandle, this, &ASpaceEnemyController::BeginFlightToRandomLocation, IdleTime, false);
+		GetWorldTimerManager().SetTimer(TimerHandle, this, &ASpaceEnemyController::BeginFlightToRandomLocation, IdleTime, false);
+	}
 }
 
 void ASpaceEnemyController::BeginFiringPrimaryWeapons()
@@ -82,7 +97,27 @@ void ASpaceEnemyController::EndFiringPrimaryWeapons()
 	}
 }
 
-void ASpaceEnemyController::HandleSpaceshipRotation()
+void ASpaceEnemyController::AttemptAttackOnPlayer(ASpacecraftPawn* SpacecraftToFollow)
+{
+	// Clear the timer in case there was a MoveTo action scheduled in the near future.
+	GetWorldTimerManager().ClearTimer(TimerHandle);
+
+	MoveToActor(SpacecraftToFollow, 10.0f);
+
+	SpacecraftToReach = SpacecraftToFollow;
+	SpacecraftState   = ESpacecraftState::Attacking;
+}
+
+void ASpaceEnemyController::StayInPlace(bool bContinueAttack)
+{
+	GetWorldTimerManager().ClearTimer(TimerHandle);
+
+	SpacecraftState = bContinueAttack ? ESpacecraftState::Attacking : ESpacecraftState::Idle;
+
+	StopMovement();
+}
+
+void ASpaceEnemyController::HandleSpaceshipRotation(FVector TargetLocation)
 {
 	FRotator TargetRotation;
 
@@ -94,9 +129,9 @@ void ASpaceEnemyController::HandleSpaceshipRotation()
 
 void ASpaceEnemyController::BeginFlightToRandomLocation()
 {
-	TargetLocation = GetNewRandomLocationInNavMesh();
+	LocationToReach = GetNewRandomLocationInNavMesh();
 
-	MoveToLocation(TargetLocation);
+	MoveToLocation(LocationToReach);
 	
 	SpacecraftState = ESpacecraftState::Flying;
 }
