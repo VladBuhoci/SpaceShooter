@@ -103,6 +103,9 @@
     <ClInclude Include="..\..\Source\SpaceShooter\Public\SpaceEnemyController.h">
       <Filter>Source\SpaceShooter\Public</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\SpaceEnums.h">
+      <Filter>Source\SpaceShooter\Public</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\SpaceShooter\Private\SpacecraftPawn.cpp">
@@ -112,6 +115,9 @@
       <Filter>Source\SpaceShooter\Private</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\SpaceShooter\Private\SpaceEnemyController.cpp">
+      <Filter>Source\SpaceShooter\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\SpaceEnums.cpp">
       <Filter>Source\SpaceShooter\Private</Filter>
     </ClCompile>
   </ItemGroup>

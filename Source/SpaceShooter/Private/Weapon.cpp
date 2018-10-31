@@ -33,7 +33,7 @@ void AWeapon::Tick(float DeltaTime)
 	TimePassedSinceLastShot += DeltaTime;
 }
 
-void AWeapon::FireWeapon(EProjectileOwnerType OwnerType)
+void AWeapon::FireWeapon(ESpacecraftFaction OwnerType)
 {
 	if (ProjectileClass && IsAllowedToFireWeapon())
 	{
@@ -53,7 +53,7 @@ void AWeapon::FireWeapon(EProjectileOwnerType OwnerType)
 				FiredProjectile->SetOwnerType(OwnerType);
 				//FiredProjectile->SetDamage(0.0f);
 				
-				// @TODO: Set up more stuff for it.
+				// TODO: Set up more stuff for it.
 
 				// Reset the counter.
 				ResetTimeSinceLastWeaponUsage();

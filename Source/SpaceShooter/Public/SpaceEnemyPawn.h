@@ -20,11 +20,11 @@ class SPACESHOOTER_API ASpaceEnemyPawn : public ASpacecraftPawn
 	
 private:
 	/* Used to detect whenever a Spacecraft pawn enters or exits this spacecraft's "field of view". */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Enemy Pawn | Components", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Components", Meta = (AllowPrivateAccess = "true"))
 	USphereComponent* DetectionArea;
 
 	/* Used to detect whenever a Spacecraft pawn enters or exits this spacecraft's close quarters area. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Enemy Pawn | Components", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Components", Meta = (AllowPrivateAccess = "true"))
 	USphereComponent* CloseQuartersArea;
 
 	/** The targeted spacecraft of this pawn. */

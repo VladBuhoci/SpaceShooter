@@ -22,9 +22,9 @@ AProjectile::AProjectile()
 
 	RootComponent               = MeshComponent;
 	InitialLifeSpan             = 5.0f;
-
+	
 	Damage                      = 0.0f;
-	OwnerType                   = EProjectileOwnerType::Unspecified;
+	OwnerType                   = ESpacecraftFaction::Unspecified;
 	
 	// MeshComponent setup:
 	MeshComponent->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap);
@@ -73,11 +73,13 @@ void AProjectile::ExecuteOnProjectileBeginOverlap_Implementation(UPrimitiveCompo
 	// We want to overlap spacecrafts and projectiles that belong to the same "faction" and hit everything else.
 	if (OtherActor != nullptr && OtherActor != this)
 	{
+		// TODO: we might have issues with projectiles hitting something too early, when the OwnerType (faction) isn't set yet.
+
 		// Check if we hit another projectile.
 		if (AProjectile* OtherProjectile = Cast<AProjectile>(OtherActor))
 		{
 			// Destroy this projectile if it collides with another one belonging to the enemy side.
-			if (OtherProjectile->GetOwnerType() != this->GetOwnerType())
+			if (OtherProjectile->OwnerType != this->OwnerType)
 			{
 				this->DestroyProjectile();
 			}
@@ -92,13 +94,15 @@ void AProjectile::ExecuteOnProjectileBeginOverlap_Implementation(UPrimitiveCompo
 			{
 				// Destroy this projectile if it collides with a spacecraft belonging to the enemy side,
 				//		but not before applying damage to it.
+				if (OtherSpacecraft->GetFaction() != this->OwnerType)
+				{
+					// TODO: add this damage stuff.
 
-				// TODO: add this stuff.
-
-				this->DestroyProjectile();
-
-				return;
+					this->DestroyProjectile();
+				}
 			}
+
+			return;
 		}
 	}
 }

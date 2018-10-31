@@ -64,6 +64,10 @@ void ASpaceEnemyController::Tick(float DeltaTime)
 			}
 		}
 	}
+	else
+	{
+		PossessedSpacePawn = Cast<ASpaceEnemyPawn>(GetPawn());
+	}
 }
 
 void ASpaceEnemyController::OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult & Result)
@@ -74,6 +78,8 @@ void ASpaceEnemyController::OnMoveCompleted(FAIRequestID RequestID, const FPathF
 	{
 		SpacecraftToReach = nullptr;
 		SpacecraftState   = ESpacecraftState::Idle;
+
+		EndFiringPrimaryWeapons();
 
 		float IdleTime = UKismetMathLibrary::RandomFloatInRange(IdleTimeMin, IdleTimeMax);
 
@@ -106,6 +112,12 @@ void ASpaceEnemyController::AttemptAttackOnPlayer(ASpacecraftPawn* SpacecraftToF
 
 	SpacecraftToReach = SpacecraftToFollow;
 	SpacecraftState   = ESpacecraftState::Attacking;
+
+	FTimerHandle ShootDelayTimerHandle;
+	float Delay = 0.5f;
+
+	// Don't start shooting immediately because it looks weird until the ship is completely rotated towards the target.
+	GetWorldTimerManager().SetTimer(ShootDelayTimerHandle, this, &ASpaceEnemyController::BeginFiringPrimaryWeapons, Delay, false);
 }
 
 void ASpaceEnemyController::StayInPlace(bool bContinueAttack)
@@ -121,7 +133,7 @@ void ASpaceEnemyController::HandleSpaceshipRotation(FVector TargetLocation)
 {
 	FRotator TargetRotation;
 
-	TargetRotation = (TargetLocation - PossessedSpacePawn->GetActorLocation()).ToOrientationRotator();
+	TargetRotation       = (TargetLocation - PossessedSpacePawn->GetActorLocation()).ToOrientationRotator();
 	TargetRotation.Pitch = 0.0f;
 
 	PossessedSpacePawn->RotateSpacecraft(TargetRotation);

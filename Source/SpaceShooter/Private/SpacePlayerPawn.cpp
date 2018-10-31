@@ -18,6 +18,7 @@
 ASpacePlayerPawn::ASpacePlayerPawn()
 {
 	// Initialize components.
+	CentralSceneComponent        = CreateDefaultSubobject<USceneComponent    >("Central Player Scene Component");
 	CameraComponent              = CreateDefaultSubobject<UCameraComponent   >("Camera Component");
 	SpringArmComponent           = CreateDefaultSubobject<USpringArmComponent>("Spring Arm Component");
 	
@@ -30,6 +31,11 @@ ASpacePlayerPawn::ASpacePlayerPawn()
 	SpacecraftTurnSpeed          = 10.0f;
 	DesiredCameraSpringArmLength = 0.0f;
 	CameraZoomSpeed              = 10.0f;
+	Faction                      = ESpacecraftFaction::Human;
+
+	// CentralSceneComponent setup:
+	CentralSceneComponent->SetupAttachment(SpacecraftMeshComponent);
+	// ~ end of CentralSceneComponent setup.
 
 	// SpringArmComponent setup:
 	SpringArmComponent->SetupAttachment(CentralSceneComponent);
@@ -58,6 +64,10 @@ void ASpacePlayerPawn::BeginPlay()
 void ASpacePlayerPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	// Keep the helper scene component's rotation at a fixed zero value on all axis so the camera's
+	//		 spring arm (that is attached to it) never rotates its children (i.e. the camera).
+	CentralSceneComponent->SetWorldRotation(FRotator::ZeroRotator);
 	
 	CheckCameraOffset(DeltaTime);
 }

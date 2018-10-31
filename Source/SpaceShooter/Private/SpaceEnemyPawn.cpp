@@ -21,6 +21,7 @@ ASpaceEnemyPawn::ASpaceEnemyPawn()
 	CloseQuartersAreaRadius         = 500.0f;
 	DetectionAreaRadiusModifier     = 135.0f;
 	CloseQuartersAreaRadiusModifier = 150.0f;
+	Faction                         = ESpacecraftFaction::Alien;
 	
 	DetectionArea->SetupAttachment(SpacecraftMeshComponent);
 	DetectionArea->InitSphereRadius(DetectionAreaRadius);

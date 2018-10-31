@@ -47,7 +47,7 @@ protected:
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
-	virtual void FireWeapon(EProjectileOwnerType OwnerType);
+	virtual void FireWeapon(ESpacecraftFaction OwnerType);
 
 private:
 	void ResetTimeSinceLastWeaponUsage();

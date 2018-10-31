@@ -26,7 +26,6 @@ ASpacecraftPawn::ASpacecraftPawn()
 	PrimaryActorTick.bCanEverTick    = true;
 
 	// Initialize components.
-	CentralSceneComponent            = CreateDefaultSubobject<USceneComponent         >("Central Player Scene Component");
 	SpacecraftMeshComponent          = CreateDefaultSubobject<UStaticMeshComponent    >("Spacecraft Mesh Component");
 	SpacecraftMovementComponent      = CreateDefaultSubobject<UFloatingPawnMovement   >("Spacecraft Movement Component");
 	BackSideThrusterParticleEmitter  = CreateDefaultSubobject<UParticleSystemComponent>("Back Thruster Particle Emitter");
@@ -45,10 +44,7 @@ ASpacecraftPawn::ASpacecraftPawn()
 	MoveBackwardSpeed                = 800.0f;
 	SpacecraftTurnSpeed              = 10.0f;
 	bIsFiringPrimaryWeapons			 = false;
-
-	// CentralSceneComponent setup:
-	CentralSceneComponent->SetupAttachment(SpacecraftMeshComponent);
-	// ~ end of CentralSceneComponent setup.
+	Faction                          = ESpacecraftFaction::Unspecified;
 
 	// SpacecraftMeshComponent setup:
 	ConstructorHelpers::FObjectFinder<UStaticMesh> SpacecraftMeshFinder (TEXT("StaticMesh'/Game/StaticMeshes/Spacecrafts/PlayerSpacecraft/PlayerSpacecraft_Dev.PlayerSpacecraft_Dev'"));
@@ -93,10 +89,6 @@ void ASpacecraftPawn::BeginPlay()
 void ASpacecraftPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	// Keep the helper scene component's rotation at a fixed zero value on all axis so in case of the SpacePlayerPawn
-	//		subclass, the camera's spring arm (that is attached to it) never rotates its children (i.e. the camera).
-	CentralSceneComponent->SetWorldRotation(FRotator::ZeroRotator);
 
 	// Check if we are moving and activate thrusters' particle emitters accordingly.
 	if (SpacecraftMovementComponent->Velocity.Size() > 0.0f)
@@ -329,7 +321,7 @@ void ASpacecraftPawn::FirePrimaryWeapons_Internal()
 {
 	if (PrimaryWeapon)
 	{
-		PrimaryWeapon->FireWeapon(EProjectileOwnerType::Friendly);
+		PrimaryWeapon->FireWeapon(Faction);
 	}
 }
 

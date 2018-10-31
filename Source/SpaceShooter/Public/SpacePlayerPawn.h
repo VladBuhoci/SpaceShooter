@@ -23,6 +23,15 @@ class SPACESHOOTER_API ASpacePlayerPawn : public ASpacecraftPawn
 	GENERATED_BODY()
 
 private:
+	/**
+	 * A component that is not rendered in game.
+	 * This object attaches to the spaceship while maintaining a zero-rotation relative to the world.
+	 * For the SpacePlayerPawn subclass, this is very useful because the camera's spring arm focuses on this component,
+	 *		therefore the camera will not rotate when the spaceship does so.
+	 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Components", Meta = (AllowPrivateAccess = "true"))
+	USceneComponent* CentralSceneComponent;
+
 	/** The camera that is used to view the player and the world it belongs to. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Player Camera", Meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* CameraComponent;

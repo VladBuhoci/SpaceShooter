@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "SpaceEnums.h"
+
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
 #include "SpacecraftPawn.generated.h"
@@ -25,15 +27,6 @@ class SPACESHOOTER_API ASpacecraftPawn : public APawn
 	GENERATED_BODY()
 
 protected:
-	/**
-	 * A component that is not rendered in game.
-	 * This object attaches to the spaceship while maintaining a zero-rotation relative to the world.
-	 * For the SpacePlayerPawn subclass, this is very useful because the camera's spring arm focuses on this component,
-	 *		therefore the camera will not rotate when the spaceship does so.
-	 */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Components", Meta = (AllowPrivateAccess = "true"))
-	USceneComponent* CentralSceneComponent;
-
 	/** The mesh of the spacecraft. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Components", Meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* SpacecraftMeshComponent;
@@ -113,6 +106,10 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Weapons", Meta = (AllowPrivateAccess = "true"))
 	bool bIsFiringPrimaryWeapons;
 
+	/** The "side" this spacecraft belongs to. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Misc", Meta = (AllowPrivateAccess = "true"))
+	ESpacecraftFaction Faction;
+
 public:
 	/** Sets default values. */
 	ASpacecraftPawn();
@@ -182,4 +179,5 @@ private:
 
 public:
 	UStaticMeshComponent* GetSpacecraftMeshComponent() const { return SpacecraftMeshComponent; }
+	ESpacecraftFaction    GetFaction()                 const { return Faction; }
 };

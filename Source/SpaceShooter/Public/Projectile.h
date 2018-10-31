@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "SpaceEnums.h"
+
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Projectile.generated.h"
@@ -10,20 +12,6 @@
 class UProjectileMovementComponent;
 class UParticleSystemComponent;
 
-/**
- * The "side" to which a projectile's owner belongs to.
- */
-UENUM(BlueprintType)
-enum class EProjectileOwnerType : uint8
-{
-	Unspecified,
-
-	/** The one who fired the projectile is a friendly NPC or the player itself. */
-	Friendly,
-
-	/** The one who fired the projectile is an enemy. */
-	Hostile
-};
 
 /**
  * Base class of all projectiles shot by spaceships.
@@ -50,9 +38,12 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile", Meta = (AllowPrivateAccess = "true"))
 	UProjectileMovementComponent* ProjectileMovementComponent;
 
-	/** The owner type controls the way different projectiles interact with each other during an OnHit event. */
+	/**
+	 * The owner type controls the way different projectiles interact with
+	 *		each other and with spacecrafts during OnHit events.
+	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile", Meta = (AllowPrivateAccess = "true"))
-	EProjectileOwnerType OwnerType;
+	ESpacecraftFaction OwnerType;
 	
 	/** Damage dealt by this projectile. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile", Meta = (AllowPrivateAccess = "true"))
@@ -104,7 +95,7 @@ public:
 
 	/** Gets the type of owner that fired this projectile. */
 	UFUNCTION(BlueprintPure, Category = "Projectile")
-	EProjectileOwnerType GetOwnerType() const { return OwnerType; }
+	ESpacecraftFaction GetOwnerType() const { return OwnerType; }
 
 	/** Gets the projectile movement component of this projectile. */
 	UFUNCTION(BlueprintPure, Category = "Projectile")
@@ -121,5 +112,5 @@ public:
 
 	/** Sets a new owner type for this projectile. */
 	UFUNCTION(BlueprintCallable, Category = "Projectile")
-	void SetOwnerType(EProjectileOwnerType NewType) { OwnerType = NewType; }
+	void SetOwnerType(ESpacecraftFaction NewType) { OwnerType = NewType; }
 };
