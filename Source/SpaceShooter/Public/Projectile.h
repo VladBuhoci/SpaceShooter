@@ -26,17 +26,17 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile", Meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* MeshComponent;
 
+	/** Movement component of this projectile. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile", Meta = (AllowPrivateAccess = "true"))
+	UProjectileMovementComponent* ProjectileMovementComponent;
+
 	/** The particles left behind by the projectile. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile", Meta = (AllowPrivateAccess = "true"))
 	UParticleSystemComponent* TrailingParticleEmitter;
 
-	/** Particle system which is activated when this projectile hits a surface and gets destroyed. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile", Meta = (AllowPrivateAccess = "true"))
-	UParticleSystemComponent* DestroyParticleEffect;
-
-	/** Movement component of this projectile. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile", Meta = (AllowPrivateAccess = "true"))
-	UProjectileMovementComponent* ProjectileMovementComponent;
+	/** Particle system which is activated when this projectile hits a surface (and gets destroyed). */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Projectile", Meta = (AllowPrivateAccess = "true"))
+	UParticleSystem* ImpactParticleEffect;
 
 	/**
 	 * The owner type controls the way different projectiles interact with

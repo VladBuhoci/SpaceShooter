@@ -16,9 +16,8 @@
 AProjectile::AProjectile()
 {
 	MeshComponent               = CreateDefaultSubobject<UStaticMeshComponent        >("Mesh Component");
-	TrailingParticleEmitter     = CreateDefaultSubobject<UParticleSystemComponent    >("Trailing Particles Emitter");
-	DestroyParticleEffect       = CreateDefaultSubobject<UParticleSystemComponent    >("Destroy Particles Emitter");
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>("Projectile Movement Component");
+	TrailingParticleEmitter     = CreateDefaultSubobject<UParticleSystemComponent    >("Trailing Particles Emitter");
 
 	RootComponent               = MeshComponent;
 	InitialLifeSpan             = 5.0f;
@@ -32,15 +31,6 @@ AProjectile::AProjectile()
 	MeshComponent->OnComponentBeginOverlap.AddDynamic(this, &AProjectile::ExecuteOnProjectileBeginOverlap);
 	// ~ end of MeshComponent setup.
 
-	// TrailingParticleEmitter setup:
-	TrailingParticleEmitter->SetupAttachment(MeshComponent);
-	// ~ end of TrailingParticleEmitter setup.
-
-	// DestroyParticleEffect setup:
-	DestroyParticleEffect->SetupAttachment(MeshComponent);
-	DestroyParticleEffect->bAutoActivate = false;
-	// ~ end of DestroyParticleEffect setup.
-
 	// ProjectileMovementComponent setup:
 	ProjectileMovementComponent->InitialSpeed           = 3000.0f;
 	ProjectileMovementComponent->MaxSpeed               = 3000.0f;
@@ -49,6 +39,10 @@ AProjectile::AProjectile()
 	ProjectileMovementComponent->OnProjectileBounce.AddDynamic(this, &AProjectile::ExecuteOnProjectileBounce);
 	ProjectileMovementComponent->OnProjectileStop  .AddDynamic(this, &AProjectile::ExecuteOnProjectileStop);
 	// ~ end of ProjectileMovementComponent setup.
+
+	// TrailingParticleEmitter setup:
+	TrailingParticleEmitter->SetupAttachment(MeshComponent);
+	// ~ end of TrailingParticleEmitter setup.
 }
 
 /** Called when the game starts or when spawned. */
@@ -74,6 +68,12 @@ void AProjectile::ExecuteOnProjectileBeginOverlap_Implementation(UPrimitiveCompo
 	if (OtherActor != nullptr && OtherActor != this)
 	{
 		// TODO: we might have issues with projectiles hitting something too early, when the OwnerType (faction) isn't set yet.
+		// Temporary hack (?):
+		if (this->OwnerType == ESpacecraftFaction::Unspecified)
+		{
+			// By returning, we skip any Hit/Destroy operations.
+			return;
+		}
 
 		// Check if we hit another projectile.
 		if (AProjectile* OtherProjectile = Cast<AProjectile>(OtherActor))
@@ -111,17 +111,19 @@ void AProjectile::DestroyProjectile()
 {
 	UWorld* WorldPtr = GetWorld();
 
-	// Play impact sound.
-	if (ImpactSound && WorldPtr)
+	if (WorldPtr)
 	{
-		UGameplayStatics::PlaySoundAtLocation(WorldPtr, ImpactSound, this->GetActorLocation());
-	}
+		// Play impact sound.
+		if (ImpactSound)
+		{
+			UGameplayStatics::PlaySoundAtLocation(WorldPtr, ImpactSound, this->GetActorLocation());
+		}
 
-	// Activate the destruction effect (particle system).
-	if (DestroyParticleEffect != NULL)
-	{
-		// @TODO: this should be moved somewhere else because destroying the Actor will destroy the particle emitter too soon.
-		DestroyParticleEffect->ActivateSystem();
+		// Spawn the impact effect particles.
+		if (ImpactParticleEffect != NULL)
+		{
+			UGameplayStatics::SpawnEmitterAtLocation(WorldPtr, ImpactParticleEffect, this->GetActorLocation());
+		}
 	}
 
 	// Finally, remove this projectile from the world.
