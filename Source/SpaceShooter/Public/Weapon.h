@@ -26,6 +26,10 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AProjectile> ProjectileClass;
 
+	/** Amount of damage one projectile can cause. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
+	float Damage;
+
 	/** Amount of projectiles to shoot per second. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
 	float FireRate;
@@ -47,7 +51,7 @@ protected:
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
-	virtual void FireWeapon(ESpacecraftFaction OwnerType);
+	virtual void FireWeapon(ASpacecraftPawn* ProjectileOwner);
 
 private:
 	void ResetTimeSinceLastWeaponUsage();

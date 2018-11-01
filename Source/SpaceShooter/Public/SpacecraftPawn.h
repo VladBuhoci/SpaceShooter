@@ -94,6 +94,14 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Effects", Meta = (AllowPrivateAccess = "true"))
 	UParticleSystem* BacksideTurboThrusterParticleSystem;
 
+	/** Maximum amount of damage this spacecraft can take before it gets destroyed. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Survivability", Meta = (AllowPrivateAccess = "true"))
+	int32 MaxHitPoints;
+
+	/** Current amount of damage this spacecraft can take before it gets destroyed. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Survivability", Meta = (AllowPrivateAccess = "true"))
+	int32 CurrentHitPoints;
+
 	/** Primary weapon class. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Weapons", Meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AWeapon> PrimaryWeaponClass;
@@ -145,6 +153,16 @@ protected:
 
 
 	/**********************************
+		  SURVIVABILITY INTERFACE
+	**********************************/
+
+public:
+	virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
+protected:
+	virtual void DestroySpacecraft();
+
+	/**********************************
 			 WEAPONS INTERFACE
 	**********************************/
 
@@ -164,6 +182,9 @@ private:
 protected:
 	/** Constructs and attaches the weapons to the spacecraft. */
 	virtual void InitializeWeaponry();
+
+	/** Destructs the weapons attached to the spacecraft. */
+	virtual void DestroyWeaponry();
 
 private:
 	/** Will trigger the firing of each primary weapon held by this spacecraft. */

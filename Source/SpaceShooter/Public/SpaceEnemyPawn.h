@@ -93,6 +93,14 @@ protected:
 
 	virtual void OnTurboModeActivated() override;
 	virtual void OnTurboModeDeactivated() override;
+
+
+	/**********************************
+		  SURVIVABILITY INTERFACE
+	**********************************/
+
+protected:
+	virtual void DestroySpacecraft();
 	
 
 	/**********************************

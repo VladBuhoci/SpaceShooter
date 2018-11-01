@@ -6,6 +6,7 @@
 #include "Components/StaticMeshComponent.h"
 
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "GameFramework/DamageType.h"
 
 #include "Particles/ParticleSystemComponent.h"
 
@@ -21,9 +22,8 @@ AProjectile::AProjectile()
 
 	RootComponent               = MeshComponent;
 	InitialLifeSpan             = 5.0f;
-	
+
 	Damage                      = 0.0f;
-	OwnerType                   = ESpacecraftFaction::Unspecified;
 	
 	// MeshComponent setup:
 	MeshComponent->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap);
@@ -65,44 +65,51 @@ void AProjectile::ExecuteOnProjectileStop_Implementation(const FHitResult& Impac
 void AProjectile::ExecuteOnProjectileBeginOverlap_Implementation(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	// We want to overlap spacecrafts and projectiles that belong to the same "faction" and hit everything else.
-	if (OtherActor != nullptr && OtherActor != this)
+	if (OtherActor != NULL && OtherActor != this)
 	{
-		// TODO: we might have issues with projectiles hitting something too early, when the OwnerType (faction) isn't set yet.
-		// Temporary hack (?):
-		if (this->OwnerType == ESpacecraftFaction::Unspecified)
+		if (this->ProjectileOwner)
 		{
-			// By returning, we skip any Hit/Destroy operations.
-			return;
-		}
-
-		// Check if we hit another projectile.
-		if (AProjectile* OtherProjectile = Cast<AProjectile>(OtherActor))
-		{
-			// Destroy this projectile if it collides with another one belonging to the enemy side.
-			if (OtherProjectile->OwnerType != this->OwnerType)
+			// TODO: we might have issues with projectiles hitting something too early, when the OwnerType (faction) isn't set yet.
+			// Temporary hack (?):
+			if (this->ProjectileOwner->GetFaction() == ESpacecraftFaction::Unspecified)
 			{
-				this->DestroyProjectile();
+				// By returning, we skip any Hit/Destroy operations.
+				return;
 			}
 
-			return;
-		}
-
-		// Check if we hit another spacecraft's ship mesh.
-		if (ASpacecraftPawn* OtherSpacecraft = Cast<ASpacecraftPawn>(OtherActor))
-		{
-			if (UStaticMeshComponent* OtherSpacecraftMesh = Cast<UStaticMeshComponent>(OtherComp))
+			// Check if we hit another projectile.
+			if (AProjectile* OtherProjectile = Cast<AProjectile>(OtherActor))
 			{
-				// Destroy this projectile if it collides with a spacecraft belonging to the enemy side,
-				//		but not before applying damage to it.
-				if (OtherSpacecraft->GetFaction() != this->OwnerType)
+				if (OtherProjectile->ProjectileOwner)
 				{
-					// TODO: add this damage stuff.
+					// Destroy this projectile if it collides with another one belonging to the enemy side.
+					if (OtherProjectile->ProjectileOwner->GetFaction() != this->ProjectileOwner->GetFaction())
+					{
+						this->DestroyProjectile();
+					}
 
-					this->DestroyProjectile();
+					return;
 				}
 			}
 
-			return;
+			// Check if we hit another spacecraft's ship mesh.
+			if (ASpacecraftPawn* OtherSpacecraft = Cast<ASpacecraftPawn>(OtherActor))
+			{
+				if (UStaticMeshComponent* OtherSpacecraftMesh = Cast<UStaticMeshComponent>(OtherComp))
+				{
+					// Destroy this projectile if it collides with a spacecraft belonging to the enemy side,
+					//		but not before applying damage to it.
+					if (OtherSpacecraft->GetFaction() != this->ProjectileOwner->GetFaction())
+					{
+						// TODO:
+						UGameplayStatics::ApplyDamage(OtherActor, Damage, ProjectileOwner->GetController(), ProjectileOwner, UDamageType::StaticClass());
+
+						this->DestroyProjectile();
+					}
+				}
+
+				return;
+			}
 		}
 	}
 }

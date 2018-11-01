@@ -2,6 +2,7 @@
 
 #include "Weapon.h"
 #include "Projectile.h"
+#include "SpacecraftPawn.h"
 
 #include "Components/StaticMeshComponent.h"
 
@@ -14,7 +15,8 @@ AWeapon::AWeapon()
 	PrimaryActorTick.bCanEverTick = true;
 
 	MeshComponent           = CreateDefaultSubobject<UStaticMeshComponent>("Mesh Component");
-	FireRate                = 0.0f;
+	Damage                  = 10.0f;
+	FireRate                = 5.0f;
 	TimePassedSinceLastShot = 0.0f;
 }
 
@@ -33,7 +35,7 @@ void AWeapon::Tick(float DeltaTime)
 	TimePassedSinceLastShot += DeltaTime;
 }
 
-void AWeapon::FireWeapon(ESpacecraftFaction OwnerType)
+void AWeapon::FireWeapon(ASpacecraftPawn* ProjectileOwner)
 {
 	if (ProjectileClass && IsAllowedToFireWeapon())
 	{
@@ -45,13 +47,13 @@ void AWeapon::FireWeapon(ESpacecraftFaction OwnerType)
 			
 			ProjectileTransform.SetLocation(GetActorLocation() + GetActorForwardVector() * 100);
 			ProjectileTransform.SetRotation(GetActorRotation().Quaternion());
-
+			
 			AProjectile* FiredProjectile = World->SpawnActor<AProjectile>(ProjectileClass, ProjectileTransform);
 
 			if (FiredProjectile)
 			{
-				FiredProjectile->SetOwnerType(OwnerType);
-				//FiredProjectile->SetDamage(0.0f);
+				FiredProjectile->SetProjectileOwner(ProjectileOwner);
+				FiredProjectile->SetDamage(Damage);
 				
 				// TODO: Set up more stuff for it.
 

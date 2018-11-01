@@ -21,6 +21,8 @@ ASpaceEnemyPawn::ASpaceEnemyPawn()
 	CloseQuartersAreaRadius         = 500.0f;
 	DetectionAreaRadiusModifier     = 135.0f;
 	CloseQuartersAreaRadiusModifier = 150.0f;
+	MaxHitPoints                    = 50.0f;
+	CurrentHitPoints                = MaxHitPoints;
 	Faction                         = ESpacecraftFaction::Alien;
 	
 	DetectionArea->SetupAttachment(SpacecraftMeshComponent);
@@ -138,6 +140,15 @@ void ASpaceEnemyPawn::OnTurboModeActivated()
 void ASpaceEnemyPawn::OnTurboModeDeactivated()
 {
 
+}
+
+// TODO: W.I.P.
+void ASpaceEnemyPawn::DestroySpacecraft()
+{
+	// ... anything to add here?
+
+	// End it.
+	Super::DestroySpacecraft();
 }
 
 void ASpaceEnemyPawn::BeginFiringPrimaryWeapons()

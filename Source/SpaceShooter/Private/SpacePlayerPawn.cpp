@@ -83,6 +83,15 @@ void ASpacePlayerPawn::OnTurboModeDeactivated()
 	
 }
 
+// TODO: W.I.P.
+void ASpacePlayerPawn::DestroySpacecraft()
+{
+	// ... anything to add here?
+
+	// End it.
+	Super::DestroySpacecraft();
+}
+
 void ASpacePlayerPawn::BeginFiringPrimaryWeapons()
 {
 	Super::BeginFiringPrimaryWeapons();

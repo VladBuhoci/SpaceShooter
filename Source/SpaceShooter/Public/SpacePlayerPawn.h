@@ -73,6 +73,14 @@ protected:
 
 
 	/**********************************
+		  SURVIVABILITY INTERFACE
+	**********************************/
+
+protected:
+	virtual void DestroySpacecraft();
+
+
+	/**********************************
 		     WEAPONS INTERFACE
 	**********************************/
 

@@ -43,11 +43,13 @@ ASpacecraftPawn::ASpacecraftPawn()
 	MoveForwardSpeed                 = MoveForwardMaxSpeed;
 	MoveBackwardSpeed                = 800.0f;
 	SpacecraftTurnSpeed              = 10.0f;
+	MaxHitPoints                     = 100.0f;
+	CurrentHitPoints                 = MaxHitPoints;
 	bIsFiringPrimaryWeapons			 = false;
 	Faction                          = ESpacecraftFaction::Unspecified;
 
 	// SpacecraftMeshComponent setup:
-	ConstructorHelpers::FObjectFinder<UStaticMesh> SpacecraftMeshFinder (TEXT("StaticMesh'/Game/StaticMeshes/Spacecrafts/PlayerSpacecraft/PlayerSpacecraft_Dev.PlayerSpacecraft_Dev'"));
+	ConstructorHelpers::FObjectFinder<UStaticMesh> SpacecraftMeshFinder(TEXT("StaticMesh'/Game/StaticMeshes/Spacecrafts/PlayerSpacecraft/PlayerSpacecraft_Dev.PlayerSpacecraft_Dev'"));
 	
 	if (SpacecraftMeshFinder.Succeeded())
 	{
@@ -307,6 +309,34 @@ void ASpacecraftPawn::InitializeWeaponry()
 	}
 }
 
+void ASpacecraftPawn::DestroyWeaponry()
+{
+	if (PrimaryWeapon)
+	{
+		PrimaryWeapon->Destroy();
+	}
+}
+
+// TODO: W.I.P.
+float ASpacecraftPawn::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	CurrentHitPoints -= Damage;
+
+	if (CurrentHitPoints <= 0.0f)
+		DestroySpacecraft();
+
+	return Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+}
+
+void ASpacecraftPawn::DestroySpacecraft()
+{
+	// Clean-up.
+	DestroyWeaponry();
+
+	// Finally kill this actor.
+	Destroy();
+}
+
 void ASpacecraftPawn::BeginFiringPrimaryWeapons()
 {
 	bIsFiringPrimaryWeapons = true;
@@ -321,7 +351,7 @@ void ASpacecraftPawn::FirePrimaryWeapons_Internal()
 {
 	if (PrimaryWeapon)
 	{
-		PrimaryWeapon->FireWeapon(Faction);
+		PrimaryWeapon->FireWeapon(this);
 	}
 }
 

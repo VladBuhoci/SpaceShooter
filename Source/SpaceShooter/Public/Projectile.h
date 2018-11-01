@@ -2,8 +2,6 @@
 
 #pragma once
 
-#include "SpaceEnums.h"
-
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Projectile.generated.h"
@@ -38,12 +36,9 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Projectile", Meta = (AllowPrivateAccess = "true"))
 	UParticleSystem* ImpactParticleEffect;
 
-	/**
-	 * The owner type controls the way different projectiles interact with
-	 *		each other and with spacecrafts during OnHit events.
-	 */
+	/** The owner of this projectile (spacecraft that shot it). */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile", Meta = (AllowPrivateAccess = "true"))
-	ESpacecraftFaction OwnerType;
+	ASpacecraftPawn* ProjectileOwner;
 	
 	/** Damage dealt by this projectile. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile", Meta = (AllowPrivateAccess = "true"))
@@ -80,14 +75,15 @@ private:
 	/** Triggers a few effects (sounds, particles) and then destroys the projectile. */
 	void DestroyProjectile();
 
-public:
+
 	/**********************************
 				GETTERS
 	**********************************/
 
+public:
 	/** Gets the mesh component of this projectile. */
 	UFUNCTION(BlueprintPure, Category = "Projectile")
-	UStaticMeshComponent* GetMesh() const { return MeshComponent; }
+	UStaticMeshComponent* GetMesh()	const { return MeshComponent; }
 
 	/** Gets the current damage value of this projectile. */
 	UFUNCTION(BlueprintPure, Category = "Projectile")
@@ -95,7 +91,7 @@ public:
 
 	/** Gets the type of owner that fired this projectile. */
 	UFUNCTION(BlueprintPure, Category = "Projectile")
-	ESpacecraftFaction GetOwnerType() const { return OwnerType; }
+	ASpacecraftPawn* GetProjectileOwner() const { return ProjectileOwner; }
 
 	/** Gets the projectile movement component of this projectile. */
 	UFUNCTION(BlueprintPure, Category = "Projectile")
@@ -106,11 +102,12 @@ public:
 				SETTERS
 	**********************************/
 
+public:
 	/** Sets a new value for the damage of this projectile. */
 	UFUNCTION(BlueprintCallable, Category = "Projectile")
 	void SetDamage(float NewValue) { Damage = NewValue; }
 
 	/** Sets a new owner type for this projectile. */
 	UFUNCTION(BlueprintCallable, Category = "Projectile")
-	void SetOwnerType(ESpacecraftFaction NewType) { OwnerType = NewType; }
+	void SetProjectileOwner(ASpacecraftPawn* NewOwner) { ProjectileOwner = NewOwner; }
 };
