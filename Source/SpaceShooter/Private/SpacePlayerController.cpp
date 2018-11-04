@@ -56,13 +56,8 @@ void ASpacePlayerController::HandleTargetIconOnScreen()
 
 		if (GetMousePosition(posX, posY) && OwnedHUD)
 		{
-			OwnedHUD->UpdateTargetImagePosition(posX, posY);
+			OwnedHUD->UpdateTargetIconPosition(posX, posY);
 		}
-	}
-	else
-	{
-		// TODO: instead, make it invisible or something.
-		OwnedHUD->UpdateTargetImagePosition(0, 0);
 	}
 }
 
@@ -118,6 +113,20 @@ void ASpacePlayerController::DeactivateTurboMode()
 	{
 		PossessedSpacePawn->DeactivateTurboMode();
 	}
+}
+
+void ASpacePlayerController::SignalPlayerDied()
+{
+	OwnedHUD->SetCanDrawTargetIcon(false);
+
+	bShowMouseCursor = true;
+}
+
+void ASpacePlayerController::SignalPlayerRespawned()
+{
+	bShowMouseCursor = false;
+
+	OwnedHUD->SetCanDrawTargetIcon(true);
 }
 
 void ASpacePlayerController::BeginFiringPrimaryWeapons()

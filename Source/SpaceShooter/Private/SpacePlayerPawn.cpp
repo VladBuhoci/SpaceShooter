@@ -3,6 +3,9 @@
 #include "SpacePlayerPawn.h"
 #include "Weapon.h"
 #include "Projectile.h"
+#include "SpacecraftTurboModeCameraShake.h"
+#include "SpacecraftDestructionCameraShake.h"
+#include "SpacePlayerController.h"
 
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/FloatingPawnMovement.h"
@@ -16,6 +19,10 @@
 
 #include "Runtime/Engine/Public/TimerManager.h"
 
+#include "Engine/World.h"
+
+#include "Kismet/GameplayStatics.h"
+
 
 /** Sets default values. */
 ASpacePlayerPawn::ASpacePlayerPawn()
@@ -25,7 +32,7 @@ ASpacePlayerPawn::ASpacePlayerPawn()
 	CameraComponent              = CreateDefaultSubobject<UCameraComponent   >("Camera Component");
 	SpringArmComponent           = CreateDefaultSubobject<USpringArmComponent>("Spring Arm Component");
 	
-	MoveForwardMaxTurboSpeed     = 1600.0f;
+	MoveForwardMaxTurboSpeed     = 2000.0f;
 	MoveForwardMaxSpeed          = 1200.0f;
 	MoveForwardSpeed             = MoveForwardMaxSpeed;
 	MoveBackwardSpeed            = 900.0f;
@@ -77,8 +84,13 @@ void ASpacePlayerPawn::Tick(float DeltaTime)
 
 void ASpacePlayerPawn::OnTurboModeActivated()
 {
-	// TODO: add some camera shake effect?
+	// Play camera shake effect.
 
+	UWorld* World = GetWorld();
+	if (World)
+	{
+		UGameplayStatics::PlayWorldCameraShake(World, USpacecraftTurboModeCameraShake::StaticClass(), GetActorLocation(), 0.0f, 10000.0f, 0.0f);
+	}
 }
 
 void ASpacePlayerPawn::OnTurboModeDeactivated()
@@ -89,14 +101,36 @@ void ASpacePlayerPawn::OnTurboModeDeactivated()
 // TODO: W.I.P.
 void ASpacePlayerPawn::DestroySpacecraft()
 {
+	// Play camera shake effect.
+
+	UWorld* World = GetWorld();
+	if (World)
+	{
+		UGameplayStatics::PlayWorldCameraShake(World, USpacecraftDestructionCameraShake::StaticClass(), GetActorLocation(), 0.0f, 10000.0f, 0.0f);
+
+		// Simulate slow motion.
+ 		UGameplayStatics::SetGlobalTimeDilation(World, 0.25f);
+ 		UGameplayStatics::SetGlobalPitchModulation(World, 0.75f, 1.0f);
+
+		// Calling these implies scheduling a method call to reset these global values after a bit of time.
+		FTimerHandle DisableSlowmotionTimerHandle;
+
+		GetWorldTimerManager().SetTimer(DisableSlowmotionTimerHandle, [World]() {
+			UGameplayStatics::SetGlobalTimeDilation(World, 1.0f);
+			UGameplayStatics::SetGlobalPitchModulation(World, 1.0f, 1.0f);
+		}, 0.75f, false);
+	}
+
 	// Disable physical interactions so future projectiles overlapping this ship will ignore it.
 	SpacecraftMeshComponent->bGenerateOverlapEvents = false;
 
-	// Play the destruction sound and activate the particle system to simulate destruction of the ship.
-	PlayDestroyEffects();
-
 	// Make the player's ship invisible.
 	SpacecraftMeshComponent->SetVisibility(false, true);
+
+	if (ASpacePlayerController* MyController = Cast<ASpacePlayerController>(GetController()))
+	{
+		MyController->SignalPlayerDied();
+	}
 }
 
 void ASpacePlayerPawn::BeginFiringPrimaryWeapons()
@@ -115,7 +149,11 @@ void ASpacePlayerPawn::CheckCameraOffset(float DeltaTime)
 {
 	// The speed of the spacecraft will affect the spring arm's length.
 
-	DesiredCameraSpringArmLength = 0.1f * SpacecraftMovementComponent->Velocity.Size() * (bIsTurboModeActive ? 1.5f : 1.0f);
+	float speedPercentage            = 0.2f;	// 20% of the spacecraft's velocity is used as base value for the spring arm's length.
+	float normalFlightModeMultiplier = 1.0f;
+	float turboFlightModeMultiplier  = 1.5f;
+
+	DesiredCameraSpringArmLength = speedPercentage * SpacecraftMovementComponent->Velocity.Size() * (bIsTurboModeActive ? turboFlightModeMultiplier : normalFlightModeMultiplier);
 
 	if (! FMath::IsNearlyEqual(SpringArmComponent->TargetArmLength, DesiredCameraSpringArmLength))
 	{

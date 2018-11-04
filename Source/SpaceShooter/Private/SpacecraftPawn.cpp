@@ -329,7 +329,13 @@ float ASpacecraftPawn::TakeDamage(float Damage, FDamageEvent const& DamageEvent,
 	CurrentHitPoints -= Damage;
 
 	if (CurrentHitPoints <= 0.0f)
+	{
+		// TODO: later on, this should be changed to something else to support more weapons.
+		EndFiringPrimaryWeapons();
+
+		PlayDestroyEffects();
 		DestroySpacecraft();
+	}
 
 	return Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 }
@@ -341,8 +347,6 @@ bool ASpacecraftPawn::IsNotDestroyed() const
 
 void ASpacecraftPawn::DestroySpacecraft()
 {
-	PlayDestroyEffects();
-
 	// Disable physical interactions so future projectiles overlapping this ship will ignore it.
 	SpacecraftMeshComponent->bGenerateOverlapEvents = false;
 

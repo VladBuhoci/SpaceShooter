@@ -9,28 +9,37 @@
 
 ASpaceHUD::ASpaceHUD()
 {
-	ConstructorHelpers::FObjectFinder<UMaterialInterface> targetImageFinder (TEXT("Material'/Game/Materials/Crosshairs/Crosshair_1.Crosshair_1'"));
+	ConstructorHelpers::FObjectFinder<UMaterialInterface> targetImageFinder(TEXT("Material'/Game/Materials/Crosshairs/Crosshair_1.Crosshair_1'"));
 	
 	if (targetImageFinder.Succeeded())
 	{
-		TargetImage = targetImageFinder.Object;
+		TargetIcon = targetImageFinder.Object;
 	}
 
-	TargetPosX = TargetPosY = 0.0f;
+	TargetPosX     = 0.0f;
+	TargetPosY     = 0.0f;
+	bCanDrawTarget = true;
 }
 
 void ASpaceHUD::DrawHUD()
 {
 	Super::DrawHUD();
 
-	if (TargetImage)
+	if (bCanDrawTarget)
 	{
-		// TODO: Is there any way to determine the width and height programmatically?
-		DrawMaterialSimple(TargetImage, TargetPosX - 16, TargetPosY - 16, 32, 32);
+		if (TargetIcon)
+		{
+			// TODO: Is there any way to determine the width and height programmatically?
+			DrawMaterialSimple(TargetIcon, TargetPosX - 16, TargetPosY - 16, 32, 32);
+		}
+	}
+	else
+	{
+
 	}
 }
 
-void ASpaceHUD::UpdateTargetImagePosition(float newPosX, float newPosY)
+void ASpaceHUD::UpdateTargetIconPosition(float newPosX, float newPosY)
 {
 	TargetPosX = newPosX;
 	TargetPosY = newPosY;

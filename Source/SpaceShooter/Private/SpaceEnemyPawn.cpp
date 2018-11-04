@@ -17,13 +17,17 @@ ASpaceEnemyPawn::ASpaceEnemyPawn()
 	DetectionArea                   = CreateDefaultSubobject<USphereComponent>("Detection Area");
 	CloseQuartersArea               = CreateDefaultSubobject<USphereComponent>("Close Quarters Area");
 
+	MoveForwardMaxTurboSpeed        = 1400.0f;
+	MoveForwardMaxSpeed             = 900.0f;
+	MoveForwardSpeed                = MoveForwardMaxSpeed;
+	MoveBackwardSpeed               = 600.0f;
+	MaxHitPoints                    = 50.0f;
+	CurrentHitPoints                = MaxHitPoints;
+	Faction                         = ESpacecraftFaction::Alien;
 	DetectionAreaRadius             = 1500.0f;
 	CloseQuartersAreaRadius         = 500.0f;
 	DetectionAreaRadiusModifier     = 135.0f;
 	CloseQuartersAreaRadiusModifier = 150.0f;
-	MaxHitPoints                    = 50.0f;
-	CurrentHitPoints                = MaxHitPoints;
-	Faction                         = ESpacecraftFaction::Alien;
 	
 	DetectionArea->SetupAttachment(SpacecraftMeshComponent);
 	DetectionArea->InitSphereRadius(DetectionAreaRadius);

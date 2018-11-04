@@ -16,7 +16,7 @@ class SPACESHOOTER_API ASpaceHUD : public AHUD
 	
 	/** The target image to be rendered on screen where the mouse cursor points at. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space HUD", Meta = (AllowPrivateAccess = "true"))
-	UMaterialInterface * TargetImage;
+	UMaterialInterface * TargetIcon;
 	
 	/** Target image X coordinate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space HUD", Meta = (AllowPrivateAccess = "true"))
@@ -26,16 +26,22 @@ class SPACESHOOTER_API ASpaceHUD : public AHUD
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space HUD", Meta = (AllowPrivateAccess = "true"))
 	float TargetPosY;
 
+	/** True if the target icon should be currently drawn on screen. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space HUD", Meta = (AllowPrivateAccess = "true"))
+	bool bCanDrawTarget;
+
 public:
 	ASpaceHUD();
 
-	/** The Main Draw loop for the hud. */
+	/** The Main Draw loop for the HUD. */
 	virtual void DrawHUD() override;
 
 	// Public interface:
 public:
 	/** Redraws the target image on the screen using the new coordinates. */
-	void UpdateTargetImagePosition(float newPosX, float newPosY);
+	void UpdateTargetIconPosition(float newPosX, float newPosY);
+
+	void SetCanDrawTargetIcon(bool NewState) { bCanDrawTarget = NewState; }
 
 	// ~ end of public interface.
 };

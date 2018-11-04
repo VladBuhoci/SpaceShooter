@@ -65,4 +65,13 @@ private:
 
 	void ActivateTurboMode();
 	void DeactivateTurboMode();
+
+
+	/**********************************
+		  SURVIVABILITY INTERFACE
+	**********************************/
+
+public:
+	void SignalPlayerDied();
+	void SignalPlayerRespawned();
 };

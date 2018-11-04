@@ -106,6 +106,12 @@
     <ClInclude Include="..\..\Source\SpaceShooter\Public\SpaceEnums.h">
       <Filter>Source\SpaceShooter\Public</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\SpacecraftTurboModeCameraShake.h">
+      <Filter>Source\SpaceShooter\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\SpacecraftDestructionCameraShake.h">
+      <Filter>Source\SpaceShooter\Public</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\SpaceShooter\Private\SpacecraftPawn.cpp">
@@ -118,6 +124,12 @@
       <Filter>Source\SpaceShooter\Private</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\SpaceShooter\Private\SpaceEnums.cpp">
+      <Filter>Source\SpaceShooter\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\SpacecraftTurboModeCameraShake.cpp">
+      <Filter>Source\SpaceShooter\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\SpacecraftDestructionCameraShake.cpp">
       <Filter>Source\SpaceShooter\Private</Filter>
     </ClCompile>
   </ItemGroup>
