@@ -44,24 +44,45 @@ void ASpaceEnemyController::Tick(float DeltaTime)
 
 	if (PossessedSpacePawn)
 	{
-		if (SpacecraftState == ESpacecraftState::Flying)
+		switch (SpacecraftState)
 		{
+		case ESpacecraftState::Idle:
+			EnterCompletelyIdleState();
+			ScheduleNewRandomFlight();
+
+			break;
+
+		case ESpacecraftState::Flying:
 			HandleSpaceshipRotation(LocationToReach);
-			
+
 			// TODO: maybe we can have the spacecrafts behave smarter by letting them can go backward too.
 			PossessedSpacePawn->MaintainForwardMovementSetup();
-		}
-		else if (SpacecraftState == ESpacecraftState::Attacking)
-		{
-			if (SpacecraftToReach)
+
+			break;
+
+		case ESpacecraftState::Attacking:
+			// Only handle rotation and movement if the target ship is not completely destroyed yet.
+			if (SpacecraftToReach && SpacecraftToReach->IsNotDestroyed())
 			{
 				HandleSpaceshipRotation(SpacecraftToReach->GetActorLocation());
+
 				PossessedSpacePawn->MaintainForwardMovementSetup();
 			}
+			// Else abandon current target-based movement (it will make this AI fly around randomly until another target shows up).
 			else
 			{
-				StopMovement();
+				if (PossessedSpacePawn->IsCurrentlyFlying())
+				{
+					StayInPlace(false);
+				}
+				else
+				{
+					EnterCompletelyIdleState();
+					ScheduleNewRandomFlight();
+				}
 			}
+
+			break;
 		}
 	}
 	else
@@ -76,14 +97,8 @@ void ASpaceEnemyController::OnMoveCompleted(FAIRequestID RequestID, const FPathF
 	
 	if (SpacecraftState != ESpacecraftState::Attacking)
 	{
-		SpacecraftToReach = nullptr;
-		SpacecraftState   = ESpacecraftState::Idle;
-
-		EndFiringPrimaryWeapons();
-
-		float IdleTime = UKismetMathLibrary::RandomFloatInRange(IdleTimeMin, IdleTimeMax);
-
-		GetWorldTimerManager().SetTimer(TimerHandle, this, &ASpaceEnemyController::BeginFlightToRandomLocation, IdleTime, false);
+		EnterCompletelyIdleState();
+		ScheduleNewRandomFlight();
 	}
 }
 
@@ -139,13 +154,31 @@ void ASpaceEnemyController::HandleSpaceshipRotation(FVector TargetLocation)
 	PossessedSpacePawn->RotateSpacecraft(TargetRotation);
 }
 
+void ASpaceEnemyController::ScheduleNewRandomFlight()
+{
+	SpacecraftState = ESpacecraftState::ScheduledForFlying;
+
+	float IdleTime = UKismetMathLibrary::RandomFloatInRange(IdleTimeMin, IdleTimeMax);
+
+	GetWorldTimerManager().SetTimer(TimerHandle, this, &ASpaceEnemyController::BeginFlightToRandomLocation, IdleTime, false);
+}
+
 void ASpaceEnemyController::BeginFlightToRandomLocation()
 {
 	LocationToReach = GetNewRandomLocationInNavMesh();
+	SpacecraftState = ESpacecraftState::Flying;
 
 	MoveToLocation(LocationToReach);
-	
-	SpacecraftState = ESpacecraftState::Flying;
+}
+
+void ASpaceEnemyController::EnterCompletelyIdleState()
+{
+	GetWorldTimerManager().ClearTimer(TimerHandle);
+
+	SpacecraftToReach = nullptr;
+	SpacecraftState   = ESpacecraftState::Idle;
+
+	EndFiringPrimaryWeapons();
 }
 
 void ASpaceEnemyController::MovePawnForward(float Value)

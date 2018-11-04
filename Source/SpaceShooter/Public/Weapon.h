@@ -38,6 +38,14 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
 	float TimePassedSinceLastShot;
 
+	/** Particle system which is spawned whenever this weapon shoots projectiles. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
+	UParticleSystem* WeaponFiringParticleEffect;
+
+	/** Sound played whenever this weapon shoots projectiles. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
+	USoundBase* WeaponFiringSound;
+
 public:
 	/** Sets default values for this actor's properties. */
 	AWeapon();
@@ -56,4 +64,5 @@ public:
 private:
 	void ResetTimeSinceLastWeaponUsage();
 	bool IsAllowedToFireWeapon();
+	void PlayWeaponFiringEffects();
 };

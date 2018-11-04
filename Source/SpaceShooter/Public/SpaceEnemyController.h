@@ -16,6 +16,7 @@ UENUM(BlueprintType)
 enum class ESpacecraftState : uint8
 {
 	Idle,
+	ScheduledForFlying,
 	Flying,
 	Attacking
 };
@@ -103,9 +104,10 @@ public:
 	void StayInPlace(bool bContinueAttack);
 
 private:
-	/** Gets the position of the cursor on the game screen and asks the player to rotate towards it. */
 	void HandleSpaceshipRotation(FVector TargetLocation);
+	void ScheduleNewRandomFlight();
 	void BeginFlightToRandomLocation();
+	void EnterCompletelyIdleState();
 
 	void MovePawnForward(float Value);
 	void MovePawnBackward(float Value);

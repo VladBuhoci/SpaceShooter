@@ -77,7 +77,7 @@ protected:
 	**********************************/
 
 protected:
-	virtual void DestroySpacecraft();
+	virtual void DestroySpacecraft() override;
 
 
 	/**********************************

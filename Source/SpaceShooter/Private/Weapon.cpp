@@ -8,6 +8,8 @@
 
 #include "Engine/World.h"
 
+#include "Kismet/GameplayStatics.h"
+
 
 /** Sets default values. */
 AWeapon::AWeapon()
@@ -49,13 +51,15 @@ void AWeapon::FireWeapon(ASpacecraftPawn* ProjectileOwner)
 			ProjectileTransform.SetRotation(GetActorRotation().Quaternion());
 			
 			AProjectile* FiredProjectile = World->SpawnActor<AProjectile>(ProjectileClass, ProjectileTransform);
-
+			
 			if (FiredProjectile)
 			{
 				FiredProjectile->SetProjectileOwner(ProjectileOwner);
 				FiredProjectile->SetDamage(Damage);
-				
+
 				// TODO: Set up more stuff for it.
+				
+				PlayWeaponFiringEffects();
 
 				// Reset the counter.
 				ResetTimeSinceLastWeaponUsage();
@@ -72,5 +76,28 @@ void AWeapon::ResetTimeSinceLastWeaponUsage()
 bool AWeapon::IsAllowedToFireWeapon()
 {
 	return TimePassedSinceLastShot >= 1.0f / FireRate;
+}
+
+// TODO: perhaps we can add some recoil effects too? (camera shake, ship knock back etc.)
+void AWeapon::PlayWeaponFiringEffects()
+{
+	UWorld* WorldPtr = GetWorld();
+
+	if (WorldPtr)
+	{
+		// Play destruction sound.
+		if (WeaponFiringSound)
+		{
+			// TODO: The location used for playing the sound should be indicated by some basic Actor Component.
+			UGameplayStatics::PlaySoundAtLocation(WorldPtr, WeaponFiringSound, this->GetActorLocation());
+		}
+
+		// Spawn the destruction effect particles.
+		if (WeaponFiringParticleEffect != NULL)
+		{
+			// TODO: The location used for spawning the emitter should be indicated by some basic Actor Component.
+			UGameplayStatics::SpawnEmitterAtLocation(WorldPtr, WeaponFiringParticleEffect, this->GetActorLocation());
+		}
+	}
 }
 

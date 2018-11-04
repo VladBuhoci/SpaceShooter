@@ -6,12 +6,15 @@
 
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/FloatingPawnMovement.h"
+#include "GameFramework/Controller.h"
 
 #include "Components/StaticMeshComponent.h"
 
 #include "Particles/ParticleSystemComponent.h"
 
 #include "Camera/CameraComponent.h"
+
+#include "Runtime/Engine/Public/TimerManager.h"
 
 
 /** Sets default values. */
@@ -86,10 +89,14 @@ void ASpacePlayerPawn::OnTurboModeDeactivated()
 // TODO: W.I.P.
 void ASpacePlayerPawn::DestroySpacecraft()
 {
-	// ... anything to add here?
+	// Disable physical interactions so future projectiles overlapping this ship will ignore it.
+	SpacecraftMeshComponent->bGenerateOverlapEvents = false;
 
-	// End it.
-	Super::DestroySpacecraft();
+	// Play the destruction sound and activate the particle system to simulate destruction of the ship.
+	PlayDestroyEffects();
+
+	// Make the player's ship invisible.
+	SpacecraftMeshComponent->SetVisibility(false, true);
 }
 
 void ASpacePlayerPawn::BeginFiringPrimaryWeapons()

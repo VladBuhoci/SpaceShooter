@@ -147,7 +147,7 @@ void ASpaceEnemyPawn::DestroySpacecraft()
 {
 	// ... anything to add here?
 
-	// End it.
+	// Kill it.
 	Super::DestroySpacecraft();
 }
 

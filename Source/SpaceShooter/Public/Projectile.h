@@ -32,7 +32,7 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile", Meta = (AllowPrivateAccess = "true"))
 	UParticleSystemComponent* TrailingParticleEmitter;
 
-	/** Particle system which is activated when this projectile hits a surface (and gets destroyed). */
+	/** Particle system which is spawned when this projectile hits a surface (and gets destroyed). */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Projectile", Meta = (AllowPrivateAccess = "true"))
 	UParticleSystem* ImpactParticleEffect;
 

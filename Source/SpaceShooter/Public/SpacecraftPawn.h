@@ -94,6 +94,14 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Effects", Meta = (AllowPrivateAccess = "true"))
 	UParticleSystem* BacksideTurboThrusterParticleSystem;
 
+	/** Particle system which is spawned when this spacecraft is destroyed. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Effects", Meta = (AllowPrivateAccess = "true"))
+	UParticleSystem* DestroyParticleEffect;
+
+	/** Sound played when this spacecraft is destroyed. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Effects", Meta = (AllowPrivateAccess = "true"))
+	USoundBase* DestroySound;
+
 	/** Maximum amount of damage this spacecraft can take before it gets destroyed. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Survivability", Meta = (AllowPrivateAccess = "true"))
 	int32 MaxHitPoints;
@@ -147,6 +155,8 @@ public:
 	// Override this for the Movement Component logic to work.
 	virtual UPawnMovementComponent* GetMovementComponent() const override;
 
+	bool IsCurrentlyFlying() const;
+
 protected:
 	virtual void OnTurboModeActivated();
 	virtual void OnTurboModeDeactivated();
@@ -159,8 +169,15 @@ protected:
 public:
 	virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
+	/** Returns true if this spacecraft has not been destroyed yet. */
+	UFUNCTION(BlueprintPure, Category = "Spacecraft | Survivability")
+	bool IsNotDestroyed() const;
+
 protected:
 	virtual void DestroySpacecraft();
+
+	void PlayDestroyEffects();
+
 
 	/**********************************
 			 WEAPONS INTERFACE

@@ -50,18 +50,26 @@ void ASpacePlayerController::SetupInputComponent()
 
 void ASpacePlayerController::HandleTargetIconOnScreen()
 {
-	float posX, posY;
-
-	if (GetMousePosition(posX, posY) && OwnedHUD)
+	if (PossessedSpacePawn && PossessedSpacePawn->IsNotDestroyed())
 	{
-		OwnedHUD->UpdateTargetImagePosition(posX, posY);
+		float posX, posY;
+
+		if (GetMousePosition(posX, posY) && OwnedHUD)
+		{
+			OwnedHUD->UpdateTargetImagePosition(posX, posY);
+		}
+	}
+	else
+	{
+		// TODO: instead, make it invisible or something.
+		OwnedHUD->UpdateTargetImagePosition(0, 0);
 	}
 }
 
 /** Gets the position of the cursor on the game screen and asks the player to rotate towards it. */
 void ASpacePlayerController::HandleSpaceshipRotation()
 {
-	if (PossessedSpacePawn)
+	if (PossessedSpacePawn && PossessedSpacePawn->IsNotDestroyed())
 	{
 		FRotator targetRotation;
 		FHitResult hitResult;
@@ -82,7 +90,7 @@ void ASpacePlayerController::HandleSpaceshipRotation()
 
 void ASpacePlayerController::MovePawnForward(float Value)
 {
-	if (PossessedSpacePawn)
+	if (PossessedSpacePawn && PossessedSpacePawn->IsNotDestroyed())
 	{
 		PossessedSpacePawn->MoveForward(Value);
 	}
@@ -90,7 +98,7 @@ void ASpacePlayerController::MovePawnForward(float Value)
 
 void ASpacePlayerController::MovePawnBackward(float Value)
 {
-	if (PossessedSpacePawn)
+	if (PossessedSpacePawn && PossessedSpacePawn->IsNotDestroyed())
 	{
 		PossessedSpacePawn->MoveBackward(Value);
 	}
@@ -98,7 +106,7 @@ void ASpacePlayerController::MovePawnBackward(float Value)
 
 void ASpacePlayerController::ActivateTurboMode()
 {
-	if (PossessedSpacePawn)
+	if (PossessedSpacePawn && PossessedSpacePawn->IsNotDestroyed())
 	{
 		PossessedSpacePawn->ActivateTurboMode();
 	}
@@ -106,7 +114,7 @@ void ASpacePlayerController::ActivateTurboMode()
 
 void ASpacePlayerController::DeactivateTurboMode()
 {
-	if (PossessedSpacePawn)
+	if (PossessedSpacePawn && PossessedSpacePawn->IsNotDestroyed())
 	{
 		PossessedSpacePawn->DeactivateTurboMode();
 	}
@@ -114,7 +122,7 @@ void ASpacePlayerController::DeactivateTurboMode()
 
 void ASpacePlayerController::BeginFiringPrimaryWeapons()
 {
-	if (PossessedSpacePawn)
+	if (PossessedSpacePawn && PossessedSpacePawn->IsNotDestroyed())
 	{
 		PossessedSpacePawn->BeginFiringPrimaryWeapons();
 	}
@@ -122,7 +130,7 @@ void ASpacePlayerController::BeginFiringPrimaryWeapons()
 
 void ASpacePlayerController::EndFiringPrimaryWeapons()
 {
-	if (PossessedSpacePawn)
+	if (PossessedSpacePawn && PossessedSpacePawn->IsNotDestroyed())
 	{
 		PossessedSpacePawn->EndFiringPrimaryWeapons();
 	}
