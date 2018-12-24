@@ -20,6 +20,8 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
 
+#include "Runtime/Engine/Public/TimerManager.h"
+
 
 /** Sets default values. */
 ASpacecraftPawn::ASpacecraftPawn()
@@ -41,16 +43,20 @@ ASpacecraftPawn::ASpacecraftPawn()
 	bIsTurboModeActive               = false;
 	MoveForwardMaxTurboSpeed         = 1400.0f;
 	MoveForwardMaxSpeed              = 1000.0f;
-	MoveForwardSpeed                 = MoveForwardMaxSpeed;
 	MoveBackwardSpeed                = 800.0f;
 	SpacecraftTurnSpeed              = 10.0f;
 	MaxHitPoints                     = 100.0f;
-	CurrentHitPoints                 = MaxHitPoints;
+	MaxShieldPoints                  = 200.0f;
+	ShieldAbsorptionRate             = 40;
+	ShieldRechargeRate               = 4.0f;
+	ShieldRechargeTimePassedSinceLastPointRecharged = 0.0f;
+	ShieldRechargeDelay              = 2.5f;
+	bIsShieldRecharging              = false;
 	bIsFiringPrimaryWeapons			 = false;
 	Faction                          = ESpacecraftFaction::Unspecified;
 
 	// SpacecraftMeshComponent setup:
-	ConstructorHelpers::FObjectFinder<UStaticMesh> SpacecraftMeshFinder(TEXT("StaticMesh'/Game/StaticMeshes/Spacecrafts/Player/PlayerSpacecraft_Dev.PlayerSpacecraft_Dev'"));
+	ConstructorHelpers::FObjectFinder<UStaticMesh> SpacecraftMeshFinder(TEXT("StaticMesh'/Game/StaticMeshes/Spacecrafts/Player/SM_PlayerSpacecraft_Dev.SM_PlayerSpacecraft_Dev'"));
 	
 	if (SpacecraftMeshFinder.Succeeded())
 	{
@@ -85,7 +91,15 @@ void ASpacecraftPawn::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	InitializeAttributes();
 	InitializeWeaponry();
+}
+
+void ASpacecraftPawn::InitializeAttributes()
+{
+	MoveForwardSpeed    = MoveForwardMaxSpeed;
+	CurrentHitPoints    = MaxHitPoints;
+	CurrentShieldPoints = MaxShieldPoints;
 }
 
 /** Called every frame. */
@@ -121,6 +135,7 @@ void ASpacecraftPawn::Tick(float DeltaTime)
 		StopMovingSpacecraft();
 	}
 
+	CheckShieldStatus();
 	CheckIfWeaponsNeedToBeFired();
 }
 
@@ -323,15 +338,37 @@ void ASpacecraftPawn::DestroyWeaponry()
 	}
 }
 
-// TODO: W.I.P.
 float ASpacecraftPawn::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	CurrentHitPoints -= Damage;
+	// Damage the shield first.
+	// If the shield is down, damage the ship.
+
+	if (CurrentShieldPoints > 0)
+	{
+		int32 DamageToAbsorb           = Damage * ShieldAbsorptionRate / 100;
+		int32 UnabsorbedAbsorbedDamage = DamageToAbsorb - CurrentShieldPoints;	// In case the shield cannot take in all of this damage, keep the remaining bit for the ship.
+		int32 ActualAbsorbedDamage     = DamageToAbsorb - FMath::Clamp(UnabsorbedAbsorbedDamage, 0, UnabsorbedAbsorbedDamage);
+		int32 DamageTakenByShip        = Damage - ActualAbsorbedDamage;
+
+		CurrentShieldPoints -= ActualAbsorbedDamage;
+		CurrentHitPoints    -= DamageTakenByShip;
+
+		// Since the shield has been damaged, schedule a recharge process.
+		GetWorldTimerManager().SetTimer(ShieldRechargeTimerHandle, this, &ASpacecraftPawn::BeginShieldRechargeProcess, ShieldRechargeDelay, false);
+	}
+	else
+	{
+		CurrentHitPoints -= Damage;
+	}
 
 	if (CurrentHitPoints <= 0.0f)
 	{
 		// TODO: later on, this should be changed to something else to support more weapons.
 		EndFiringPrimaryWeapons();
+
+		// Disable shield recharging and put down the shield completely.
+		StopShieldRechargeProcess();
+		CurrentShieldPoints = 0;
 
 		PlayDestroyEffects();
 		DestroySpacecraft();
@@ -375,6 +412,46 @@ void ASpacecraftPawn::PlayDestroyEffects()
 			UGameplayStatics::SpawnEmitterAtLocation(WorldPtr, DestroyParticleEffect, this->GetActorLocation());
 		}
 	}
+}
+
+void ASpacecraftPawn::CheckShieldStatus()
+{
+	if (bIsShieldRecharging)
+	{
+		ShieldRechargeTimePassedSinceLastPointRecharged += FApp::GetDeltaTime();
+
+		if (ShouldIncrementShieldEnergyPoints())
+		{
+			CurrentShieldPoints += 1;
+
+			// If the shield reached full capacity, stop the recharge process.
+			if (CurrentShieldPoints >= MaxShieldPoints)
+			{
+				StopShieldRechargeProcess();
+			}
+		}
+	}
+}
+
+void ASpacecraftPawn::BeginShieldRechargeProcess()
+{
+	ShieldRechargeTimePassedSinceLastPointRecharged = 0.0f;
+	bIsShieldRecharging                             = true;
+
+	GetWorldTimerManager().ClearTimer(ShieldRechargeTimerHandle);
+}
+
+void ASpacecraftPawn::StopShieldRechargeProcess()
+{
+	ShieldRechargeTimePassedSinceLastPointRecharged = 0.0f;
+	bIsShieldRecharging                             = false;
+
+	GetWorldTimerManager().ClearTimer(ShieldRechargeTimerHandle);
+}
+
+bool ASpacecraftPawn::ShouldIncrementShieldEnergyPoints()
+{
+	return ShieldRechargeTimePassedSinceLastPointRecharged >= 1.0f / ShieldRechargeRate;
 }
 
 void ASpacecraftPawn::BeginFiringPrimaryWeapons()

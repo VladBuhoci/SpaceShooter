@@ -110,6 +110,49 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Survivability", Meta = (AllowPrivateAccess = "true"))
 	int32 CurrentHitPoints;
 
+	/** The energy shield's maximum capacity. Once it is zero it can no longer protect this spacecraft. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Survivability", Meta = (AllowPrivateAccess = "true"))
+	int32 MaxShieldPoints;
+
+	/** Current amount of energy shield points. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Survivability", Meta = (AllowPrivateAccess = "true"))
+	int32 CurrentShieldPoints;
+
+	/**
+	 * Amount of damage this shield absorbs (percentage of total damage received), losing an equivalent 
+	 *		amount of energy points in the process.
+	 * The remaining damage (that did not get absorbed) will be inflicted onto the spacecraft itself.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Survivability", Meta = (AllowPrivateAccess = "true"))
+	int32 ShieldAbsorptionRate;
+
+	/** The rate at which this ship's shield recharges itself to full capacity, measured in points per second. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Survivability", Meta = (AllowPrivateAccess = "true"))
+	float ShieldRechargeRate;
+
+	/** Amount of time which has passed since the last moment the shield has regained 1 point of energy, in seconds. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Survivability", Meta = (AllowPrivateAccess = "true"))
+	float ShieldRechargeTimePassedSinceLastPointRecharged;
+
+	/**
+	 * Once damaged, the shield will attempt to recharge itself, but only after a short amount of time
+	 *		has passed since last hit.
+	 * Receiving damage "resets" the timer paired with this delay.
+	 * The delay is measured in seconds.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Survivability", Meta = (AllowPrivateAccess = "true"))
+	float ShieldRechargeDelay;
+
+	/** True if the shield is currently recharging itself. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Survivability", Meta = (AllowPrivateAccess = "true"))
+	bool bIsShieldRecharging;
+
+	/**
+	 * Works along with ShieldRechargeDelay to make sure the shield begins to recharge when it should do so.
+	 * Getting hit will clear this timer handle and schedule another recharge attempt after the specified delay has passed.
+	 */
+	FTimerHandle ShieldRechargeTimerHandle;
+
 	/** Primary weapon class. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Weapons", Meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AWeapon> PrimaryWeaponClass;
@@ -136,6 +179,8 @@ public:
 protected:
 	/** Called when the game starts or when spawned. */
 	virtual void BeginPlay() override;
+
+	virtual void InitializeAttributes();
 
 
 	/**********************************
@@ -177,6 +222,12 @@ protected:
 	virtual void DestroySpacecraft();
 
 	void PlayDestroyEffects();
+
+private:
+	void CheckShieldStatus();
+	void BeginShieldRechargeProcess();
+	void StopShieldRechargeProcess();
+	bool ShouldIncrementShieldEnergyPoints();
 
 
 	/**********************************

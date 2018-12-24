@@ -35,6 +35,7 @@ void AWeapon::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	TimePassedSinceLastShot += DeltaTime;
+	TimePassedSinceLastShot = FMath::Clamp(TimePassedSinceLastShot, TimePassedSinceLastShot, 100.0f);	// Don't let this go too high..
 }
 
 void AWeapon::FireWeapon(ASpacecraftPawn* ProjectileOwner)

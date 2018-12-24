@@ -9,7 +9,7 @@
 
 ASpaceHUD::ASpaceHUD()
 {
-	ConstructorHelpers::FObjectFinder<UMaterialInterface> targetImageFinder(TEXT("Material'/Game/Materials/Crosshairs/Crosshair_1.Crosshair_1'"));
+	ConstructorHelpers::FObjectFinder<UMaterialInterface> targetImageFinder(TEXT("Material'/Game/Materials/Crosshairs/M_Crosshair_01.M_Crosshair_01'"));
 	
 	if (targetImageFinder.Succeeded())
 	{

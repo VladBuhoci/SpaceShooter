@@ -34,8 +34,12 @@ ASpacePlayerPawn::ASpacePlayerPawn()
 	
 	MoveForwardMaxTurboSpeed     = 2000.0f;
 	MoveForwardMaxSpeed          = 1200.0f;
-	MoveForwardSpeed             = MoveForwardMaxSpeed;
 	MoveBackwardSpeed            = 900.0f;
+	MaxHitPoints                 = 100.0f;
+	MaxShieldPoints              = 200.0f;
+	ShieldAbsorptionRate         = 30.0f;
+	ShieldRechargeRate           = 4.0f;
+	ShieldRechargeDelay          = 2.0f;
 	SpringArmOffset              = FVector(-500.0f, 0.0f, 600.0f);
 	SpringArmRotation            = FRotator(-50.0f, 0.0f, 0.0f);
 	SpacecraftTurnSpeed          = 10.0f;
@@ -101,11 +105,10 @@ void ASpacePlayerPawn::OnTurboModeDeactivated()
 // TODO: W.I.P.
 void ASpacePlayerPawn::DestroySpacecraft()
 {
-	// Play camera shake effect.
-
 	UWorld* World = GetWorld();
 	if (World)
 	{
+		// Play camera shake effect.
 		UGameplayStatics::PlayWorldCameraShake(World, USpacecraftDestructionCameraShake::StaticClass(), GetActorLocation(), 0.0f, 10000.0f, 0.0f);
 
 		// Simulate slow motion.

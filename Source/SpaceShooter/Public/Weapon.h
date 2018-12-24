@@ -34,7 +34,7 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
 	float FireRate;
 
-	/** Amount of time which has passed since the last moment the weapon has been fired. */
+	/** Amount of time which has passed since the last moment the weapon has been fired, in seconds. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
 	float TimePassedSinceLastShot;
 

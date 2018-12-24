@@ -19,10 +19,12 @@ ASpaceEnemyPawn::ASpaceEnemyPawn()
 
 	MoveForwardMaxTurboSpeed        = 1400.0f;
 	MoveForwardMaxSpeed             = 900.0f;
-	MoveForwardSpeed                = MoveForwardMaxSpeed;
 	MoveBackwardSpeed               = 600.0f;
 	MaxHitPoints                    = 50.0f;
-	CurrentHitPoints                = MaxHitPoints;
+	MaxShieldPoints                 = 100.0f;
+	ShieldAbsorptionRate            = 20;
+	ShieldRechargeRate              = 5.0f;
+	ShieldRechargeDelay             = 3.0f;
 	Faction                         = ESpacecraftFaction::Alien;
 	DetectionAreaRadius             = 1500.0f;
 	CloseQuartersAreaRadius         = 500.0f;
@@ -30,12 +32,12 @@ ASpaceEnemyPawn::ASpaceEnemyPawn()
 	CloseQuartersAreaRadiusModifier = 150.0f;
 	
 	DetectionArea->SetupAttachment(SpacecraftMeshComponent);
-	DetectionArea->InitSphereRadius(DetectionAreaRadius);
+	DetectionArea->SetSphereRadius(DetectionAreaRadius);
 	DetectionArea->OnComponentBeginOverlap.AddDynamic(this, &ASpaceEnemyPawn::ExecuteOnObjectEnterDetectionArea);
 	DetectionArea->OnComponentEndOverlap.AddDynamic(this, &ASpaceEnemyPawn::ExecuteOnObjectExitDetectionArea);
 	
 	CloseQuartersArea->SetupAttachment(SpacecraftMeshComponent);
-	CloseQuartersArea->InitSphereRadius(CloseQuartersAreaRadius);
+	CloseQuartersArea->SetSphereRadius(CloseQuartersAreaRadius);
 	CloseQuartersArea->OnComponentBeginOverlap.AddDynamic(this, &ASpaceEnemyPawn::ExecuteOnObjectEnterCloseQuartersArea);
 	CloseQuartersArea->OnComponentEndOverlap.AddDynamic(this, &ASpaceEnemyPawn::ExecuteOnObjectExitCloseQuartersArea);
 }
