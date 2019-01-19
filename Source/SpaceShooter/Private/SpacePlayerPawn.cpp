@@ -40,7 +40,7 @@ ASpacePlayerPawn::ASpacePlayerPawn()
 	ShieldAbsorptionRate         = 30.0f;
 	ShieldRechargeRate           = 4.0f;
 	ShieldRechargeDelay          = 2.0f;
-	SpringArmOffset              = FVector(-500.0f, 0.0f, 600.0f);
+	SpringArmOffset              = FVector(-600.0f, 0.0f, 700.0f);
 	SpringArmRotation            = FRotator(-50.0f, 0.0f, 0.0f);
 	SpacecraftTurnSpeed          = 10.0f;
 	DesiredCameraSpringArmLength = 0.0f;

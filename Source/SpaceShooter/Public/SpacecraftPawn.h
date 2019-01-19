@@ -27,95 +27,114 @@ class SPACESHOOTER_API ASpacecraftPawn : public APawn
 	GENERATED_BODY()
 
 protected:
+	//////////////////////////////////////////////////////////////////////////
+	// Class Components.
+	//////////////////////////////////////////////////////////////////////////
+
 	/** The mesh of the spacecraft. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Components", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Components")
 	UStaticMeshComponent* SpacecraftMeshComponent;
 
 	/** Movement component governing the movement of this pawn. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Components", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Components")
 	UFloatingPawnMovement* SpacecraftMovementComponent;
 
+	/** Particle system which is activated when the spacecraft is moving forward. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Components")
+	UParticleSystemComponent* BackSideThrusterParticleEmitter;
+
+	/** Particle system which is activated when the spacecraft is moving backward. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Components")
+	UParticleSystemComponent* FrontSideThrusterParticleEmitter;
+
+	/** Particle system which is activated when the spacecraft is rotating clockwise. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Components")
+	UParticleSystemComponent* LeftSideThrusterParticleEmitter;
+
+	/** Particle system which is activated when the spacecraft is rotating counterclockwise. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Components")
+	UParticleSystemComponent* RightSideThrusterParticleEmitter;
+
+
+	//////////////////////////////////////////////////////////////////////////
+	// Movement.
+	//////////////////////////////////////////////////////////////////////////
+
 	/** True if the spacecraft is flying forward. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Movement", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Movement")
 	bool bIsMovingForward;
 
 	/** True if the spacecraft is flying backward. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Movement", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Movement")
 	bool bIsMovingBackward;
 
 	/**
 	 * True if the spacecraft is in turbo mode, significantly increasing the movement speed of the spacecraft.
 	 * Only available for forward flight.
 	 */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Movement", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Movement")
 	bool bIsTurboModeActive;
 
 	/** Maximum speed of the spacecraft while turbo mode is active. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Movement", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Movement")
 	float MoveForwardMaxSpeed;
 
 	/** Maximum speed of the spacecraft while flying normally. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Movement", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Movement")
 	float MoveForwardMaxTurboSpeed;
 
 	/** Current maximum speed of the spacecraft when flying forward. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Movement", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Movement")
 	float MoveForwardSpeed;
 
 	/** Current maximum speed of the spacecraft when flying backward. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Movement", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Movement")
 	float MoveBackwardSpeed;
 
 	/** A higher value means the spacecraft turns left or right quicker. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Movement", Meta = (AllowPrivateAccess = "true", ClampMin = "8", UIMin = "8", ClampMax = "20", UIMax = "20"))
 	float SpacecraftTurnSpeed;
 
-	/** Particle system which is activated when the spacecraft is moving forward. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Components", Meta = (AllowPrivateAccess = "true"))
-	UParticleSystemComponent* BackSideThrusterParticleEmitter;
 
-	/** Particle system which is activated when the spacecraft is moving backward. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Components", Meta = (AllowPrivateAccess = "true"))
-	UParticleSystemComponent* FrontSideThrusterParticleEmitter;
-
-	/** Particle system which is activated when the spacecraft is rotating clockwise. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Components", Meta = (AllowPrivateAccess = "true"))
-	UParticleSystemComponent* LeftSideThrusterParticleEmitter;
-
-	/** Particle system which is activated when the spacecraft is rotating counterclockwise. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Components", Meta = (AllowPrivateAccess = "true"))
-	UParticleSystemComponent* RightSideThrusterParticleEmitter;
+	//////////////////////////////////////////////////////////////////////////
+	// Effects.
+	//////////////////////////////////////////////////////////////////////////
 
 	/** Particle system template for normal forward flight mode. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Effects", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Effects")
 	UParticleSystem* BacksideNormalThrusterParticleSystem;
 
 	/** Particle system template for turbo forward flight mode. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Effects", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Effects")
 	UParticleSystem* BacksideTurboThrusterParticleSystem;
 
 	/** Particle system which is spawned when this spacecraft is destroyed. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Effects", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Effects")
 	UParticleSystem* DestroyParticleEffect;
 
 	/** Sound played when this spacecraft is destroyed. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Effects", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Effects")
 	USoundBase* DestroySound;
 
+
+	//////////////////////////////////////////////////////////////////////////
+	// Survivability.
+	//////////////////////////////////////////////////////////////////////////
+
 	/** Maximum amount of damage this spacecraft can take before it gets destroyed. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Survivability", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Survivability")
 	int32 MaxHitPoints;
 
 	/** Current amount of damage this spacecraft can take before it gets destroyed. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Survivability", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Survivability")
 	int32 CurrentHitPoints;
 
 	/** The energy shield's maximum capacity. Once it is zero it can no longer protect this spacecraft. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Survivability", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Survivability")
 	int32 MaxShieldPoints;
 
 	/** Current amount of energy shield points. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Survivability", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Survivability")
 	int32 CurrentShieldPoints;
 
 	/**
@@ -123,15 +142,15 @@ protected:
 	 *		amount of energy points in the process.
 	 * The remaining damage (that did not get absorbed) will be inflicted onto the spacecraft itself.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Survivability", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Survivability")
 	int32 ShieldAbsorptionRate;
 
 	/** The rate at which this ship's shield recharges itself to full capacity, measured in points per second. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Survivability", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Survivability")
 	float ShieldRechargeRate;
 
 	/** Amount of time which has passed since the last moment the shield has regained 1 point of energy, in seconds. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Survivability", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Survivability")
 	float ShieldRechargeTimePassedSinceLastPointRecharged;
 
 	/**
@@ -140,11 +159,11 @@ protected:
 	 * Receiving damage "resets" the timer paired with this delay.
 	 * The delay is measured in seconds.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Survivability", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Survivability")
 	float ShieldRechargeDelay;
 
 	/** True if the shield is currently recharging itself. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Survivability", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Survivability")
 	bool bIsShieldRecharging;
 
 	/**
@@ -153,20 +172,30 @@ protected:
 	 */
 	FTimerHandle ShieldRechargeTimerHandle;
 
+
+	//////////////////////////////////////////////////////////////////////////
+	// Weapons.
+	//////////////////////////////////////////////////////////////////////////
+
 	/** Primary weapon class. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Weapons", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Weapons")
 	TSubclassOf<AWeapon> PrimaryWeaponClass;
 	
 	/** Primary weapon reference. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Weapons", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Weapons")
 	AWeapon* PrimaryWeapon;
 
 	/** If true, all attached primary weapons will be fired together. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Weapons", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Weapons")
 	bool bIsFiringPrimaryWeapons;
 
+
+	//////////////////////////////////////////////////////////////////////////
+	// Miscellaneous.
+	//////////////////////////////////////////////////////////////////////////
+
 	/** The "side" this spacecraft belongs to. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Misc", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Misc")
 	ESpacecraftFaction Faction;
 
 public:

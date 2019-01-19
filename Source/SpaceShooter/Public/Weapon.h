@@ -23,15 +23,25 @@ private:
 	UStaticMeshComponent* MeshComponent;
 
 	/** Class of the projectile to spawn when shooting. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AProjectile> ProjectileClass;
 
 	/** Amount of damage one projectile can cause. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
 	float Damage;
 
+	/**
+	 * Determines the triangular area in which projectiles can be fired.
+	 * Higher values mean more space can be covered but it becomes harder to hit a specific target. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true", ClampMin = "20", UIMin = "20", ClampMax = "180", UIMax = "180"))
+	float SpreadAngle;
+	
+	/** Affects the precision of the projectiles fired by this weapon: higher value = higher chance to hit. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true", ClampMin = "0", UIMin = "0", ClampMax = "100", UIMax = "100"))
+	float Accuracy;
+
 	/** Amount of projectiles to shoot per second. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
 	float FireRate;
 
 	/** Amount of time which has passed since the last moment the weapon has been fired, in seconds. */
@@ -39,11 +49,11 @@ private:
 	float TimePassedSinceLastShot;
 
 	/** Particle system which is spawned whenever this weapon shoots projectiles. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
 	UParticleSystem* WeaponFiringParticleEffect;
 
 	/** Sound played whenever this weapon shoots projectiles. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
 	USoundBase* WeaponFiringSound;
 
 public:
