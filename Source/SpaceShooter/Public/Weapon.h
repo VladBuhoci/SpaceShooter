@@ -32,7 +32,10 @@ private:
 
 	/**
 	 * Determines the triangular area in which projectiles can be fired.
-	 * Higher values mean more space can be covered but it becomes harder to hit a specific target. */
+	 * Higher values mean more space can be covered but it becomes harder to hit a specific target.
+	 * The spread angle is the angle between the center of the cone and any of its edges.
+	 * It is half the angle of the cone's aperture, thus the aperture's angle will be SpreadAngle * 2.
+	 */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true", ClampMin = "20", UIMin = "20", ClampMax = "180", UIMax = "180"))
 	float SpreadAngle;
 	
@@ -40,9 +43,31 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true", ClampMin = "0", UIMin = "0", ClampMax = "100", UIMax = "100"))
 	float Accuracy;
 
+	/** This is the actual accuracy used when firing the weapon. For details, see: Accuracy. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
+	float CurrentAccuracy;
+
+	/** Amount of accuracy units to recover per second. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
+	float AccuracyRecoveryRate;
+
+	/** Time (in seconds) to pass before the accuracy begins to return to its base value. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
+	float AccuracyRecoveryDelay;
+
+	FTimerHandle CountToBeginAccuracyRecoveryTimer;
+
 	/** Amount of projectiles to shoot per second. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
 	float FireRate;
+
+	/** Recoil is applied to the current accuracy whenever this weapon shoots something, making it less precise. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
+	float Recoil;
+
+	/** Recoil reduction is used to decrease the recoil right before it is applied. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
+	float RecoilReduction;
 
 	/** Amount of time which has passed since the last moment the weapon has been fired, in seconds. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
@@ -75,4 +100,6 @@ private:
 	void ResetTimeSinceLastWeaponUsage();
 	bool IsAllowedToFireWeapon();
 	void PlayWeaponFiringEffects();
+	void ApplyRecoil();
+	void RecoverAccuracyByOneWholeRate();
 };

@@ -10,6 +10,8 @@
 
 #include "Kismet/GameplayStatics.h"
 
+#include "Runtime/Engine/Public/TimerManager.h"
+
 
 /** Sets default values. */
 AWeapon::AWeapon()
@@ -18,9 +20,13 @@ AWeapon::AWeapon()
 
 	MeshComponent           = CreateDefaultSubobject<UStaticMeshComponent>("Mesh Component");
 	Damage                  = 10.0f;
-	SpreadAngle             = 90.0f;
+	SpreadAngle             = 30.0f;
 	Accuracy                = 75.0f;
+	AccuracyRecoveryRate    = 3.0f;
+	AccuracyRecoveryDelay   = 0.5f;
 	FireRate                = 5.0f;
+	Recoil                  = 1.5f;
+	RecoilReduction         = 0.5f;
 	TimePassedSinceLastShot = 0.0f;
 }
 
@@ -29,6 +35,7 @@ void AWeapon::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	CurrentAccuracy = Accuracy;
 }
 
 /** Called every frame. */
@@ -49,9 +56,8 @@ void AWeapon::FireWeapon(ASpacecraftPawn* ProjectileOwner)
 		if (World)
 		{
 			// Set up the spawn parameters for the projectile that'll be fired.
-			float HalfSpreadAngle              = SpreadAngle / 2;
-			float InaccuracyFactorRaw          = HalfSpreadAngle - (Accuracy * HalfSpreadAngle / 100);			// Formula used: ConeAngle - Accuracy%ConeAngle.
-			float InaccuracyFactorMax          = FMath::Clamp(InaccuracyFactorRaw, 0.0f, HalfSpreadAngle);
+			float InaccuracyFactorRaw          = SpreadAngle - (CurrentAccuracy * SpreadAngle / 100);			// Formula used: SpreadAngle - Accuracy % SpreadAngle.
+			float InaccuracyFactorMax          = FMath::Clamp(InaccuracyFactorRaw, 0.0f, SpreadAngle);
 			float InaccuracyFactor             = FMath::FRandRange(-InaccuracyFactorMax, InaccuracyFactorMax);
 			float DistanceFromShipToSpawnPoint = 100.0f;
 
@@ -69,13 +75,21 @@ void AWeapon::FireWeapon(ASpacecraftPawn* ProjectileOwner)
 			
 			if (FiredProjectile)
 			{
+				// If we fire something, abort the countdown process that would trigger accuracy recovery.
+				GetWorldTimerManager().ClearTimer(CountToBeginAccuracyRecoveryTimer);
+
 				FiredProjectile->SetProjectileOwner(ProjectileOwner);
 				FiredProjectile->SetDamage(Damage);
 
 				PlayWeaponFiringEffects();
+				ApplyRecoil();
+				// TODO: activate a timer based on accuracy recovery delay field that activates another timer
+				//		which brings current accuracy back to base value using an accuracy recovery rate field.
 
-				// Reset the counter.
+				// Reset the counter for time which had passed between shots.
 				ResetTimeSinceLastWeaponUsage();
+
+				GetWorldTimerManager().SetTimer(CountToBeginAccuracyRecoveryTimer, this, &AWeapon::RecoverAccuracyByOneWholeRate, AccuracyRecoveryDelay);
 			}
 		}
 	}
@@ -114,3 +128,35 @@ void AWeapon::PlayWeaponFiringEffects()
 	}
 }
 
+void AWeapon::ApplyRecoil()
+{
+	CurrentAccuracy -= Recoil - RecoilReduction;
+	CurrentAccuracy = FMath::Clamp(CurrentAccuracy, 0.0f, 100.0f);
+}
+
+void AWeapon::RecoverAccuracyByOneWholeRate()
+{
+	// We try to get back to the base value of the accuracy here.
+
+	float Delta = FMath::Abs(CurrentAccuracy - Accuracy);
+
+	if (Delta == 0)
+		return;
+
+	int TimeUntilNextRecovery = 1;		// 1 second until we recover some more accuracy units.
+	int SignFactor = CurrentAccuracy == Accuracy ? 0 : CurrentAccuracy < Accuracy ? 1 : -1;
+
+	if (Delta < AccuracyRecoveryRate)
+	{
+		CurrentAccuracy += Delta * SignFactor;
+		CurrentAccuracy = FMath::Clamp(CurrentAccuracy, 0.0f, 100.0f);
+	}
+	else
+	{
+		CurrentAccuracy += AccuracyRecoveryRate * SignFactor;
+		CurrentAccuracy = FMath::Clamp(CurrentAccuracy, 0.0f, 100.0f);
+	}
+
+	if (CurrentAccuracy != Accuracy)
+		GetWorldTimerManager().SetTimer(CountToBeginAccuracyRecoveryTimer, this, &AWeapon::RecoverAccuracyByOneWholeRate, TimeUntilNextRecovery);
+}
