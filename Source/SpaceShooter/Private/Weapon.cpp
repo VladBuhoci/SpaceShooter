@@ -59,10 +59,9 @@ void AWeapon::FireWeapon(ASpacecraftPawn* ProjectileOwner)
 			float InaccuracyFactorRaw          = SpreadAngle - (CurrentAccuracy * SpreadAngle / 100);			// Formula used: SpreadAngle - Accuracy % SpreadAngle.
 			float InaccuracyFactorMax          = FMath::Clamp(InaccuracyFactorRaw, 0.0f, SpreadAngle);
 			float InaccuracyFactor             = FMath::FRandRange(-InaccuracyFactorMax, InaccuracyFactorMax);
-			float DistanceFromShipToSpawnPoint = 100.0f;
 
 			FTransform ProjectileTransform;
-			FVector    ProjectileLocation = GetActorLocation() + GetActorForwardVector() * DistanceFromShipToSpawnPoint;
+			FVector    ProjectileLocation = MeshComponent->GetSocketLocation("Muzzle");
 			FRotator   ProjectileRotation = GetActorRotation();
 
 			ProjectileRotation.Yaw += InaccuracyFactor;

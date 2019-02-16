@@ -56,7 +56,7 @@ void ASpacePlayerController::HandleTargetIconOnScreen()
 
 		if (GetMousePosition(posX, posY) && OwnedHUD)
 		{
-			OwnedHUD->UpdateTargetIconPosition(posX, posY);
+			OwnedHUD->UpdateCrosshairIconPosition(posX, posY);
 		}
 	}
 }
@@ -117,7 +117,7 @@ void ASpacePlayerController::DeactivateTurboMode()
 
 void ASpacePlayerController::SignalPlayerDied()
 {
-	OwnedHUD->SetCanDrawTargetIcon(false);
+	OwnedHUD->SetCanDrawCrosshairIcon(false);
 
 	bShowMouseCursor = true;
 }
@@ -126,7 +126,7 @@ void ASpacePlayerController::SignalPlayerRespawned()
 {
 	bShowMouseCursor = false;
 
-	OwnedHUD->SetCanDrawTargetIcon(true);
+	OwnedHUD->SetCanDrawCrosshairIcon(true);
 }
 
 void ASpacePlayerController::BeginFiringPrimaryWeapons()

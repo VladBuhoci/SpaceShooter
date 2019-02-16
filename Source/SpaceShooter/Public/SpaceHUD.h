@@ -6,6 +6,22 @@
 #include "GameFramework/HUD.h"
 #include "SpaceHUD.generated.h"
 
+
+USTRUCT(BlueprintInternalUseOnly)
+struct FCrosshairParams
+{
+	GENERATED_USTRUCT_BODY()
+
+	/** The crosshair image to be rendered on screen where the mouse cursor points at. */
+	UMaterialInterface* Icon;
+	
+	/** Crosshair image X coordinate. */
+	float PosX;
+
+	/** Crosshair image Y coordinate. */
+	float PosY;
+};
+
 /**
  * The Space Game Mode's HUD class.
  */
@@ -14,21 +30,12 @@ class SPACESHOOTER_API ASpaceHUD : public AHUD
 {
 	GENERATED_BODY()
 	
-	/** The target image to be rendered on screen where the mouse cursor points at. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space HUD", Meta = (AllowPrivateAccess = "true"))
-	UMaterialInterface * TargetIcon;
-	
-	/** Target image X coordinate. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space HUD", Meta = (AllowPrivateAccess = "true"))
-	float TargetPosX;
+	/** Controls the end result of the crosshair's rendering every frame. */
+	FCrosshairParams CrosshairParams;
 
-	/** Target image Y coordinate. */
+	/** True if the crosshair icon should be currently drawn on screen. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space HUD", Meta = (AllowPrivateAccess = "true"))
-	float TargetPosY;
-
-	/** True if the target icon should be currently drawn on screen. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space HUD", Meta = (AllowPrivateAccess = "true"))
-	bool bCanDrawTarget;
+	bool bCanDrawCrosshair;
 
 public:
 	ASpaceHUD();
@@ -38,10 +45,10 @@ public:
 
 	// Public interface:
 public:
-	/** Redraws the target image on the screen using the new coordinates. */
-	void UpdateTargetIconPosition(float newPosX, float newPosY);
+	/** Update the crosshair icon's coordinates on the screen. */
+	void UpdateCrosshairIconPosition(float newPosX, float newPosY);
 
-	void SetCanDrawTargetIcon(bool NewState) { bCanDrawTarget = NewState; }
+	void SetCanDrawCrosshairIcon(bool NewState) { bCanDrawCrosshair = NewState; }
 
 	// ~ end of public interface.
 };

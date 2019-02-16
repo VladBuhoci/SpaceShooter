@@ -222,7 +222,7 @@ public:
 
 	virtual void MoveForward(float Value);
 	virtual void MoveBackward(float Value);
-	virtual void RotateSpacecraft(FRotator rotator);
+	virtual void RotateSpacecraft(FRotator Rotator);
 	virtual void ActivateTurboMode();
 	virtual void DeactivateTurboMode();
 
@@ -271,8 +271,8 @@ public:
 	virtual void EndFiringPrimaryWeapons();
 
 private:
-	void RotateSpacecraftClockwise(FRotator newRotation);
-	void RotateSpacecraftCounterclockwise(FRotator newRotation);
+	void RotateSpacecraftClockwise(FRotator NewRotation);
+	void RotateSpacecraftCounterclockwise(FRotator NewRotation);
 	void StopRotatingSpacecraft();
 	void StopMovingSpacecraft();
 

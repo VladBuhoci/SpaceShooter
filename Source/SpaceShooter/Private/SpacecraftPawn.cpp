@@ -192,10 +192,10 @@ bool ASpacecraftPawn::IsCurrentlyFlying() const
 	return SpacecraftMovementComponent->Velocity.Size() > 0.0f;
 }
 
-void ASpacecraftPawn::RotateSpacecraft(FRotator rotator)
+void ASpacecraftPawn::RotateSpacecraft(FRotator Rotator)
 {
 	FRotator previousRotation = SpacecraftMeshComponent->GetComponentRotation();
-	FRotator newRotation      = UKismetMathLibrary::RInterpTo(previousRotation, rotator, FApp::GetDeltaTime(), SpacecraftTurnSpeed);
+	FRotator newRotation      = UKismetMathLibrary::RInterpTo(previousRotation, Rotator, FApp::GetDeltaTime(), SpacecraftTurnSpeed);
 	
 	// If the yaw happens to be negative, calculate the positive value it could have been instead (e.g.: for -40 it is 320).
 	previousRotation.Yaw = previousRotation.Yaw >= 0.0f ? previousRotation.Yaw : 360.0f + previousRotation.Yaw;
@@ -270,7 +270,7 @@ void ASpacecraftPawn::OnTurboModeDeactivated()
 
 }
 
-void ASpacecraftPawn::RotateSpacecraftClockwise(FRotator newRotation)
+void ASpacecraftPawn::RotateSpacecraftClockwise(FRotator NewRotation)
 {
 	RightSideThrusterParticleEmitter->DeactivateSystem();
 	
@@ -279,10 +279,10 @@ void ASpacecraftPawn::RotateSpacecraftClockwise(FRotator newRotation)
 		LeftSideThrusterParticleEmitter->ActivateSystem();
 	}
 
-	SpacecraftMeshComponent->SetWorldRotation(newRotation);
+	SpacecraftMeshComponent->SetWorldRotation(NewRotation);
 }
 
-void ASpacecraftPawn::RotateSpacecraftCounterclockwise(FRotator newRotation)
+void ASpacecraftPawn::RotateSpacecraftCounterclockwise(FRotator NewRotation)
 {
 	LeftSideThrusterParticleEmitter->DeactivateSystem();
 
@@ -291,7 +291,7 @@ void ASpacecraftPawn::RotateSpacecraftCounterclockwise(FRotator newRotation)
 		RightSideThrusterParticleEmitter->ActivateSystem();
 	}
 
-	SpacecraftMeshComponent->SetWorldRotation(newRotation);
+	SpacecraftMeshComponent->SetWorldRotation(NewRotation);
 }
 
 void ASpacecraftPawn::StopRotatingSpacecraft()
