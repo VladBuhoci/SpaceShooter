@@ -9,6 +9,7 @@
 // Forward declarations.
 class AProjectile;
 
+
 /**
  * Base class of all spaceship weapons.
  */
@@ -36,7 +37,7 @@ private:
 	 * The spread angle is the angle between the center of the cone and any of its edges.
 	 * It is half the angle of the cone's aperture, thus the aperture's angle will be SpreadAngle * 2.
 	 */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true", ClampMin = "20", UIMin = "20", ClampMax = "180", UIMax = "180"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true", ClampMin = "5", UIMin = "5", ClampMax = "45", UIMax = "45"))
 	float SpreadAngle;
 	
 	/** Affects the precision of the projectiles fired by this weapon: higher value = higher chance to hit. */
@@ -55,6 +56,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
 	float AccuracyRecoveryDelay;
 
+	/** Used to control the timer which triggers the process of restoring accuracy to its initial value. */
 	FTimerHandle CountToBeginAccuracyRecoveryTimer;
 
 	/** Amount of projectiles to shoot per second. */
@@ -64,10 +66,6 @@ private:
 	/** Recoil is applied to the current accuracy whenever this weapon shoots something, making it less precise. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
 	float Recoil;
-
-	/** Recoil reduction is used to decrease the recoil right before it is applied. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
-	float RecoilReduction;
 
 	/** Amount of time which has passed since the last moment the weapon has been fired, in seconds. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))

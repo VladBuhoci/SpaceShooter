@@ -20,13 +20,12 @@ AWeapon::AWeapon()
 
 	MeshComponent           = CreateDefaultSubobject<UStaticMeshComponent>("Mesh Component");
 	Damage                  = 10.0f;
-	SpreadAngle             = 30.0f;
-	Accuracy                = 75.0f;
-	AccuracyRecoveryRate    = 3.0f;
+	SpreadAngle             = 15.0f;
+	Accuracy                = 85.0f;
+	AccuracyRecoveryRate    = 25.0f;
 	AccuracyRecoveryDelay   = 0.5f;
 	FireRate                = 5.0f;
-	Recoil                  = 1.5f;
-	RecoilReduction         = 0.5f;
+	Recoil                  = 2.5f;
 	TimePassedSinceLastShot = 0.0f;
 }
 
@@ -56,9 +55,9 @@ void AWeapon::FireWeapon(ASpacecraftPawn* ProjectileOwner)
 		if (World)
 		{
 			// Set up the spawn parameters for the projectile that'll be fired.
-			float InaccuracyFactorRaw          = SpreadAngle - (CurrentAccuracy * SpreadAngle / 100);			// Formula used: SpreadAngle - Accuracy % SpreadAngle.
-			float InaccuracyFactorMax          = FMath::Clamp(InaccuracyFactorRaw, 0.0f, SpreadAngle);
-			float InaccuracyFactor             = FMath::FRandRange(-InaccuracyFactorMax, InaccuracyFactorMax);
+			float InaccuracyFactorRaw = SpreadAngle - (CurrentAccuracy * SpreadAngle / 100);			// Formula used: SpreadAngle - Accuracy % SpreadAngle.
+			float InaccuracyFactorMax = FMath::Clamp(InaccuracyFactorRaw, 0.0f, SpreadAngle);
+			float InaccuracyFactor    = FMath::FRandRange(-InaccuracyFactorMax, InaccuracyFactorMax);
 
 			FTransform ProjectileTransform;
 			FVector    ProjectileLocation = MeshComponent->GetSocketLocation("Muzzle");
@@ -129,13 +128,13 @@ void AWeapon::PlayWeaponFiringEffects()
 
 void AWeapon::ApplyRecoil()
 {
-	CurrentAccuracy -= Recoil - RecoilReduction;
+	CurrentAccuracy -= Recoil;
 	CurrentAccuracy = FMath::Clamp(CurrentAccuracy, 0.0f, 100.0f);
 }
 
 void AWeapon::RecoverAccuracyByOneWholeRate()
 {
-	// We try to get back to the base value of the accuracy here.
+	// We try to get back to the base value of accuracy.
 
 	float Delta = FMath::Abs(CurrentAccuracy - Accuracy);
 
