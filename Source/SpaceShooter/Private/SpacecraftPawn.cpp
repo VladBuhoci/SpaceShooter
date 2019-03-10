@@ -47,7 +47,6 @@ ASpacecraftPawn::ASpacecraftPawn()
 	SpacecraftTurnSpeed              = 10.0f;
 	MaxHitPoints                     = 100.0f;
 	MaxShieldPoints                  = 200.0f;
-	ShieldAbsorptionRate             = 40;
 	ShieldRechargeRate               = 4.0f;
 	ShieldRechargeTimePassedSinceLastPointRecharged = 0.0f;
 	ShieldRechargeDelay              = 2.5f;
@@ -340,26 +339,27 @@ void ASpacecraftPawn::DestroyWeaponry()
 
 float ASpacecraftPawn::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
+	// End the previous shield recharge process when hit.
+	StopShieldRechargeProcess();
+	
 	// Damage the shield first.
 	// If the shield is down, damage the ship.
-
 	if (CurrentShieldPoints > 0)
 	{
-		int32 DamageToAbsorb           = Damage * ShieldAbsorptionRate / 100;
-		int32 UnabsorbedAbsorbedDamage = DamageToAbsorb - CurrentShieldPoints;	// In case the shield cannot take in all of this damage, keep the remaining bit for the ship.
-		int32 ActualAbsorbedDamage     = DamageToAbsorb - FMath::Clamp(UnabsorbedAbsorbedDamage, 0, UnabsorbedAbsorbedDamage);
+		int32 UnabsorbedAbsorbedDamage = Damage - CurrentShieldPoints;	// In case the shield cannot take in all of this damage, keep the remaining bit for the ship.
+		int32 ActualAbsorbedDamage     = Damage - FMath::Clamp(UnabsorbedAbsorbedDamage, 0, UnabsorbedAbsorbedDamage);
 		int32 DamageTakenByShip        = Damage - ActualAbsorbedDamage;
 
 		CurrentShieldPoints -= ActualAbsorbedDamage;
 		CurrentHitPoints    -= DamageTakenByShip;
-
-		// Since the shield has been damaged, schedule a recharge process.
-		GetWorldTimerManager().SetTimer(ShieldRechargeTimerHandle, this, &ASpacecraftPawn::BeginShieldRechargeProcess, ShieldRechargeDelay, false);
 	}
 	else
 	{
 		CurrentHitPoints -= Damage;
 	}
+	
+	// Schedule a new shield recharge process.
+	GetWorldTimerManager().SetTimer(ShieldRechargeTimerHandle, this, &ASpacecraftPawn::BeginShieldRechargeProcess, ShieldRechargeDelay, false);
 
 	if (CurrentHitPoints <= 0.0f)
 	{
@@ -422,10 +422,10 @@ void ASpacecraftPawn::CheckShieldStatus()
 
 		if (ShouldIncrementShieldEnergyPoints())
 		{
-			CurrentShieldPoints += 1;
+			CurrentShieldPoints = FMath::Clamp(++ CurrentShieldPoints, 0, MaxShieldPoints);
 
-			// If the shield reached full capacity, stop the recharge process.
-			if (CurrentShieldPoints >= MaxShieldPoints)
+			// If the shield reached full capacity, stop the recharging process.
+			if (CurrentShieldPoints == MaxShieldPoints)
 			{
 				StopShieldRechargeProcess();
 			}

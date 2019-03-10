@@ -137,14 +137,6 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Survivability")
 	int32 CurrentShieldPoints;
 
-	/**
-	 * Amount of damage this shield absorbs (percentage of total damage received), losing an equivalent 
-	 *		amount of energy points in the process.
-	 * The remaining damage (that did not get absorbed) will be inflicted onto the spacecraft itself.
-	 */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Survivability")
-	int32 ShieldAbsorptionRate;
-
 	/** The rate at which this ship's shield recharges itself to full capacity, measured in points per second. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Survivability")
 	float ShieldRechargeRate;

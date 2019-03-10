@@ -22,7 +22,6 @@ ASpaceEnemyPawn::ASpaceEnemyPawn()
 	MoveBackwardSpeed               = 600.0f;
 	MaxHitPoints                    = 50.0f;
 	MaxShieldPoints                 = 100.0f;
-	ShieldAbsorptionRate            = 20;
 	ShieldRechargeRate              = 5.0f;
 	ShieldRechargeDelay             = 3.0f;
 	Faction                         = ESpacecraftFaction::Alien;
