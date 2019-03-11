@@ -23,7 +23,7 @@ ASpaceEnemyPawn::ASpaceEnemyPawn()
 	MaxHitPoints                    = 50.0f;
 	MaxShieldPoints                 = 100.0f;
 	ShieldRechargeRate              = 5.0f;
-	ShieldRechargeDelay             = 3.0f;
+	ShieldRechargeDelay             = 2.5f;
 	Faction                         = ESpacecraftFaction::Alien;
 	DetectionAreaRadius             = 1500.0f;
 	CloseQuartersAreaRadius         = 500.0f;

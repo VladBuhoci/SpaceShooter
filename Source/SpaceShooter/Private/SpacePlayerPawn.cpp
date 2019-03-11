@@ -37,8 +37,8 @@ ASpacePlayerPawn::ASpacePlayerPawn()
 	MoveBackwardSpeed            = 900.0f;
 	MaxHitPoints                 = 100.0f;
 	MaxShieldPoints              = 200.0f;
-	ShieldRechargeRate           = 4.0f;
-	ShieldRechargeDelay          = 2.0f;
+	ShieldRechargeRate           = 10.0f;
+	ShieldRechargeDelay          = 1.25f;
 	SpringArmOffset              = FVector(-600.0f, 0.0f, 700.0f);
 	SpringArmRotation            = FRotator(-50.0f, 0.0f, 0.0f);
 	SpacecraftTurnSpeed          = 10.0f;

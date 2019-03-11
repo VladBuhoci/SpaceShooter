@@ -47,9 +47,8 @@ ASpacecraftPawn::ASpacecraftPawn()
 	SpacecraftTurnSpeed              = 10.0f;
 	MaxHitPoints                     = 100.0f;
 	MaxShieldPoints                  = 200.0f;
-	ShieldRechargeRate               = 4.0f;
-	ShieldRechargeTimePassedSinceLastPointRecharged = 0.0f;
-	ShieldRechargeDelay              = 2.5f;
+	ShieldRechargeRate               = 6.5f;
+	ShieldRechargeDelay              = 2.0f;
 	bIsShieldRecharging              = false;
 	bIsFiringPrimaryWeapons			 = false;
 	Faction                          = ESpacecraftFaction::Unspecified;
@@ -134,7 +133,7 @@ void ASpacecraftPawn::Tick(float DeltaTime)
 		StopMovingSpacecraft();
 	}
 
-	CheckShieldStatus();
+	CheckShieldStatus(DeltaTime);
 	CheckIfWeaponsNeedToBeFired();
 }
 
@@ -359,7 +358,7 @@ float ASpacecraftPawn::TakeDamage(float Damage, FDamageEvent const& DamageEvent,
 	}
 	
 	// Schedule a new shield recharge process.
-	GetWorldTimerManager().SetTimer(ShieldRechargeTimerHandle, this, &ASpacecraftPawn::BeginShieldRechargeProcess, ShieldRechargeDelay, false);
+	ScheduleShieldRechargeProcess();
 
 	if (CurrentHitPoints <= 0.0f)
 	{
@@ -414,44 +413,42 @@ void ASpacecraftPawn::PlayDestroyEffects()
 	}
 }
 
-void ASpacecraftPawn::CheckShieldStatus()
+void ASpacecraftPawn::CheckShieldStatus(float DeltaTime)
 {
 	if (bIsShieldRecharging)
 	{
-		ShieldRechargeTimePassedSinceLastPointRecharged += FApp::GetDeltaTime();
-
-		if (ShouldIncrementShieldEnergyPoints())
-		{
-			CurrentShieldPoints = FMath::Clamp(++ CurrentShieldPoints, 0, MaxShieldPoints);
-
-			// If the shield reached full capacity, stop the recharging process.
-			if (CurrentShieldPoints == MaxShieldPoints)
-			{
-				StopShieldRechargeProcess();
-			}
-		}
+		RechargeShield(DeltaTime);
 	}
+}
+
+void ASpacecraftPawn::ScheduleShieldRechargeProcess()
+{
+	GetWorldTimerManager().SetTimer(ShieldRechargeTimerHandle, this, &ASpacecraftPawn::BeginShieldRechargeProcess, ShieldRechargeDelay, false);
 }
 
 void ASpacecraftPawn::BeginShieldRechargeProcess()
 {
-	ShieldRechargeTimePassedSinceLastPointRecharged = 0.0f;
-	bIsShieldRecharging                             = true;
+	bIsShieldRecharging = true;
 
 	GetWorldTimerManager().ClearTimer(ShieldRechargeTimerHandle);
 }
 
 void ASpacecraftPawn::StopShieldRechargeProcess()
 {
-	ShieldRechargeTimePassedSinceLastPointRecharged = 0.0f;
-	bIsShieldRecharging                             = false;
+	bIsShieldRecharging = false;
 
 	GetWorldTimerManager().ClearTimer(ShieldRechargeTimerHandle);
 }
 
-bool ASpacecraftPawn::ShouldIncrementShieldEnergyPoints()
+void ASpacecraftPawn::RechargeShield(float DeltaTime)
 {
-	return ShieldRechargeTimePassedSinceLastPointRecharged >= 1.0f / ShieldRechargeRate;
+	CurrentShieldPoints = FMath::FInterpConstantTo(CurrentShieldPoints, MaxShieldPoints, DeltaTime, ShieldRechargeRate);
+	
+	// If the shield reached full capacity, stop the recharging process.
+	if (CurrentShieldPoints == MaxShieldPoints)
+	{
+		StopShieldRechargeProcess();
+	}
 }
 
 void ASpacecraftPawn::BeginFiringPrimaryWeapons()

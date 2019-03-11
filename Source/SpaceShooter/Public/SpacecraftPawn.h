@@ -123,27 +123,23 @@ protected:
 
 	/** Maximum amount of damage this spacecraft can take before it gets destroyed. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Survivability")
-	int32 MaxHitPoints;
+	float MaxHitPoints;
 
 	/** Current amount of damage this spacecraft can take before it gets destroyed. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Survivability")
-	int32 CurrentHitPoints;
+	float CurrentHitPoints;
 
 	/** The energy shield's maximum capacity. Once it is zero it can no longer protect this spacecraft. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Survivability")
-	int32 MaxShieldPoints;
+	float MaxShieldPoints;
 
 	/** Current amount of energy shield points. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Survivability")
-	int32 CurrentShieldPoints;
+	float CurrentShieldPoints;
 
 	/** The rate at which this ship's shield recharges itself to full capacity, measured in points per second. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Survivability")
 	float ShieldRechargeRate;
-
-	/** Amount of time which has passed since the last moment the shield has regained 1 point of energy, in seconds. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Survivability")
-	float ShieldRechargeTimePassedSinceLastPointRecharged;
 
 	/**
 	 * Once damaged, the shield will attempt to recharge itself, but only after a short amount of time
@@ -245,10 +241,11 @@ protected:
 	void PlayDestroyEffects();
 
 private:
-	void CheckShieldStatus();
+	void CheckShieldStatus(float DeltaTime);
+	void ScheduleShieldRechargeProcess();
 	void BeginShieldRechargeProcess();
 	void StopShieldRechargeProcess();
-	bool ShouldIncrementShieldEnergyPoints();
+	void RechargeShield(float DeltaTime);
 
 
 	/**********************************

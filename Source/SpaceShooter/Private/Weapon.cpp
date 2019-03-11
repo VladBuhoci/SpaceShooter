@@ -18,15 +18,16 @@ AWeapon::AWeapon()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	MeshComponent           = CreateDefaultSubobject<UStaticMeshComponent>("Mesh Component");
-	Damage                  = 10.0f;
-	SpreadAngle             = 15.0f;
-	Accuracy                = 85.0f;
-	AccuracyRecoveryRate    = 25.0f;
-	AccuracyRecoveryDelay   = 0.5f;
-	FireRate                = 5.0f;
-	Recoil                  = 2.5f;
-	TimePassedSinceLastShot = 0.0f;
+	MeshComponent            = CreateDefaultSubobject<UStaticMeshComponent>("Mesh Component");
+	Damage                   = 10.0f;
+	SpreadAngle              = 15.0f;
+	Accuracy                 = 85.0f;
+	AccuracyRecoveryRate     = 15.3f;
+	AccuracyRecoveryDelay    = 0.5f;
+	bIsAccuracyBeingRestored = false;
+	FireRate                 = 5.0f;
+	Recoil                   = 2.5f;
+	TimePassedSinceLastShot  = 0.0f;
 }
 
 /** Called when the game starts or when spawned. */
@@ -44,6 +45,8 @@ void AWeapon::Tick(float DeltaTime)
 
 	TimePassedSinceLastShot += DeltaTime;
 	TimePassedSinceLastShot = FMath::Clamp(TimePassedSinceLastShot, TimePassedSinceLastShot, 100.0f);	// Don't let this go too high..
+
+	CheckAccuracyStatus(DeltaTime);
 }
 
 void AWeapon::FireWeapon(ASpacecraftPawn* ProjectileOwner)
@@ -73,21 +76,19 @@ void AWeapon::FireWeapon(ASpacecraftPawn* ProjectileOwner)
 			
 			if (FiredProjectile)
 			{
-				// If we fire something, abort the countdown process that would trigger accuracy recovery.
-				GetWorldTimerManager().ClearTimer(CountToBeginAccuracyRecoveryTimer);
+				StopAccuracyRecoveryProcess();
 
 				FiredProjectile->SetProjectileOwner(ProjectileOwner);
 				FiredProjectile->SetDamage(Damage);
 
 				PlayWeaponFiringEffects();
 				ApplyRecoil();
-				// TODO: activate a timer based on accuracy recovery delay field that activates another timer
-				//		which brings current accuracy back to base value using an accuracy recovery rate field.
-
+				
 				// Reset the counter for time which had passed between shots.
 				ResetTimeSinceLastWeaponUsage();
 
-				GetWorldTimerManager().SetTimer(CountToBeginAccuracyRecoveryTimer, this, &AWeapon::RecoverAccuracyByOneWholeRate, AccuracyRecoveryDelay);
+				// Prepare for future accuracy recovery.
+				ScheduleAccuracyRecoveryProcess();
 			}
 		}
 	}
@@ -132,29 +133,40 @@ void AWeapon::ApplyRecoil()
 	CurrentAccuracy = FMath::Clamp(CurrentAccuracy, 0.0f, 100.0f);
 }
 
-void AWeapon::RecoverAccuracyByOneWholeRate()
+void AWeapon::CheckAccuracyStatus(float DeltaTime)
 {
-	// We try to get back to the base value of accuracy.
-
-	float Delta = FMath::Abs(CurrentAccuracy - Accuracy);
-
-	if (Delta == 0)
-		return;
-
-	int TimeUntilNextRecovery = 1;		// 1 second until we recover some more accuracy units.
-	int SignFactor = CurrentAccuracy == Accuracy ? 0 : CurrentAccuracy < Accuracy ? 1 : -1;
-
-	if (Delta < AccuracyRecoveryRate)
+	if (bIsAccuracyBeingRestored)
 	{
-		CurrentAccuracy += Delta * SignFactor;
-		CurrentAccuracy = FMath::Clamp(CurrentAccuracy, 0.0f, 100.0f);
+		RecoverAccuracy(DeltaTime);
 	}
-	else
-	{
-		CurrentAccuracy += AccuracyRecoveryRate * SignFactor;
-		CurrentAccuracy = FMath::Clamp(CurrentAccuracy, 0.0f, 100.0f);
-	}
+}
 
-	if (CurrentAccuracy != Accuracy)
-		GetWorldTimerManager().SetTimer(CountToBeginAccuracyRecoveryTimer, this, &AWeapon::RecoverAccuracyByOneWholeRate, TimeUntilNextRecovery);
+void AWeapon::ScheduleAccuracyRecoveryProcess()
+{
+	GetWorldTimerManager().SetTimer(CountToBeginAccuracyRecoveryTimer, this, &AWeapon::BeginAccuracyRecoveryProcess, AccuracyRecoveryDelay);
+}
+
+void AWeapon::BeginAccuracyRecoveryProcess()
+{
+	bIsAccuracyBeingRestored = true;
+
+	GetWorldTimerManager().ClearTimer(CountToBeginAccuracyRecoveryTimer);
+}
+
+void AWeapon::StopAccuracyRecoveryProcess()
+{
+	bIsAccuracyBeingRestored = false;
+
+	GetWorldTimerManager().ClearTimer(CountToBeginAccuracyRecoveryTimer);
+}
+
+void AWeapon::RecoverAccuracy(float DeltaTime)
+{
+	CurrentAccuracy = FMath::FInterpConstantTo(CurrentAccuracy, Accuracy, DeltaTime, AccuracyRecoveryRate);
+
+	// If current accuracy is equal to the initial value, stop the recovery process.
+	if (CurrentAccuracy == Accuracy)
+	{
+		StopAccuracyRecoveryProcess();
+	}
 }

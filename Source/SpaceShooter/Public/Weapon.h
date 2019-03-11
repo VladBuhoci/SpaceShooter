@@ -56,6 +56,10 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
 	float AccuracyRecoveryDelay;
 
+	/** True if Accuracy is currently returning to its initial value. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
+	bool bIsAccuracyBeingRestored;
+
 	/** Used to control the timer which triggers the process of restoring accuracy to its initial value. */
 	FTimerHandle CountToBeginAccuracyRecoveryTimer;
 
@@ -99,5 +103,10 @@ private:
 	bool IsAllowedToFireWeapon();
 	void PlayWeaponFiringEffects();
 	void ApplyRecoil();
-	void RecoverAccuracyByOneWholeRate();
+
+	void CheckAccuracyStatus(float DeltaTime);
+	void ScheduleAccuracyRecoveryProcess();
+	void BeginAccuracyRecoveryProcess();
+	void StopAccuracyRecoveryProcess();
+	void RecoverAccuracy(float DeltaTime);
 };
