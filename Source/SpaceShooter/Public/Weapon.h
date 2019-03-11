@@ -75,6 +75,25 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
 	float TimePassedSinceLastShot;
 
+	/**
+	 * A value between 0% and 100% that once reaches its peak, it enters an overheated state
+	 *		and the weapon cannot be used again until it has completely cooled down.
+	 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
+	float CurrentHeat;
+
+	/** Amount of heat produced every single time the weapon is used. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
+	float HeatProducedPerShot;
+
+	/** Heat points "cooled down" (removed) per second. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
+	float CoolingRate;
+
+	/** If true, the weapon can't be fired until CurrentHeat reaches 0%. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
+	bool bIsOverheated;
+
 	/** Particle system which is spawned whenever this weapon shoots projectiles. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
 	UParticleSystem* WeaponFiringParticleEffect;
@@ -109,4 +128,18 @@ private:
 	void BeginAccuracyRecoveryProcess();
 	void StopAccuracyRecoveryProcess();
 	void RecoverAccuracy(float DeltaTime);
+
+	void CheckHeatState(float DeltaTime);
+	void ProduceHeat();
+	void EnterOverheatedState();
+	void ExitOverheatedState();
+	void CoolDown(float DeltaTime);
+
+public:
+	/** Returns the current percentage of total heat produced. */
+	UFUNCTION(BlueprintPure, Category = "Weapon")
+	float GetCurrentHeatLevel() const { return CurrentHeat; }
+
+	UFUNCTION(BlueprintPure, Category = "Weapon")
+	bool IsOverheated() const { return bIsOverheated; }
 };

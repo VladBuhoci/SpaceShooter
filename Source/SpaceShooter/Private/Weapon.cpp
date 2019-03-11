@@ -28,6 +28,10 @@ AWeapon::AWeapon()
 	FireRate                 = 5.0f;
 	Recoil                   = 2.5f;
 	TimePassedSinceLastShot  = 0.0f;
+	CurrentHeat              = 0.0f;
+	HeatProducedPerShot      = 9.2f;
+	CoolingRate              = 35.0f;
+	bIsOverheated            = false;
 }
 
 /** Called when the game starts or when spawned. */
@@ -47,6 +51,7 @@ void AWeapon::Tick(float DeltaTime)
 	TimePassedSinceLastShot = FMath::Clamp(TimePassedSinceLastShot, TimePassedSinceLastShot, 100.0f);	// Don't let this go too high..
 
 	CheckAccuracyStatus(DeltaTime);
+	CheckHeatState(DeltaTime);
 }
 
 void AWeapon::FireWeapon(ASpacecraftPawn* ProjectileOwner)
@@ -83,6 +88,7 @@ void AWeapon::FireWeapon(ASpacecraftPawn* ProjectileOwner)
 
 				PlayWeaponFiringEffects();
 				ApplyRecoil();
+				ProduceHeat();
 				
 				// Reset the counter for time which had passed between shots.
 				ResetTimeSinceLastWeaponUsage();
@@ -101,7 +107,7 @@ void AWeapon::ResetTimeSinceLastWeaponUsage()
 
 bool AWeapon::IsAllowedToFireWeapon()
 {
-	return TimePassedSinceLastShot >= 1.0f / FireRate;
+	return !IsOverheated() && TimePassedSinceLastShot >= 1.0f / FireRate;
 }
 
 // TODO: perhaps we can add some recoil effects too? (camera shake, ship knock back etc.)
@@ -168,5 +174,45 @@ void AWeapon::RecoverAccuracy(float DeltaTime)
 	if (CurrentAccuracy == Accuracy)
 	{
 		StopAccuracyRecoveryProcess();
+	}
+}
+
+void AWeapon::CheckHeatState(float DeltaTime)
+{
+	if (CurrentHeat > 0)
+	{
+		CoolDown(DeltaTime);
+	}
+}
+
+void AWeapon::ProduceHeat()
+{
+	CurrentHeat += HeatProducedPerShot;
+	CurrentHeat = FMath::Clamp(CurrentHeat, 0.0f, 100.0f);
+
+	if (CurrentHeat == 100.0f && !IsOverheated())
+	{
+		EnterOverheatedState();
+	}
+}
+
+void AWeapon::EnterOverheatedState()
+{
+	bIsOverheated = true;
+}
+
+void AWeapon::ExitOverheatedState()
+{
+	bIsOverheated = false;
+}
+
+void AWeapon::CoolDown(float DeltaTime)
+{
+	CurrentHeat = FMath::FInterpConstantTo(CurrentHeat, 0.0f, DeltaTime, CoolingRate);
+
+	// If CurrentHeat is equal to 0, stop the cooling process.
+	if (CurrentHeat == 0.0f && IsOverheated())
+	{
+		ExitOverheatedState();
 	}
 }
