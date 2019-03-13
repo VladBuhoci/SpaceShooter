@@ -89,10 +89,10 @@ protected:
 
 protected:
 	/** Sends a request to the spaceship to activate its primary weapons. */
-	void BeginFiringPrimaryWeapons();
+	void BeginFiringWeapon();
 
 	/** Sends a request to the spaceship to deactivate its primary weapons. */
-	void EndFiringPrimaryWeapons();
+	void EndFiringWeapon();
 
 
 	/**********************************

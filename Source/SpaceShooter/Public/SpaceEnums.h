@@ -19,10 +19,28 @@ enum class ESpacecraftFaction : uint8
 	/** The human race. */
 	Human,
 
-	/** The alien race. */
-	Alien
+	/** The clone race. */
+	Clone
 };
 
+/**
+ * Weapon categories.
+ */
+UENUM(BlueprintType)
+enum class EWeaponType : uint8
+{
+	/** Normal, (usually) single projectile firing weapon. */
+	Blaster,
+
+	/** Faster firing weapon. */
+	Cannon,
+
+	/** Multi-projectile firing weapon. */
+	Shotgun,
+
+	/** Missile firing weapon. */
+	Launcher
+};
 
 /**
  * 

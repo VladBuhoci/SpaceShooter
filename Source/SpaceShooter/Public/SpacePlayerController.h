@@ -43,10 +43,10 @@ protected:
 	virtual void BeginPlay() override;
 
 	/** Sends a request to the spaceship to activate its primary weapons. */
-	void BeginFiringPrimaryWeapons();
+	void BeginFiringWeapon();
 
 	/** Sends a request to the spaceship to deactivate its primary weapons. */
-	void EndFiringPrimaryWeapons();
+	void EndFiringWeapon();
 
 
 	/**********************************
@@ -65,6 +65,11 @@ private:
 
 	void ActivateTurboMode();
 	void DeactivateTurboMode();
+
+	void EquipWeapon_1();
+	void EquipWeapon_2();
+	void EquipWeapon_3();
+	void EquipWeapon_4();
 
 
 	/**********************************

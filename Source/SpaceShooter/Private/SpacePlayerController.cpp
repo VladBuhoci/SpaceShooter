@@ -44,8 +44,13 @@ void ASpacePlayerController::SetupInputComponent()
 	InputComponent->BindAction("Turbo Mode", IE_Pressed, this, &ASpacePlayerController::ActivateTurboMode);
 	InputComponent->BindAction("Turbo Mode", IE_Released, this, &ASpacePlayerController::DeactivateTurboMode);
 
-	InputComponent->BindAction("Use Primary Weapons", IE_Pressed, this, &ASpacePlayerController::BeginFiringPrimaryWeapons);
-	InputComponent->BindAction("Use Primary Weapons", IE_Released, this, &ASpacePlayerController::EndFiringPrimaryWeapons);
+	InputComponent->BindAction("Fire Weapon", IE_Pressed, this, &ASpacePlayerController::BeginFiringWeapon);
+	InputComponent->BindAction("Fire Weapon", IE_Released, this, &ASpacePlayerController::EndFiringWeapon);
+
+	InputComponent->BindAction("Equip Weapon 1", IE_Pressed, this, &ASpacePlayerController::EquipWeapon_1);
+	InputComponent->BindAction("Equip Weapon 2", IE_Pressed, this, &ASpacePlayerController::EquipWeapon_2);
+	InputComponent->BindAction("Equip Weapon 3", IE_Pressed, this, &ASpacePlayerController::EquipWeapon_3);
+	InputComponent->BindAction("Equip Weapon 4", IE_Pressed, this, &ASpacePlayerController::EquipWeapon_4);
 }
 
 void ASpacePlayerController::HandleTargetIconOnScreen()
@@ -115,6 +120,38 @@ void ASpacePlayerController::DeactivateTurboMode()
 	}
 }
 
+void ASpacePlayerController::EquipWeapon_1()
+{
+	if (PossessedSpacePawn && PossessedSpacePawn->IsNotDestroyed())
+	{
+		PossessedSpacePawn->EquipWeaponFromSlot_1();
+	}
+}
+
+void ASpacePlayerController::EquipWeapon_2()
+{
+	if (PossessedSpacePawn && PossessedSpacePawn->IsNotDestroyed())
+	{
+		PossessedSpacePawn->EquipWeaponFromSlot_2();
+	}
+}
+
+void ASpacePlayerController::EquipWeapon_3()
+{
+	if (PossessedSpacePawn && PossessedSpacePawn->IsNotDestroyed())
+	{
+		PossessedSpacePawn->EquipWeaponFromSlot_3();
+	}
+}
+
+void ASpacePlayerController::EquipWeapon_4()
+{
+	if (PossessedSpacePawn && PossessedSpacePawn->IsNotDestroyed())
+	{
+		PossessedSpacePawn->EquipWeaponFromSlot_4();
+	}
+}
+
 void ASpacePlayerController::SignalPlayerDied()
 {
 	OwnedHUD->SetCanDrawCrosshairIcon(false);
@@ -129,18 +166,18 @@ void ASpacePlayerController::SignalPlayerRespawned()
 	OwnedHUD->SetCanDrawCrosshairIcon(true);
 }
 
-void ASpacePlayerController::BeginFiringPrimaryWeapons()
+void ASpacePlayerController::BeginFiringWeapon()
 {
 	if (PossessedSpacePawn && PossessedSpacePawn->IsNotDestroyed())
 	{
-		PossessedSpacePawn->BeginFiringPrimaryWeapons();
+		PossessedSpacePawn->BeginFiringWeapon();
 	}
 }
 
-void ASpacePlayerController::EndFiringPrimaryWeapons()
+void ASpacePlayerController::EndFiringWeapon()
 {
 	if (PossessedSpacePawn && PossessedSpacePawn->IsNotDestroyed())
 	{
-		PossessedSpacePawn->EndFiringPrimaryWeapons();
+		PossessedSpacePawn->EndFiringWeapon();
 	}
 }

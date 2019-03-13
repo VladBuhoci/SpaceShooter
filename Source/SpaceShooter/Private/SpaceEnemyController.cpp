@@ -102,19 +102,19 @@ void ASpaceEnemyController::OnMoveCompleted(FAIRequestID RequestID, const FPathF
 	}
 }
 
-void ASpaceEnemyController::BeginFiringPrimaryWeapons()
+void ASpaceEnemyController::BeginFiringWeapon()
 {
 	if (PossessedSpacePawn)
 	{
-		PossessedSpacePawn->BeginFiringPrimaryWeapons();
+		PossessedSpacePawn->BeginFiringWeapon();
 	}
 }
 
-void ASpaceEnemyController::EndFiringPrimaryWeapons()
+void ASpaceEnemyController::EndFiringWeapon()
 {
 	if (PossessedSpacePawn)
 	{
-		PossessedSpacePawn->EndFiringPrimaryWeapons();
+		PossessedSpacePawn->EndFiringWeapon();
 	}
 }
 
@@ -132,7 +132,7 @@ void ASpaceEnemyController::AttemptAttackOnPlayer(ASpacecraftPawn* SpacecraftToF
 	float Delay = 0.5f;
 
 	// Don't start shooting immediately because it looks weird until the ship is completely rotated towards the target.
-	GetWorldTimerManager().SetTimer(ShootDelayTimerHandle, this, &ASpaceEnemyController::BeginFiringPrimaryWeapons, Delay, false);
+	GetWorldTimerManager().SetTimer(ShootDelayTimerHandle, this, &ASpaceEnemyController::BeginFiringWeapon, Delay, false);
 }
 
 void ASpaceEnemyController::StayInPlace(bool bContinueAttack)
@@ -178,7 +178,7 @@ void ASpaceEnemyController::EnterCompletelyIdleState()
 	SpacecraftToReach = nullptr;
 	SpacecraftState   = ESpacecraftState::Idle;
 
-	EndFiringPrimaryWeapons();
+	EndFiringWeapon();
 }
 
 void ASpaceEnemyController::MovePawnForward(float Value)

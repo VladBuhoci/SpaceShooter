@@ -17,6 +17,38 @@ class UParticleSystemComponent;
 class AProjectile;
 class AWeapon;
 
+USTRUCT(BlueprintType)
+struct FPreparedWeapons
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Weapons")
+	AWeapon* Slot_1;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Weapons")
+	AWeapon* Slot_2;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Weapons")
+	AWeapon* Slot_3;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Weapons")
+	AWeapon* Slot_4;
+};
+
+USTRUCT(BlueprintType)
+struct FAmmunitionStock
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Weapons")
+	int32 CurrentAmmoQuantity;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Weapons")
+	int32 MaxAmmoQuantity;
+
+	FAmmunitionStock()				: CurrentAmmoQuantity(0)      , MaxAmmoQuantity(0)       {};
+	FAmmunitionStock(int32 MaxAmmo) : CurrentAmmoQuantity(MaxAmmo), MaxAmmoQuantity(MaxAmmo) {};
+};
 
 /**
  * Base class of all spacecrafts (player or NPCs).
@@ -165,17 +197,25 @@ protected:
 	// Weapons.
 	//////////////////////////////////////////////////////////////////////////
 
-	/** Primary weapon class. */
+	/** Weapon class. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Weapons")
-	TSubclassOf<AWeapon> PrimaryWeaponClass;
-	
-	/** Primary weapon reference. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Weapons")
-	AWeapon* PrimaryWeapon;
+	TSubclassOf<AWeapon> WeaponClass;
 
-	/** If true, all attached primary weapons will be fired together. */
+	/** Ready to use weapons, distributed on 4 slots. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Weapons")
-	bool bIsFiringPrimaryWeapons;
+	FPreparedWeapons PreparedWeapons;
+	
+	/** Currently equipped weapon reference. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Weapons")
+	AWeapon* EquippedWeapon;
+
+	/** If true, the weapon equipped at the moment will be fired. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Weapons")
+	bool bIsFiringWeapon;
+
+	/** Ammunition stocks used by the right kind of weapon. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Weapons")
+	TMap<EWeaponType, FAmmunitionStock> AmmoPools;
 
 
 	//////////////////////////////////////////////////////////////////////////
@@ -223,6 +263,12 @@ protected:
 	virtual void OnTurboModeActivated();
 	virtual void OnTurboModeDeactivated();
 
+private:
+	void RotateSpacecraftClockwise(FRotator NewRotation);
+	void RotateSpacecraftCounterclockwise(FRotator NewRotation);
+	void StopRotatingSpacecraft();
+	void StopMovingSpacecraft();
+
 
 	/**********************************
 		  SURVIVABILITY INTERFACE
@@ -253,17 +299,16 @@ private:
 	**********************************/
 
 public:
-	/** Activates primary weapons on the spacecraft. */
-	virtual void BeginFiringPrimaryWeapons();
+	/** Activates equipped weapon on the spacecraft. */
+	virtual void BeginFiringWeapon();
 
-	/** Deactivates primary weapons on the spacecraft. */
-	virtual void EndFiringPrimaryWeapons();
+	/** Deactivates equipped weapon on the spacecraft. */
+	virtual void EndFiringWeapon();
 
-private:
-	void RotateSpacecraftClockwise(FRotator NewRotation);
-	void RotateSpacecraftCounterclockwise(FRotator NewRotation);
-	void StopRotatingSpacecraft();
-	void StopMovingSpacecraft();
+	void EquipWeaponFromSlot_1();
+	void EquipWeaponFromSlot_2();
+	void EquipWeaponFromSlot_3();
+	void EquipWeaponFromSlot_4();
 
 protected:
 	/** Constructs and attaches the weapons to the spacecraft. */
@@ -273,11 +318,15 @@ protected:
 	virtual void DestroyWeaponry();
 
 private:
-	/** Will trigger the firing of each primary weapon held by this spacecraft. */
-	void FirePrimaryWeapons_Internal();
+	/** Will trigger the firing of the equipped weapon held by this spacecraft. */
+	void FireWeapon_Internal();
 
 	/** Checks if any type of weapon should be fired at the moment. */
-	void CheckIfWeaponsNeedToBeFired();
+	void CheckIfWeaponNeedsToBeFired();
+
+	AWeapon* ConstructWeapon(UWorld* World);
+	void EquipWeapon(AWeapon* WeaponToEquip);
+	void UnequipCurrentWeapon();
 
 
 	/**********************************
@@ -285,6 +334,7 @@ private:
 	**********************************/
 
 public:
-	UStaticMeshComponent* GetSpacecraftMeshComponent() const { return SpacecraftMeshComponent; }
-	ESpacecraftFaction    GetFaction()                 const { return Faction; }
+	UStaticMeshComponent*				GetSpacecraftMeshComponent() const { return SpacecraftMeshComponent; }
+	ESpacecraftFaction					GetFaction()                 const { return Faction; }
+	TMap<EWeaponType, FAmmunitionStock> GetAmmoPools()               const { return AmmoPools; }
 };

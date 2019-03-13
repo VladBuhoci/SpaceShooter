@@ -86,10 +86,10 @@ protected:
 
 public:
 	/** Activates primary weapons on the spacecraft. */
-	virtual void BeginFiringPrimaryWeapons() override;
+	virtual void BeginFiringWeapon() override;
 
 	/** Deactivates primary weapons on the spacecraft. */
-	virtual void EndFiringPrimaryWeapons() override;
+	virtual void EndFiringWeapon() override;
 
 	/**********************************
 				GETTERS

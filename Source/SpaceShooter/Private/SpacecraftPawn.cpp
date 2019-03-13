@@ -3,6 +3,7 @@
 #include "SpacecraftPawn.h"
 #include "Weapon.h"
 #include "Projectile.h"
+//#include "SpaceEnums.h"
 
 #include "ConstructorHelpers.h"
 
@@ -50,7 +51,7 @@ ASpacecraftPawn::ASpacecraftPawn()
 	ShieldRechargeRate               = 6.5f;
 	ShieldRechargeDelay              = 2.0f;
 	bIsShieldRecharging              = false;
-	bIsFiringPrimaryWeapons			 = false;
+	bIsFiringWeapon			         = false;
 	Faction                          = ESpacecraftFaction::Unspecified;
 
 	// SpacecraftMeshComponent setup:
@@ -91,6 +92,8 @@ void ASpacecraftPawn::BeginPlay()
 	
 	InitializeAttributes();
 	InitializeWeaponry();
+
+	EquipWeaponFromSlot_1();
 }
 
 void ASpacecraftPawn::InitializeAttributes()
@@ -98,6 +101,11 @@ void ASpacecraftPawn::InitializeAttributes()
 	MoveForwardSpeed    = MoveForwardMaxSpeed;
 	CurrentHitPoints    = MaxHitPoints;
 	CurrentShieldPoints = MaxShieldPoints;
+
+	AmmoPools.Add(EWeaponType::Blaster, FAmmunitionStock(128));
+	AmmoPools.Add(EWeaponType::Cannon, FAmmunitionStock(256));
+	AmmoPools.Add(EWeaponType::Shotgun, FAmmunitionStock(64));
+	AmmoPools.Add(EWeaponType::Launcher, FAmmunitionStock(32));
 }
 
 /** Called every frame. */
@@ -134,7 +142,7 @@ void ASpacecraftPawn::Tick(float DeltaTime)
 	}
 
 	CheckShieldStatus(DeltaTime);
-	CheckIfWeaponsNeedToBeFired();
+	CheckIfWeaponNeedsToBeFired();
 }
 
 void ASpacecraftPawn::MaintainForwardMovementSetup()
@@ -311,29 +319,25 @@ void ASpacecraftPawn::StopMovingSpacecraft()
 
 void ASpacecraftPawn::InitializeWeaponry()
 {
-	if (PrimaryWeaponClass)
+	if (WeaponClass)
 	{
 		UWorld* World = GetWorld();
 		if (World)
 		{
-			PrimaryWeapon = World->SpawnActor<AWeapon>(PrimaryWeaponClass);
-
-			if (PrimaryWeapon)
-			{
-				FAttachmentTransformRules AttachRules = FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true);
-
-				PrimaryWeapon->AttachToComponent(SpacecraftMeshComponent, AttachRules, TEXT("Weapon_AttachPoint_DEV"));
-			}
+			PreparedWeapons.Slot_1 = ConstructWeapon(World);
+			PreparedWeapons.Slot_2 = ConstructWeapon(World);
+			PreparedWeapons.Slot_3 = ConstructWeapon(World);
+			PreparedWeapons.Slot_4 = ConstructWeapon(World);
 		}
 	}
 }
 
 void ASpacecraftPawn::DestroyWeaponry()
 {
-	if (PrimaryWeapon)
-	{
-		PrimaryWeapon->Destroy();
-	}
+	PreparedWeapons.Slot_1->Destroy();
+	PreparedWeapons.Slot_2->Destroy();
+	PreparedWeapons.Slot_3->Destroy();
+	PreparedWeapons.Slot_4->Destroy();
 }
 
 float ASpacecraftPawn::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -363,7 +367,7 @@ float ASpacecraftPawn::TakeDamage(float Damage, FDamageEvent const& DamageEvent,
 	if (CurrentHitPoints <= 0.0f)
 	{
 		// TODO: later on, this should be changed to something else to support more weapons.
-		EndFiringPrimaryWeapons();
+		EndFiringWeapon();
 
 		// Disable shield recharging and put down the shield completely.
 		StopShieldRechargeProcess();
@@ -451,28 +455,84 @@ void ASpacecraftPawn::RechargeShield(float DeltaTime)
 	}
 }
 
-void ASpacecraftPawn::BeginFiringPrimaryWeapons()
+void ASpacecraftPawn::BeginFiringWeapon()
 {
-	bIsFiringPrimaryWeapons = true;
+	bIsFiringWeapon = true;
 }
 
-void ASpacecraftPawn::EndFiringPrimaryWeapons()
+void ASpacecraftPawn::EndFiringWeapon()
 {
-	bIsFiringPrimaryWeapons = false;
+	bIsFiringWeapon = false;
 }
 
-void ASpacecraftPawn::FirePrimaryWeapons_Internal()
+void ASpacecraftPawn::EquipWeaponFromSlot_1()
 {
-	if (PrimaryWeapon)
+	EquipWeapon(PreparedWeapons.Slot_1);
+}
+
+void ASpacecraftPawn::EquipWeaponFromSlot_2()
+{
+	EquipWeapon(PreparedWeapons.Slot_2);
+}
+
+void ASpacecraftPawn::EquipWeaponFromSlot_3()
+{
+	EquipWeapon(PreparedWeapons.Slot_3);
+}
+
+void ASpacecraftPawn::EquipWeaponFromSlot_4()
+{
+	EquipWeapon(PreparedWeapons.Slot_4);
+}
+
+void ASpacecraftPawn::FireWeapon_Internal()
+{
+	if (EquippedWeapon)
 	{
-		PrimaryWeapon->FireWeapon(this);
+		EquippedWeapon->FireWeapon(this, AmmoPools[EquippedWeapon->GetType()].CurrentAmmoQuantity);
 	}
 }
 
-void ASpacecraftPawn::CheckIfWeaponsNeedToBeFired()
+void ASpacecraftPawn::CheckIfWeaponNeedsToBeFired()
 {
-	if (bIsFiringPrimaryWeapons && !bIsTurboModeActive)
+	if (bIsFiringWeapon && !bIsTurboModeActive)
 	{
-		FirePrimaryWeapons_Internal();
+		FireWeapon_Internal();
+	}
+}
+
+AWeapon* ASpacecraftPawn::ConstructWeapon(UWorld* World)
+{
+	AWeapon* NewWeapon = World->SpawnActor<AWeapon>(WeaponClass);
+	
+	if (NewWeapon)
+	{
+		FAttachmentTransformRules AttachRules = FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true);
+
+		NewWeapon->AttachToComponent(SpacecraftMeshComponent, AttachRules, TEXT("Weapon_AttachPoint_DEV"));
+	}
+
+	return NewWeapon;
+}
+
+// TODO: slow down the process, add some visual effect?
+void ASpacecraftPawn::EquipWeapon(AWeapon* WeaponToEquip)
+{
+	if (WeaponToEquip != nullptr)
+	{
+		UnequipCurrentWeapon();
+
+		EquippedWeapon = WeaponToEquip;
+		EquippedWeapon->SetVisibility(true);
+	}
+}
+
+// TODO: slow down the process, add some visual effect?
+void ASpacecraftPawn::UnequipCurrentWeapon()
+{
+	if (EquippedWeapon != nullptr)
+	{
+		EquippedWeapon->SetVisibility(false);
+		EquippedWeapon = nullptr;
 	}
 }

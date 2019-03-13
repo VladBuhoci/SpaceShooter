@@ -23,6 +23,14 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* MeshComponent;
 
+	/** Name of this weapon. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
+	FText Name;
+
+	/** Type of this weapon. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
+	EWeaponType Type;
+
 	/** Class of the projectile to spawn when shooting. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AProjectile> ProjectileClass;
@@ -75,6 +83,14 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
 	float TimePassedSinceLastShot;
 
+	/** Particle system which is spawned whenever this weapon shoots projectiles. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
+	UParticleSystem* WeaponFiringParticleEffect;
+
+	/** Sound played whenever this weapon shoots projectiles. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
+	USoundBase* WeaponFiringSound;
+
 	/**
 	 * A value between 0% and 100% that once reaches its peak, it enters an overheated state
 	 *		and the weapon cannot be used again until it has completely cooled down.
@@ -94,13 +110,9 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
 	bool bIsOverheated;
 
-	/** Particle system which is spawned whenever this weapon shoots projectiles. */
+	/** Ammunition units consumed per shot. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
-	UParticleSystem* WeaponFiringParticleEffect;
-
-	/** Sound played whenever this weapon shoots projectiles. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
-	USoundBase* WeaponFiringSound;
+	int32 AmmoPerShot;
 
 public:
 	/** Sets default values for this actor's properties. */
@@ -115,7 +127,10 @@ protected:
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
-	virtual void FireWeapon(ASpacecraftPawn* ProjectileOwner);
+	virtual void FireWeapon(ASpacecraftPawn* ProjectileOwner, int32 & AmmoToUse);
+
+public:
+	void SetVisibility(bool State);
 
 private:
 	void ResetTimeSinceLastWeaponUsage();
@@ -135,6 +150,9 @@ private:
 	void ExitOverheatedState();
 	void CoolDown(float DeltaTime);
 
+	bool HasEnoughAmmoForOneShot();
+	void ConsumeAmmoForOneShot(int32 & AmmoToUse);
+
 public:
 	/** Returns the current percentage of total heat produced. */
 	UFUNCTION(BlueprintPure, Category = "Weapon")
@@ -142,4 +160,14 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Weapon")
 	bool IsOverheated() const { return bIsOverheated; }
+
+
+	/**********************************
+				GETTERS
+	**********************************/
+
+public:
+	/** Returns the type of this weapon. */
+	UFUNCTION(BlueprintPure, Category = "Weapon")
+	EWeaponType GetType() const { return Type; }
 };

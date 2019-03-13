@@ -3,6 +3,7 @@
 #include "Weapon.h"
 #include "Projectile.h"
 #include "SpacecraftPawn.h"
+#include "SpaceEnums.h"
 
 #include "Components/StaticMeshComponent.h"
 
@@ -19,19 +20,21 @@ AWeapon::AWeapon()
 	PrimaryActorTick.bCanEverTick = true;
 
 	MeshComponent            = CreateDefaultSubobject<UStaticMeshComponent>("Mesh Component");
-	Damage                   = 10.0f;
-	SpreadAngle              = 15.0f;
+	Type                     = EWeaponType::Blaster;
+	Damage                   = 23.0f;
+	SpreadAngle              = 12.5f;
 	Accuracy                 = 85.0f;
-	AccuracyRecoveryRate     = 15.3f;
-	AccuracyRecoveryDelay    = 0.5f;
+	AccuracyRecoveryRate     = 21.3f;
+	AccuracyRecoveryDelay    = 0.8f;
 	bIsAccuracyBeingRestored = false;
-	FireRate                 = 5.0f;
-	Recoil                   = 2.5f;
+	FireRate                 = 3.5f;
+	Recoil                   = 4.0f;
 	TimePassedSinceLastShot  = 0.0f;
 	CurrentHeat              = 0.0f;
-	HeatProducedPerShot      = 9.2f;
-	CoolingRate              = 35.0f;
+	HeatProducedPerShot      = 14.0f;
+	CoolingRate              = 23.6f;
 	bIsOverheated            = false;
+	AmmoPerShot              = 1;
 }
 
 /** Called when the game starts or when spawned. */
@@ -54,9 +57,9 @@ void AWeapon::Tick(float DeltaTime)
 	CheckHeatState(DeltaTime);
 }
 
-void AWeapon::FireWeapon(ASpacecraftPawn* ProjectileOwner)
+void AWeapon::FireWeapon(ASpacecraftPawn* ProjectileOwner, int32 & AmmoToUse)
 {
-	if (ProjectileClass && IsAllowedToFireWeapon())
+	if (ProjectileClass && IsAllowedToFireWeapon() && AmmoPerShot <= AmmoToUse)
 	{
 		UWorld* World = GetWorld();
 
@@ -89,6 +92,7 @@ void AWeapon::FireWeapon(ASpacecraftPawn* ProjectileOwner)
 				PlayWeaponFiringEffects();
 				ApplyRecoil();
 				ProduceHeat();
+				ConsumeAmmoForOneShot(AmmoToUse);
 				
 				// Reset the counter for time which had passed between shots.
 				ResetTimeSinceLastWeaponUsage();
@@ -98,6 +102,11 @@ void AWeapon::FireWeapon(ASpacecraftPawn* ProjectileOwner)
 			}
 		}
 	}
+}
+
+void AWeapon::SetVisibility(bool State)
+{
+	MeshComponent->SetVisibility(State, true);
 }
 
 void AWeapon::ResetTimeSinceLastWeaponUsage()
@@ -215,4 +224,9 @@ void AWeapon::CoolDown(float DeltaTime)
 	{
 		ExitOverheatedState();
 	}
+}
+
+void AWeapon::ConsumeAmmoForOneShot(int32 & AmmoToUse)
+{
+	AmmoToUse -= AmmoPerShot;
 }

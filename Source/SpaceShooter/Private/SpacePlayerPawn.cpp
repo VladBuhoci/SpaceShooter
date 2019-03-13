@@ -135,15 +135,15 @@ void ASpacePlayerPawn::DestroySpacecraft()
 	}
 }
 
-void ASpacePlayerPawn::BeginFiringPrimaryWeapons()
+void ASpacePlayerPawn::BeginFiringWeapon()
 {
-	Super::BeginFiringPrimaryWeapons();
+	Super::BeginFiringWeapon();
 
 }
 
-void ASpacePlayerPawn::EndFiringPrimaryWeapons()
+void ASpacePlayerPawn::EndFiringWeapon()
 {
-	Super::EndFiringPrimaryWeapons();
+	Super::EndFiringWeapon();
 
 }
 

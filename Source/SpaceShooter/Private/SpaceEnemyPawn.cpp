@@ -24,7 +24,7 @@ ASpaceEnemyPawn::ASpaceEnemyPawn()
 	MaxShieldPoints                 = 100.0f;
 	ShieldRechargeRate              = 5.0f;
 	ShieldRechargeDelay             = 2.5f;
-	Faction                         = ESpacecraftFaction::Alien;
+	Faction                         = ESpacecraftFaction::Clone;
 	DetectionAreaRadius             = 1500.0f;
 	CloseQuartersAreaRadius         = 500.0f;
 	DetectionAreaRadiusModifier     = 135.0f;
@@ -156,14 +156,14 @@ void ASpaceEnemyPawn::DestroySpacecraft()
 	Super::DestroySpacecraft();
 }
 
-void ASpaceEnemyPawn::BeginFiringPrimaryWeapons()
+void ASpaceEnemyPawn::BeginFiringWeapon()
 {
-	Super::BeginFiringPrimaryWeapons();
+	Super::BeginFiringWeapon();
 
 }
 
-void ASpaceEnemyPawn::EndFiringPrimaryWeapons()
+void ASpaceEnemyPawn::EndFiringWeapon()
 {
-	Super::EndFiringPrimaryWeapons();
+	Super::EndFiringWeapon();
 
 }
