@@ -3,9 +3,12 @@
 #include "SpaceEnemyPawn.h"
 #include "SpaceEnemyController.h"
 #include "SpacePlayerPawn.h"
+#include "LootChest.h"
 
 #include "Components/SphereComponent.h"
 #include "Components/StaticMeshComponent.h"
+
+#include "Engine/World.h"
 
 
 ASpaceEnemyPawn::ASpaceEnemyPawn()
@@ -16,7 +19,7 @@ ASpaceEnemyPawn::ASpaceEnemyPawn()
 
 	DetectionArea                   = CreateDefaultSubobject<USphereComponent>("Detection Area");
 	CloseQuartersArea               = CreateDefaultSubobject<USphereComponent>("Close Quarters Area");
-
+	
 	MoveForwardMaxTurboSpeed        = 1400.0f;
 	MoveForwardMaxSpeed             = 900.0f;
 	MoveBackwardSpeed               = 600.0f;
@@ -29,6 +32,8 @@ ASpaceEnemyPawn::ASpaceEnemyPawn()
 	CloseQuartersAreaRadius         = 500.0f;
 	DetectionAreaRadiusModifier     = 135.0f;
 	CloseQuartersAreaRadiusModifier = 150.0f;
+	LootBoundingBox.Min             = FVector(-75.0f, -50.0f, 20.0f);
+	LootBoundingBox.Max             = FVector( 75.0f,  50.0f, 40.0f);
 	
 	DetectionArea->SetupAttachment(SpacecraftMeshComponent);
 	DetectionArea->SetSphereRadius(DetectionAreaRadius);
@@ -148,12 +153,15 @@ void ASpaceEnemyPawn::OnTurboModeDeactivated()
 }
 
 // TODO: W.I.P.
-void ASpaceEnemyPawn::DestroySpacecraft()
+void ASpaceEnemyPawn::PreDestroy(bool & bShouldPlayDestroyEffects, bool & bShouldBeDestroyed)
 {
-	// ... anything to add here?
+	// ... anything to add here? (besides triggering a loot chest spawn event)
 
-	// Kill it.
-	Super::DestroySpacecraft();
+	// Attempt to create loot chests.
+	TryToCreateLootChests();
+
+	bShouldPlayDestroyEffects = true;
+	bShouldBeDestroyed        = true;
 }
 
 void ASpaceEnemyPawn::BeginFiringWeapon()
@@ -166,4 +174,40 @@ void ASpaceEnemyPawn::EndFiringWeapon()
 {
 	Super::EndFiringWeapon();
 
+}
+
+void ASpaceEnemyPawn::TryToCreateLootChests()
+{
+	for (FLootChestWithChance_KeyValue_Pair ChestAndItsChance : LootChestsAndChances)
+	{
+		if (ChestAndItsChance.ChestType != NULL && ChestAndItsChance.SpawnChance > 0)
+		{
+			// Get a random number between 1 and 100.
+			int RandomNumber = FMath::RandRange(1, 100);
+
+			if (RandomNumber <= ChestAndItsChance.SpawnChance)
+			{
+				SpawnLootChest(ChestAndItsChance.ChestType);
+			}
+		}
+	}
+}
+
+void ASpaceEnemyPawn::SpawnLootChest(TSubclassOf<ALootChest> ChestTypeToSpawn)
+{
+	UWorld* World = GetWorld();
+	if (World)
+	{
+		FTransform ChestTransform;
+		FVector    ChestLocation = GetActorLocation() + FMath::RandPointInBox(LootBoundingBox);
+		FRotator   ChestRotation = GetActorRotation();
+
+		// Spawn chest with a random rotation around the Z (up) axis.
+		ChestRotation.Yaw += FMath::RandRange(0.0f, 359.9f);
+
+		ChestTransform.SetLocation(ChestLocation);
+		ChestTransform.SetRotation(ChestRotation.Quaternion());
+
+		World->SpawnActor<ALootChest>(ChestTypeToSpawn, ChestTransform);
+	}
 }

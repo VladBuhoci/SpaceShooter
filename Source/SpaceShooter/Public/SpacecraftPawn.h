@@ -14,8 +14,10 @@ class UCameraComponent;
 class UFloatingPawnMovement;
 class UParticleSystemComponent;
 
+class ASpacecraftExplosion;
 class AProjectile;
 class AWeapon;
+
 
 USTRUCT(BlueprintType)
 struct FPreparedWeapons
@@ -40,10 +42,10 @@ struct FAmmunitionStock
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Weapons")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spacecraft | Weapons")
 	int32 CurrentAmmoQuantity;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Weapons")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spacecraft | Weapons")
 	int32 MaxAmmoQuantity;
 
 	FAmmunitionStock()				: CurrentAmmoQuantity(0)      , MaxAmmoQuantity(0)       {};
@@ -140,13 +142,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Effects")
 	UParticleSystem* BacksideTurboThrusterParticleSystem;
 
-	/** Particle system which is spawned when this spacecraft is destroyed. */
+	/** Suit of effects played during this spacecraft's destruction. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Effects")
-	UParticleSystem* DestroyParticleEffect;
-
-	/** Sound played when this spacecraft is destroyed. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Effects")
-	USoundBase* DestroySound;
+	TSubclassOf<ASpacecraftExplosion> ExplosionEffectsHandlerClass;
 
 
 	//////////////////////////////////////////////////////////////////////////
@@ -281,8 +279,17 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Spacecraft | Survivability")
 	bool IsNotDestroyed() const;
 
+private:
+	void DestroySpacecraft();
+
 protected:
-	virtual void DestroySpacecraft();
+	/**
+	 * Called right before the spacecraft is removed from the world.
+	 * 
+	 * @param bShouldPlayDestroyEffects [ref] if set to true, an explosion will be spawned at the spacecraft's location.
+	 * @param bShouldBeDestroyedForGood [ref] if set to false, the attempt to remove this actor is canceled.
+	 */
+	virtual void PreDestroy(bool & bShouldPlayDestroyEffects, bool & bShouldBeDestroyedForGood) {};
 
 	void PlayDestroyEffects();
 

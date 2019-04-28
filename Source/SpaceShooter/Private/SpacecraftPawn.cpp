@@ -1,9 +1,9 @@
 // This application is the final year project (2018-2019) of a Computer Science student (me - Vlad Buhoci).
 
 #include "SpacecraftPawn.h"
+#include "SpacecraftExplosion.h"
 #include "Weapon.h"
 #include "Projectile.h"
-//#include "SpaceEnums.h"
 
 #include "ConstructorHelpers.h"
 
@@ -19,7 +19,6 @@
 #include "Camera/CameraComponent.h"
 
 #include "Kismet/KismetMathLibrary.h"
-#include "Kismet/GameplayStatics.h"
 
 #include "Runtime/Engine/Public/TimerManager.h"
 
@@ -55,7 +54,7 @@ ASpacecraftPawn::ASpacecraftPawn()
 	Faction                          = ESpacecraftFaction::Unspecified;
 
 	// SpacecraftMeshComponent setup:
-	ConstructorHelpers::FObjectFinder<UStaticMesh> SpacecraftMeshFinder(TEXT("StaticMesh'/Game/StaticMeshes/Spacecrafts/Player/SM_PlayerSpacecraft_Dev.SM_PlayerSpacecraft_Dev'"));
+	ConstructorHelpers::FObjectFinder<UStaticMesh> SpacecraftMeshFinder(TEXT("StaticMesh'/Game/Models/Spacecrafts/Player/SM_PlayerSpacecraft_Dev.SM_PlayerSpacecraft_Dev'"));
 	
 	if (SpacecraftMeshFinder.Succeeded())
 	{
@@ -373,7 +372,6 @@ float ASpacecraftPawn::TakeDamage(float Damage, FDamageEvent const& DamageEvent,
 		StopShieldRechargeProcess();
 		CurrentShieldPoints = 0;
 
-		PlayDestroyEffects();
 		DestroySpacecraft();
 	}
 
@@ -390,11 +388,25 @@ void ASpacecraftPawn::DestroySpacecraft()
 	// Disable physical interactions so future projectiles overlapping this ship will ignore it.
 	SpacecraftMeshComponent->bGenerateOverlapEvents = false;
 
-	// Clean-up.
-	DestroyWeaponry();
+	// Give subclasses a chance to react before the spacecraft is destroyed.
+	bool bShouldPlayDestroyEffects = false;
+	bool bShouldBeDestroyedForGood = false;
 
-	// Finally kill this actor.
-	Destroy();
+	PreDestroy(bShouldPlayDestroyEffects, bShouldBeDestroyedForGood);
+
+	if (bShouldPlayDestroyEffects)
+	{
+		PlayDestroyEffects();
+	}
+
+	if (bShouldBeDestroyedForGood)
+	{
+		// Clean-up.
+		DestroyWeaponry();
+
+		// Finally kill this actor.
+		Destroy();
+	}
 }
 
 void ASpacecraftPawn::PlayDestroyEffects()
@@ -403,16 +415,9 @@ void ASpacecraftPawn::PlayDestroyEffects()
 
 	if (WorldPtr)
 	{
-		// Play destruction sound.
-		if (DestroySound)
+		if (ExplosionEffectsHandlerClass != NULL)
 		{
-			UGameplayStatics::PlaySoundAtLocation(WorldPtr, DestroySound, this->GetActorLocation());
-		}
-
-		// Spawn the destruction effect particles.
-		if (DestroyParticleEffect != NULL)
-		{
-			UGameplayStatics::SpawnEmitterAtLocation(WorldPtr, DestroyParticleEffect, this->GetActorLocation());
+			WorldPtr->SpawnActor<ASpacecraftExplosion>(ExplosionEffectsHandlerClass, GetActorLocation(), GetActorRotation());
 		}
 	}
 }

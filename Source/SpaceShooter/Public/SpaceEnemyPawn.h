@@ -9,6 +9,22 @@
 // Forward declarations.
 class USphereComponent;
 
+class ALootChest;
+
+
+USTRUCT(BlueprintInternalUseOnly)
+struct FLootChestWithChance_KeyValue_Pair
+{
+	GENERATED_USTRUCT_BODY()
+
+	/** Class of chest to spawn. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spacecraft | Loot")
+	TSubclassOf<ALootChest> ChestType;
+
+	/** Chance for this chest to be instantiated, as a percentage. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spacecraft | Loot")
+	float SpawnChance;
+};
 
 /**
  * Base class of all Enemy spacecraft entities.
@@ -52,6 +68,14 @@ private:
 	 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Space Enemy Pawn", Meta = (AllowPrivateAccess = "true"))
 	float CloseQuartersAreaRadiusModifier;
+
+	/** List of loot chests and their respective chances of getting spawned during this spacecraft's destruction. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spacecraft | Loot", Meta = (AllowPrivateAccess = "true"))
+	TArray<FLootChestWithChance_KeyValue_Pair> LootChestsAndChances;
+
+	/** Bounding box inside which loot chests will be spawned. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spacecraft | Loot", Meta = (AllowPrivateAccess = "true"))
+	FBox LootBoundingBox;
 
 public:
 	/** Sets default values. */
@@ -100,7 +124,13 @@ protected:
 	**********************************/
 
 protected:
-	virtual void DestroySpacecraft() override;
+	/**
+	 * Called right before the spacecraft is removed from the world.
+	 * 
+	 * @param bShouldPlayDestroyEffects [ref] if set to true, an explosion will be spawned at the spacecraft's location.
+	 * @param bShouldBeDestroyedForGood [ref] if set to false, the attempt to remove this actor is canceled.
+	 */
+	virtual void PreDestroy(bool & bShouldPlayDestroyEffects, bool & bShouldBeDestroyed) override;
 	
 
 	/**********************************
@@ -114,6 +144,15 @@ public:
 
 	/** Deactivates primary weapons on the spacecraft. */
 	virtual void EndFiringWeapon() override;
+
+
+	/**********************************
+				  LOOT
+	**********************************/
+
+private:
+	void TryToCreateLootChests();
+	void SpawnLootChest(TSubclassOf<ALootChest> ChestTypeToSpawn);
 
 
 	/**********************************

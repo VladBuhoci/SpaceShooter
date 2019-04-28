@@ -77,7 +77,13 @@ protected:
 	**********************************/
 
 protected:
-	virtual void DestroySpacecraft() override;
+	/**
+	 * Called right before the spacecraft is removed from the world.
+	 * 
+	 * @param bShouldPlayDestroyEffects [ref] if set to true, an explosion will be spawned at the spacecraft's location.
+	 * @param bShouldBeDestroyedForGood [ref] if set to false, the attempt to remove this actor is canceled.
+	 */
+	virtual void PreDestroy(bool & bShouldPlayDestroyEffects, bool & bShouldBeDestroyed) override;
 
 
 	/**********************************

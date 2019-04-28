@@ -102,9 +102,10 @@ void ASpacePlayerPawn::OnTurboModeDeactivated()
 }
 
 // TODO: W.I.P.
-void ASpacePlayerPawn::DestroySpacecraft()
+void ASpacePlayerPawn::PreDestroy(bool & bShouldPlayDestroyEffects, bool & bShouldBeDestroyed)
 {
 	UWorld* World = GetWorld();
+
 	if (World)
 	{
 		// Play camera shake effect.
@@ -114,7 +115,8 @@ void ASpacePlayerPawn::DestroySpacecraft()
  		UGameplayStatics::SetGlobalTimeDilation(World, 0.25f);
  		UGameplayStatics::SetGlobalPitchModulation(World, 0.75f, 1.0f);
 
-		// Calling these implies scheduling a method call to reset these global values after a bit of time.
+		// Calling these time altering methods implies scheduling a call to a method to
+		//		reset these global values after a bit of time.
 		FTimerHandle DisableSlowmotionTimerHandle;
 
 		GetWorldTimerManager().SetTimer(DisableSlowmotionTimerHandle, [World]() {
@@ -123,9 +125,6 @@ void ASpacePlayerPawn::DestroySpacecraft()
 		}, 0.75f, false);
 	}
 
-	// Disable physical interactions so future projectiles overlapping this ship will ignore it.
-	SpacecraftMeshComponent->bGenerateOverlapEvents = false;
-
 	// Make the player's ship invisible.
 	SpacecraftMeshComponent->SetVisibility(false, true);
 
@@ -133,6 +132,9 @@ void ASpacePlayerPawn::DestroySpacecraft()
 	{
 		MyController->SignalPlayerDied();
 	}
+
+	bShouldPlayDestroyEffects = true;
+	bShouldBeDestroyed        = false;
 }
 
 void ASpacePlayerPawn::BeginFiringWeapon()
