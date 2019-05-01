@@ -1,6 +1,7 @@
 // This application is the final year project (2018-2019) of a Computer Science student (me - Vlad Buhoci).
 
 #include "SpacecraftPawn.h"
+#include "XYOnlyPhysicsConstraintComponent.h"
 #include "SpacecraftExplosion.h"
 #include "Weapon.h"
 #include "Projectile.h"
@@ -29,29 +30,30 @@ ASpacecraftPawn::ASpacecraftPawn()
 	PrimaryActorTick.bCanEverTick    = true;
 
 	// Initialize components.
-	SpacecraftMeshComponent          = CreateDefaultSubobject<UStaticMeshComponent    >("Spacecraft Mesh Component");
-	SpacecraftMovementComponent      = CreateDefaultSubobject<UFloatingPawnMovement   >("Spacecraft Movement Component");
-	BackSideThrusterParticleEmitter  = CreateDefaultSubobject<UParticleSystemComponent>("Back Thruster Particle Emitter");
-	FrontSideThrusterParticleEmitter = CreateDefaultSubobject<UParticleSystemComponent>("Front Thruster Particle Emitter");
-	LeftSideThrusterParticleEmitter  = CreateDefaultSubobject<UParticleSystemComponent>("Left Side Thruster Particle Emitter");
-	RightSideThrusterParticleEmitter = CreateDefaultSubobject<UParticleSystemComponent>("Right Side Thruster Particle Emitter");
+	SpacecraftMeshComponent           = CreateDefaultSubobject<UStaticMeshComponent             >("Spacecraft Mesh Component");
+	SpacecraftMovementComponent       = CreateDefaultSubobject<UFloatingPawnMovement            >("Spacecraft Movement Component");
+	XYPlanePhysicsConstraintComponent = CreateDefaultSubobject<UXYOnlyPhysicsConstraintComponent>("XY Plane Physics Constraint Component");
+	BackSideThrusterParticleEmitter   = CreateDefaultSubobject<UParticleSystemComponent         >("Back Thruster Particle Emitter");
+	FrontSideThrusterParticleEmitter  = CreateDefaultSubobject<UParticleSystemComponent         >("Front Thruster Particle Emitter");
+	LeftSideThrusterParticleEmitter   = CreateDefaultSubobject<UParticleSystemComponent         >("Left Side Thruster Particle Emitter");
+	RightSideThrusterParticleEmitter  = CreateDefaultSubobject<UParticleSystemComponent         >("Right Side Thruster Particle Emitter");
 
-	RootComponent                    = SpacecraftMeshComponent;
+	RootComponent                     = SpacecraftMeshComponent;
 
-	bIsMovingForward                 = false;
-	bIsMovingBackward                = false;
-	bIsTurboModeActive               = false;
-	MoveForwardMaxTurboSpeed         = 1400.0f;
-	MoveForwardMaxSpeed              = 1000.0f;
-	MoveBackwardSpeed                = 800.0f;
-	SpacecraftTurnSpeed              = 10.0f;
-	MaxHitPoints                     = 100.0f;
-	MaxShieldPoints                  = 200.0f;
-	ShieldRechargeRate               = 6.5f;
-	ShieldRechargeDelay              = 2.0f;
-	bIsShieldRecharging              = false;
-	bIsFiringWeapon			         = false;
-	Faction                          = ESpacecraftFaction::Unspecified;
+	bIsMovingForward                  = false;
+	bIsMovingBackward                 = false;
+	bIsTurboModeActive                = false;
+	MoveForwardMaxTurboSpeed          = 1400.0f;
+	MoveForwardMaxSpeed               = 1000.0f;
+	MoveBackwardSpeed                 = 800.0f;
+	SpacecraftTurnSpeed               = 10.0f;
+	MaxHitPoints                      = 100.0f;
+	MaxShieldPoints                   = 200.0f;
+	ShieldRechargeRate                = 6.5f;
+	ShieldRechargeDelay               = 2.0f;
+	bIsShieldRecharging               = false;
+	bIsFiringWeapon			          = false;
+	Faction                           = ESpacecraftFaction::Unspecified;
 
 	// SpacecraftMeshComponent setup:
 	ConstructorHelpers::FObjectFinder<UStaticMesh> SpacecraftMeshFinder(TEXT("StaticMesh'/Game/Models/Spacecrafts/Player/SM_PlayerSpacecraft_Dev.SM_PlayerSpacecraft_Dev'"));
@@ -62,9 +64,24 @@ ASpacecraftPawn::ASpacecraftPawn()
 	}
 	// ~ end of SpacecraftMeshComponent setup.
 
-	// FloatingPawnMovementComponent setup:
+	// SpacecraftMovementComponent setup:
 	SpacecraftMovementComponent->UpdatedComponent = SpacecraftMeshComponent;
-	// ~ end of FloatingPawnMovementComponent setup.
+
+	// Lock movement on the XY plane.
+
+	// This is required for the next line to work.
+	SpacecraftMovementComponent->SetPlaneConstraintEnabled(true);
+
+	// According to the documentation, setting Z to 1.0f prevents the Z value from ever changing,
+	//		effectively locking movement on the XY plane.
+	SpacecraftMovementComponent->SetPlaneConstraintNormal(FVector(0.0f, 0.0f, 1.0f));
+
+	// ~ end of SpacecraftMovementComponent setup.
+
+	// XYPlanePhysicsConstraintComponent setup:
+	XYPlanePhysicsConstraintComponent->SetupAttachment(RootComponent);
+	XYPlanePhysicsConstraintComponent->SetActorConstrainedComponent(RootComponent);
+	// ~ end of XYPlanePhysicsConstraintComponent setup.
 
 	// BackSideThrusterParticleEmitter setup:
 	BackSideThrusterParticleEmitter->SetupAttachment(SpacecraftMeshComponent, "BackThruster");

@@ -7,7 +7,7 @@
 #include "LootChest.generated.h"
 
 // Forward declarations.
-class UPhysicsConstraintComponent;
+class UXYOnlyPhysicsConstraintComponent;
 
 
 /**
@@ -20,11 +20,11 @@ class SPACESHOOTER_API ALootChest : public AActor
 
 	/** Mesh of this chest. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Loot Chest", Meta = (AllowPrivateAccess = "true"))
-	USkeletalMeshComponent* ChestMesh;
+	USkeletalMeshComponent* ChestMeshComponent;
 
 	/** Physical constraint component for this loot chest. Primarily used to keep it in the XY plane. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Loot Chest", Meta = (AllowPrivateAccess = "true"))
-	UPhysicsConstraintComponent* PhysicsConstraintComponent;
+	UXYOnlyPhysicsConstraintComponent* XYPlanePhysicsConstraintComponent;
 	
 public:	
 	/** Sets default values. */

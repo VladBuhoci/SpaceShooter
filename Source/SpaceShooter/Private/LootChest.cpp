@@ -1,10 +1,9 @@
 // This application is the final year project (2018-2019) of a Computer Science student (me - Vlad Buhoci).
 
 #include "LootChest.h"
+#include "XYOnlyPhysicsConstraintComponent.h"
 
 #include "Components/SkeletalMeshComponent.h"
-
-#include "PhysicsEngine/PhysicsConstraintComponent.h"
 
 
 ALootChest::ALootChest()
@@ -12,24 +11,18 @@ ALootChest::ALootChest()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	ChestMesh                  = CreateDefaultSubobject<USkeletalMeshComponent>("Chest Mesh");
-	PhysicsConstraintComponent = CreateDefaultSubobject<UPhysicsConstraintComponent>("Physics Constraint Component");
+	ChestMeshComponent                = CreateDefaultSubobject<USkeletalMeshComponent>("Chest Mesh Component");
+	XYPlanePhysicsConstraintComponent = CreateDefaultSubobject<UXYOnlyPhysicsConstraintComponent>("XY Plane Physics Constraint Component");
 
-	RootComponent = ChestMesh;
+	RootComponent = ChestMeshComponent;
 
-	ChestMesh->SetSimulatePhysics(true);
-	ChestMesh->SetEnableGravity(false);
-	ChestMesh->SetCollisionProfileName("PhysicsActor");
+	ChestMeshComponent->SetSimulatePhysics(true);
+	ChestMeshComponent->SetEnableGravity(false);
+	ChestMeshComponent->SetCollisionProfileName("PhysicsActor");	// Use the PhysicsActor profile for collision setup
+																	//		(collision channels and responses).
 
-	PhysicsConstraintComponent->SetupAttachment(ChestMesh);
-	PhysicsConstraintComponent->ComponentName1.ComponentName = "Chest Mesh";
-	// Leave ComponentName2 NULL to constrain this actor to the world.
-	PhysicsConstraintComponent->SetLinearXLimit(LCM_Free, 0.0f);			// Movement on X
-	PhysicsConstraintComponent->SetLinearYLimit(LCM_Free, 0.0f);			// Movement on Y
-	PhysicsConstraintComponent->SetLinearZLimit(LCM_Locked, 0.0f);			// Movement on Z
-	PhysicsConstraintComponent->SetAngularTwistLimit(ACM_Locked, 0.0f);		// Rotation around X
-	PhysicsConstraintComponent->SetAngularSwing2Limit(ACM_Locked, 0.0f);	// Rotation around Y
-	PhysicsConstraintComponent->SetAngularSwing1Limit(ACM_Free, 0.0f);		// Rotation around Z
+	XYPlanePhysicsConstraintComponent->SetupAttachment(RootComponent);
+	XYPlanePhysicsConstraintComponent->SetActorConstrainedComponent(RootComponent);
 }
 
 void ALootChest::BeginPlay()

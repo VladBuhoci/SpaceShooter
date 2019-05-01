@@ -14,6 +14,7 @@ class UCameraComponent;
 class UFloatingPawnMovement;
 class UParticleSystemComponent;
 
+class UXYOnlyPhysicsConstraintComponent;
 class ASpacecraftExplosion;
 class AProjectile;
 class AWeapon;
@@ -72,6 +73,10 @@ protected:
 	/** Movement component governing the movement of this pawn. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Components")
 	UFloatingPawnMovement* SpacecraftMovementComponent;
+
+	/** Physical constraint component for this spacecraft. Primarily used to keep it in the XY plane. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Loot Chest", Meta = (AllowPrivateAccess = "true"))
+	UXYOnlyPhysicsConstraintComponent* XYPlanePhysicsConstraintComponent;
 
 	/** Particle system which is activated when the spacecraft is moving forward. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Components")
