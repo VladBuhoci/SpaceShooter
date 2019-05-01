@@ -17,8 +17,4 @@ class SPACESHOOTER_API AMainMenuPlayerPawn : public APawn
 public:
 	/** Sets default values. */
 	AMainMenuPlayerPawn();
-
-protected:
-	/** Called when the game starts or when spawned. */
-	virtual void BeginPlay() override;
 };
