@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "SpacecraftPawn.h"
+#include "MousePointerListener.h"
 #include "SpaceEnemyPawn.generated.h"
 
 // Forward declarations.
@@ -30,7 +31,7 @@ struct FLootChestWithChance_KeyValue_Pair
  * Base class of all Enemy spacecraft entities.
  */
 UCLASS()
-class SPACESHOOTER_API ASpaceEnemyPawn : public ASpacecraftPawn
+class SPACESHOOTER_API ASpaceEnemyPawn : public ASpacecraftPawn, public IMousePointerListener
 {
 	GENERATED_BODY()
 	
@@ -120,6 +121,20 @@ protected:
 
 
 	/**********************************
+		 MOUSE LISTENER INTERFACE
+	**********************************/
+
+public:
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Mouse Pointer Listener")
+	void OnMouseEnter();
+	virtual void OnMouseEnter_Implementation() override;
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Mouse Pointer Listener")
+	void OnMouseLeave();
+	virtual void OnMouseLeave_Implementation() override;
+
+
+	/**********************************
 		  SURVIVABILITY INTERFACE
 	**********************************/
 
@@ -147,7 +162,7 @@ public:
 
 
 	/**********************************
-				  LOOT
+			  LOOT INTERFACE
 	**********************************/
 
 private:

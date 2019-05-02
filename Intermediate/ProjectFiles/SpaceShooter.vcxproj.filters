@@ -121,6 +121,9 @@
     <ClInclude Include="..\..\Source\SpaceShooter\Public\XYOnlyPhysicsConstraintComponent.h">
       <Filter>Source\SpaceShooter\Public</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\MousePointerListener.h">
+      <Filter>Source\SpaceShooter\Public</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\SpaceShooter\Private\SpacecraftPawn.cpp">
@@ -148,6 +151,9 @@
       <Filter>Source\SpaceShooter\Private</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\SpaceShooter\Private\XYOnlyPhysicsConstraintComponent.cpp">
+      <Filter>Source\SpaceShooter\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\MousePointerListener.cpp">
       <Filter>Source\SpaceShooter\Private</Filter>
     </ClCompile>
   </ItemGroup>

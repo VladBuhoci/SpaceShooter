@@ -28,6 +28,10 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Player Controller", Meta = (AllowPrivateAccess = "true"))
 	ASpaceHUD * OwnedHUD;
 
+	/** The mouse listening actor object the player is having their cursor put on at the moment. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Player Controller", Meta = (AllowPrivateAccess = "true"))
+	AActor* CurrentMouseListeningActorPointedAt;
+
 public:
 	/** Sets default values. */
 	ASpacePlayerController();
@@ -60,6 +64,12 @@ private:
 	/** Gets the position of the cursor on the game screen and asks the player to rotate towards it. */
 	void HandleSpaceshipRotation();
 
+	/**
+	 * Gets the position of the cursor on the game screen and triggers a mouse event (enter/leave) if
+	 *		the found actor implements the IMousePointerListener interface.
+	 */
+	void HandleCursorPointingAtMouseListeningActors();
+
 	void MovePawnForward(float Value);
 	void MovePawnBackward(float Value);
 
@@ -77,6 +87,16 @@ private:
 	**********************************/
 
 public:
-	void SignalPlayerDied();
-	void SignalPlayerRespawned();
+	void OnPlayerDied();
+	void OnPlayerRespawned();
+
+
+	/**********************************
+			  LOOT INTERFACE
+	**********************************/
+
+public:
+	/** Get the mouse listening actor that the player is pointing at with the mouse cursor. */
+	UFUNCTION(BlueprintPure, Category = "Space Player Controller")
+	AActor* GetCurrentMouseListeningActorPointedAt() const { return CurrentMouseListeningActorPointedAt; }
 };

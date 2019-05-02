@@ -152,6 +152,16 @@ void ASpaceEnemyPawn::OnTurboModeDeactivated()
 
 }
 
+void ASpaceEnemyPawn::OnMouseEnter_Implementation()
+{
+	// TODO: use this to show HP/SP widget.
+}
+
+void ASpaceEnemyPawn::OnMouseLeave_Implementation()
+{
+	// TODO: use this to hide HP/SP widget.
+}
+
 // TODO: W.I.P.
 void ASpaceEnemyPawn::PreDestroy(bool & bShouldPlayDestroyEffects, bool & bShouldBeDestroyed)
 {

@@ -262,6 +262,7 @@
     <None Include="..\..\Config\DefaultInput.ini" />
     <None Include="..\..\Source\SpaceShooter\SpaceShooter.Build.cs" />
     <ClCompile Include="..\..\Source\SpaceShooter\Private\LootChest.cpp" />
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\MousePointerListener.cpp" />
     <ClCompile Include="..\..\Source\SpaceShooter\Private\SpacecraftDestructionCameraShake.cpp" />
     <ClCompile Include="..\..\Source\SpaceShooter\Private\SpacecraftExplosion.cpp" />
     <ClCompile Include="..\..\Source\SpaceShooter\Private\SpacecraftPawn.cpp" />
@@ -272,6 +273,7 @@
     <ClCompile Include="..\..\Source\SpaceShooter\Private\XYOnlyPhysicsConstraintComponent.cpp" />
     <ClCompile Include="..\..\Source\SpaceShooter\SpaceShooter.cpp" />
     <ClInclude Include="..\..\Source\SpaceShooter\Public\LootChest.h" />
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\MousePointerListener.h" />
     <ClInclude Include="..\..\Source\SpaceShooter\Public\SpacecraftDestructionCameraShake.h" />
     <ClInclude Include="..\..\Source\SpaceShooter\Public\SpacecraftExplosion.h" />
     <ClInclude Include="..\..\Source\SpaceShooter\Public\SpacecraftPawn.h" />

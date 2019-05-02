@@ -333,7 +333,7 @@ void ASpacecraftPawn::StopMovingSpacecraft()
 	FrontSideThrusterParticleEmitter->DeactivateSystem();
 }
 
-void ASpacecraftPawn::InitializeWeaponry()
+void ASpacecraftPawn::InitializeWeaponry(int32 InitiallyEquippedWeaponIndex)
 {
 	if (WeaponClass)
 	{
@@ -344,6 +344,14 @@ void ASpacecraftPawn::InitializeWeaponry()
 			PreparedWeapons.Slot_2 = ConstructWeapon(World);
 			PreparedWeapons.Slot_3 = ConstructWeapon(World);
 			PreparedWeapons.Slot_4 = ConstructWeapon(World);
+
+			// Hide them all except the active one because the construction method leaves the weapons 100% visible,
+			//		which is odd looking since they all spawn with the same location and rotation and thus overlap.
+
+			PreparedWeapons.Slot_1->SetVisibility(InitiallyEquippedWeaponIndex == 1);
+			PreparedWeapons.Slot_2->SetVisibility(InitiallyEquippedWeaponIndex == 2);
+			PreparedWeapons.Slot_3->SetVisibility(InitiallyEquippedWeaponIndex == 3);
+			PreparedWeapons.Slot_4->SetVisibility(InitiallyEquippedWeaponIndex == 4);
 		}
 	}
 }

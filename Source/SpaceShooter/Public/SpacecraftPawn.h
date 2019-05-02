@@ -323,8 +323,11 @@ public:
 	void EquipWeaponFromSlot_4();
 
 protected:
-	/** Constructs and attaches the weapons to the spacecraft. */
-	virtual void InitializeWeaponry();
+	/**
+	 * Constructs and attaches the weapons to the spacecraft.
+	 * @param InitiallyEquippedWeaponIndex - valid values are between 1 and 4 inclusive.
+	 */
+	virtual void InitializeWeaponry(int32 InitiallyEquippedWeaponIndex = 1);
 
 	/** Destructs the weapons attached to the spacecraft. */
 	virtual void DestroyWeaponry();

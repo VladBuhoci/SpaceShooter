@@ -3,6 +3,7 @@
 #include "SpacePlayerController.h"
 #include "SpacePlayerPawn.h"
 #include "SpaceHUD.h"
+#include "MousePointerListener.h"
 
 
 /** Sets default values. */
@@ -31,6 +32,7 @@ void ASpacePlayerController::Tick(float DeltaTime)
 
 	HandleTargetIconOnScreen();
 	HandleSpaceshipRotation();
+	HandleCursorPointingAtMouseListeningActors();
 }
 
 /** Called to bind functionality to input. */
@@ -71,19 +73,66 @@ void ASpacePlayerController::HandleSpaceshipRotation()
 {
 	if (PossessedSpacePawn && PossessedSpacePawn->IsNotDestroyed())
 	{
-		FRotator targetRotation;
-		FHitResult hitResult;
+		FRotator TargetRotation;
+		FHitResult HitResult;
 		bool bHitSuccessful;
 		
-		// TraceTypeQuery3 is defined as Background trace channel in the Editor, so we're going to use that.
-		bHitSuccessful = GetHitResultUnderCursorByChannel(ETraceTypeQuery::TraceTypeQuery3, true, hitResult);
+		// TraceTypeQuery3 is defined as "Background" trace channel in the Editor, so we're going to use that.
+		bHitSuccessful = GetHitResultUnderCursorByChannel(ETraceTypeQuery::TraceTypeQuery3, true, HitResult);
 		
 		if (bHitSuccessful)
 		{
-			targetRotation       = (hitResult.ImpactPoint - PossessedSpacePawn->GetActorLocation()).ToOrientationRotator();
-			targetRotation.Pitch = 0.0f;
+			TargetRotation       = (HitResult.ImpactPoint - PossessedSpacePawn->GetActorLocation()).ToOrientationRotator();
+			TargetRotation.Pitch = 0.0f;
 
-			PossessedSpacePawn->RotateSpacecraft(targetRotation);
+			PossessedSpacePawn->RotateSpacecraft(TargetRotation);
+		}
+	}
+}
+
+void ASpacePlayerController::HandleCursorPointingAtMouseListeningActors()
+{
+	if (PossessedSpacePawn && PossessedSpacePawn->IsNotDestroyed())
+	{
+		FHitResult HitResult;
+		bool bHitSuccessful;
+		
+		// TraceTypeQuery2 is defined as "Camera" trace channel in the Editor, so we're going to use that.
+		bHitSuccessful = GetHitResultUnderCursorByChannel(ETraceTypeQuery::TraceTypeQuery2, true, HitResult);
+		
+		if (bHitSuccessful)
+		{
+			if (HitResult.GetActor()->Implements<UMousePointerListener>())
+			{
+				AActor* FoundActor = HitResult.GetActor();
+
+				// If we were previously pointing to another actor, then call OnMouseLeave for that one.
+				if (CurrentMouseListeningActorPointedAt != nullptr && CurrentMouseListeningActorPointedAt != FoundActor)
+				{
+					IMousePointerListener::Execute_OnMouseLeave(CurrentMouseListeningActorPointedAt);
+					CurrentMouseListeningActorPointedAt = nullptr;
+				}
+
+				// If we were previously pointing to nothing, it doesn't matter.
+
+				// If we were previously pointing to the same new found actor, it doesn't matter.
+				
+				// New actor found! Call OnMouseEnter for this one and remember it.
+				if (CurrentMouseListeningActorPointedAt == nullptr)
+				{
+					CurrentMouseListeningActorPointedAt = FoundActor;
+					IMousePointerListener::Execute_OnMouseEnter(CurrentMouseListeningActorPointedAt);
+				}
+			}
+			else
+			{
+				// We found no mouse listening actor, so if we were previously pointing to an actor, we've lost it.
+				if (CurrentMouseListeningActorPointedAt != nullptr)
+				{
+					IMousePointerListener::Execute_OnMouseLeave(CurrentMouseListeningActorPointedAt);
+					CurrentMouseListeningActorPointedAt = nullptr;
+				}
+			}
 		}
 	}
 }
@@ -152,14 +201,14 @@ void ASpacePlayerController::EquipWeapon_4()
 	}
 }
 
-void ASpacePlayerController::SignalPlayerDied()
+void ASpacePlayerController::OnPlayerDied()
 {
 	OwnedHUD->SetCanDrawCrosshairIcon(false);
 
 	bShowMouseCursor = true;
 }
 
-void ASpacePlayerController::SignalPlayerRespawned()
+void ASpacePlayerController::OnPlayerRespawned()
 {
 	bShowMouseCursor = false;
 

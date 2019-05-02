@@ -130,7 +130,7 @@ void ASpacePlayerPawn::PreDestroy(bool & bShouldPlayDestroyEffects, bool & bShou
 
 	if (ASpacePlayerController* MyController = Cast<ASpacePlayerController>(GetController()))
 	{
-		MyController->SignalPlayerDied();
+		MyController->OnPlayerDied();
 	}
 
 	bShouldPlayDestroyEffects = true;
