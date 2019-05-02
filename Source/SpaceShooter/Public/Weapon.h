@@ -130,7 +130,7 @@ public:
 	virtual void FireWeapon(ASpacecraftPawn* ProjectileOwner, int32 & AmmoToUse);
 
 public:
-	void SetVisibility(bool State);
+	void SetVisibility(bool CurrentState);
 
 private:
 	void ResetTimeSinceLastWeaponUsage();

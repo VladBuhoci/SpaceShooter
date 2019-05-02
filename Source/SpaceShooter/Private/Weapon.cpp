@@ -104,9 +104,9 @@ void AWeapon::FireWeapon(ASpacecraftPawn* ProjectileOwner, int32 & AmmoToUse)
 	}
 }
 
-void AWeapon::SetVisibility(bool State)
+void AWeapon::SetVisibility(bool CurrentState)
 {
-	MeshComponent->SetVisibility(State, true);
+	MeshComponent->SetVisibility(CurrentState, true);
 }
 
 void AWeapon::ResetTimeSinceLastWeaponUsage()

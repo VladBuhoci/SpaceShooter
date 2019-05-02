@@ -130,17 +130,17 @@ protected:
 	**********************************/
 
 public:
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Mouse Pointer Listener")
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Spacecraft | NPC | Mouse Listener Interface")
 	void OnMouseEnter();
 	virtual void OnMouseEnter_Implementation() override;
 
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Mouse Pointer Listener")
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Spacecraft | NPC | Mouse Listener Interface")
 	void OnMouseLeave();
 	virtual void OnMouseLeave_Implementation() override;
 
-private:
+protected:
 	/** True if the mouse cursor is located over this object at the moment. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mouse Pointer Listener")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | NPC | Mouse Listener Interface")
 	bool bCurrentlyPointedAt;
 
 
