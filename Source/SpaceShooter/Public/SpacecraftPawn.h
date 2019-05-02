@@ -225,6 +225,10 @@ protected:
 	// Miscellaneous.
 	//////////////////////////////////////////////////////////////////////////
 
+	/** The name of this spacecraft. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spacecraft | Misc")
+	FText Name;
+
 	/** The "side" this spacecraft belongs to. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Misc")
 	ESpacecraftFaction Faction;
@@ -288,6 +292,12 @@ private:
 	void DestroySpacecraft();
 
 protected:
+	/**
+	 * Called after taking damage, a value not great enough to be destroyed yet.
+	 * Damage has already been applied and checks done at the time of this method being called.
+	 */
+	virtual void OnDamageTaken() {};
+
 	/**
 	 * Called right before the spacecraft is removed from the world.
 	 * 

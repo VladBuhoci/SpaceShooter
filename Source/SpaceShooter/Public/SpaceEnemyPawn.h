@@ -9,6 +9,7 @@
 
 // Forward declarations.
 class USphereComponent;
+class UWidgetComponent;
 
 class ALootChest;
 
@@ -43,6 +44,10 @@ private:
 	/* Used to detect whenever a Spacecraft pawn enters or exits this spacecraft's close quarters area. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Components", Meta = (AllowPrivateAccess = "true"))
 	USphereComponent* CloseQuartersArea;
+
+	/** Widget component presenting info such as name, hit/shield points in a simple widget. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Components", Meta = (AllowPrivateAccess = "true"))
+	UWidgetComponent* SurvivabilitySummaryWidgetComponent;
 
 	/** The targeted spacecraft of this pawn. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Enemy Pawn", Meta = (AllowPrivateAccess = "true"))
@@ -133,6 +138,11 @@ public:
 	void OnMouseLeave();
 	virtual void OnMouseLeave_Implementation() override;
 
+private:
+	/** True if the mouse cursor is located over this object at the moment. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mouse Pointer Listener")
+	bool bCurrentlyPointedAt;
+
 
 	/**********************************
 		  SURVIVABILITY INTERFACE
@@ -140,12 +150,25 @@ public:
 
 protected:
 	/**
+	 * Called after taking damage, a value not great enough to be destroyed yet.
+	 * Damage has already been applied and checks done at the time of this method being called.
+	 */
+	virtual void OnDamageTaken() override;
+
+	/**
 	 * Called right before the spacecraft is removed from the world.
 	 * 
 	 * @param bShouldPlayDestroyEffects [ref] if set to true, an explosion will be spawned at the spacecraft's location.
 	 * @param bShouldBeDestroyedForGood [ref] if set to false, the attempt to remove this actor is canceled.
 	 */
 	virtual void PreDestroy(bool & bShouldPlayDestroyEffects, bool & bShouldBeDestroyed) override;
+
+private:
+	/** Used to control the timer that takes care of the tiny HP/SP HUD visibility after taking damage. */
+	FTimerHandle ShowSurvivabilityWidgetOnDamageTakenTimerHandle;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spacecraft | NPC | Misc", Meta = (AllowPrivateAccess = "true"))
+	float SurvivabilityWidgetVisibilityTime;
 	
 
 	/**********************************

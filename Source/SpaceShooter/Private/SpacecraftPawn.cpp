@@ -53,6 +53,7 @@ ASpacecraftPawn::ASpacecraftPawn()
 	ShieldRechargeDelay               = 2.0f;
 	bIsShieldRecharging               = false;
 	bIsFiringWeapon			          = false;
+	Name                              = FText::FromString("Unnamed");
 	Faction                           = ESpacecraftFaction::Unspecified;
 
 	// SpacecraftMeshComponent setup:
@@ -399,6 +400,9 @@ float ASpacecraftPawn::TakeDamage(float Damage, FDamageEvent const& DamageEvent,
 
 		DestroySpacecraft();
 	}
+
+	// Give subclasses a chance to react to this event before returning.
+	OnDamageTaken();
 
 	return Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 }

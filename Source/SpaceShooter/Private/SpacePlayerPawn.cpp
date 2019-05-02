@@ -44,6 +44,7 @@ ASpacePlayerPawn::ASpacePlayerPawn()
 	SpacecraftTurnSpeed          = 10.0f;
 	DesiredCameraSpringArmLength = 0.0f;
 	CameraZoomSpeed              = 10.0f;
+	Name                         = FText::FromString("Unnamed Player");
 	Faction                      = ESpacecraftFaction::Human;
 
 	// CentralSceneComponent setup:

@@ -7,33 +7,39 @@
 
 #include "Components/SphereComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/WidgetComponent.h"
 
 #include "Engine/World.h"
+
+#include "Runtime/Engine/Public/TimerManager.h"
 
 
 ASpaceEnemyPawn::ASpaceEnemyPawn()
 {
-	AIControllerClass               = ASpaceEnemyController::StaticClass();
-	AutoPossessPlayer               = EAutoReceiveInput::Disabled;
-	AutoPossessAI                   = EAutoPossessAI::PlacedInWorldOrSpawned;
+	AIControllerClass                   = ASpaceEnemyController::StaticClass();
+	AutoPossessPlayer                   = EAutoReceiveInput::Disabled;
+	AutoPossessAI                       = EAutoPossessAI::PlacedInWorldOrSpawned;
 
-	DetectionArea                   = CreateDefaultSubobject<USphereComponent>("Detection Area");
-	CloseQuartersArea               = CreateDefaultSubobject<USphereComponent>("Close Quarters Area");
+	DetectionArea                       = CreateDefaultSubobject<USphereComponent>("Detection Area");
+	CloseQuartersArea                   = CreateDefaultSubobject<USphereComponent>("Close Quarters Area");
+	SurvivabilitySummaryWidgetComponent = CreateDefaultSubobject<UWidgetComponent>("Survivability Summary Widget Component");
 	
-	MoveForwardMaxTurboSpeed        = 1400.0f;
-	MoveForwardMaxSpeed             = 900.0f;
-	MoveBackwardSpeed               = 600.0f;
-	MaxHitPoints                    = 50.0f;
-	MaxShieldPoints                 = 100.0f;
-	ShieldRechargeRate              = 5.0f;
-	ShieldRechargeDelay             = 2.5f;
-	Faction                         = ESpacecraftFaction::Clone;
-	DetectionAreaRadius             = 1500.0f;
-	CloseQuartersAreaRadius         = 500.0f;
-	DetectionAreaRadiusModifier     = 135.0f;
-	CloseQuartersAreaRadiusModifier = 150.0f;
-	LootBoundingBox.Min             = FVector(-75.0f, -50.0f, 20.0f);
-	LootBoundingBox.Max             = FVector( 75.0f,  50.0f, 40.0f);
+	MoveForwardMaxTurboSpeed            = 1400.0f;
+	MoveForwardMaxSpeed                 = 900.0f;
+	MoveBackwardSpeed                   = 600.0f;
+	MaxHitPoints                        = 50.0f;
+	MaxShieldPoints                     = 100.0f;
+	ShieldRechargeRate                  = 5.0f;
+	ShieldRechargeDelay                 = 2.5f;
+	Name                                = FText::FromString("Unnamed Enemy");
+	Faction                             = ESpacecraftFaction::Clone;
+	DetectionAreaRadius                 = 1500.0f;
+	CloseQuartersAreaRadius             = 500.0f;
+	DetectionAreaRadiusModifier         = 135.0f;
+	CloseQuartersAreaRadiusModifier     = 150.0f;
+	LootBoundingBox.Min                 = FVector(-75.0f, -50.0f, 20.0f);
+	LootBoundingBox.Max                 = FVector( 75.0f,  50.0f, 40.0f);
+	SurvivabilityWidgetVisibilityTime   = 1.5f;
 	
 	DetectionArea->SetupAttachment(SpacecraftMeshComponent);
 	DetectionArea->SetSphereRadius(DetectionAreaRadius);
@@ -44,6 +50,10 @@ ASpaceEnemyPawn::ASpaceEnemyPawn()
 	CloseQuartersArea->SetSphereRadius(CloseQuartersAreaRadius);
 	CloseQuartersArea->OnComponentBeginOverlap.AddDynamic(this, &ASpaceEnemyPawn::ExecuteOnObjectEnterCloseQuartersArea);
 	CloseQuartersArea->OnComponentEndOverlap.AddDynamic(this, &ASpaceEnemyPawn::ExecuteOnObjectExitCloseQuartersArea);
+
+	SurvivabilitySummaryWidgetComponent->SetupAttachment(SpacecraftMeshComponent);
+	SurvivabilitySummaryWidgetComponent->PrimaryComponentTick.bCanEverTick = true;	// false by default, no clue why, but it won't render the widget that way.
+	SurvivabilitySummaryWidgetComponent->SetVisibility(false);
 }
 
 void ASpaceEnemyPawn::BeginPlay()
@@ -154,12 +164,43 @@ void ASpaceEnemyPawn::OnTurboModeDeactivated()
 
 void ASpaceEnemyPawn::OnMouseEnter_Implementation()
 {
-	// TODO: use this to show HP/SP widget.
+	// Show HP/SP widget.
+	SurvivabilitySummaryWidgetComponent->SetVisibility(true);
+
+	bCurrentlyPointedAt = true;
 }
 
 void ASpaceEnemyPawn::OnMouseLeave_Implementation()
 {
-	// TODO: use this to hide HP/SP widget.
+	// Hide HP/SP widget.
+	SurvivabilitySummaryWidgetComponent->SetVisibility(false);
+
+	bCurrentlyPointedAt = false;
+}
+
+void ASpaceEnemyPawn::OnDamageTaken()
+{
+	// If this Pawn is not currently pointed at, the widget will be visibly only temporarily.
+	if (! bCurrentlyPointedAt)
+	{
+		// Make the HP/SP HUD element (widget) for a limited amount of time whenever taking damage.
+		// Getting damaged while the timer is still counting resets it.
+	
+		// Clear timer.
+		GetWorldTimerManager().ClearTimer(ShowSurvivabilityWidgetOnDamageTakenTimerHandle);
+
+		// Show HP/SP widget.
+		SurvivabilitySummaryWidgetComponent->SetVisibility(true);
+
+		GetWorldTimerManager().SetTimer(ShowSurvivabilityWidgetOnDamageTakenTimerHandle, [this]() {
+			// Do this check again because the value could have changed before the timer had finished counted.
+			if (! bCurrentlyPointedAt)
+			{
+				// Hide HP/SP widget after the timer finished counting.
+				SurvivabilitySummaryWidgetComponent->SetVisibility(false);
+			}
+		}, SurvivabilityWidgetVisibilityTime, false);
+	}
 }
 
 // TODO: W.I.P.
