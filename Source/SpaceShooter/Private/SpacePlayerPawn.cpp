@@ -39,11 +39,14 @@ ASpacePlayerPawn::ASpacePlayerPawn()
 	MaxShieldPoints              = 200.0f;
 	ShieldRechargeRate           = 10.0f;
 	ShieldRechargeDelay          = 1.25f;
-	SpringArmOffset              = FVector(-600.0f, 0.0f, 700.0f);
-	SpringArmRotation            = FRotator(-50.0f, 0.0f, 0.0f);
 	SpacecraftTurnSpeed          = 10.0f;
-	DesiredCameraSpringArmLength = 0.0f;
+	SpringArmLength_SpeedFactor  = 0.25f;	// 25% of the spacecraft's velocity is used as base value for the spring arm's length.
+	SpringArmLength_NormalFlightModeMultiplier = 1.0f;
+	SpringArmLength_TurboFlightModeMultiplier  = 1.5f;
+	CameraNormalFlightFOV        = 90.0f;
+	CameraTurboFlightFOV         = 100.0f;
 	CameraZoomSpeed              = 10.0f;
+	CameraFOVZoomSpeed           = 5.0f;
 	Name                         = FText::FromString("Unnamed Player");
 	Faction                      = ESpacecraftFaction::Human;
 
@@ -53,12 +56,13 @@ ASpacePlayerPawn::ASpacePlayerPawn()
 
 	// SpringArmComponent setup:
 	SpringArmComponent->SetupAttachment(CentralSceneComponent);
-	SpringArmComponent->SetRelativeLocation(SpringArmOffset);
-	SpringArmComponent->SetRelativeRotation(SpringArmRotation);
+	SpringArmComponent->SetRelativeLocation(FVector(-850.0f, 0.0f, 900.0f));
+	SpringArmComponent->SetRelativeRotation(FRotator(-50.0f, 0.0f, 0.0f));
 	SpringArmComponent->TargetArmLength          = 0.0f;
 	SpringArmComponent->bEnableCameraLag         = true;					// Enable spring arm lag.
 	SpringArmComponent->bEnableCameraRotationLag = false;					// Disable spring arm rotation lag. (camera never rotates)
 	SpringArmComponent->CameraLagSpeed           = 20.0f;
+	SpringArmComponent->bDoCollisionTest         = false;
 	// ~ end of SpringArmComponent setup.
 
 	// CameraComponent setup:
@@ -154,14 +158,13 @@ void ASpacePlayerPawn::CheckCameraOffset(float DeltaTime)
 {
 	// The speed of the spacecraft will affect the spring arm's length.
 
-	float speedPercentage            = 0.2f;	// 20% of the spacecraft's velocity is used as base value for the spring arm's length.
-	float normalFlightModeMultiplier = 1.0f;
-	float turboFlightModeMultiplier  = 1.5f;
-
-	DesiredCameraSpringArmLength = speedPercentage * SpacecraftMovementComponent->Velocity.Size() * (bIsTurboModeActive ? turboFlightModeMultiplier : normalFlightModeMultiplier);
+	float SpringArmLengthMultiplier    = bIsTurboModeActive ? SpringArmLength_TurboFlightModeMultiplier : SpringArmLength_NormalFlightModeMultiplier;
+	float DesiredCameraSpringArmLength = SpringArmLength_SpeedFactor * SpacecraftMovementComponent->Velocity.Size() * SpringArmLengthMultiplier;
+	float DesiredCameraFOV             = bIsTurboModeActive ? CameraTurboFlightFOV : CameraNormalFlightFOV;
 
 	if (! FMath::IsNearlyEqual(SpringArmComponent->TargetArmLength, DesiredCameraSpringArmLength))
 	{
 		SpringArmComponent->TargetArmLength = FMath::FInterpTo(SpringArmComponent->TargetArmLength, DesiredCameraSpringArmLength, DeltaTime, CameraZoomSpeed);
+		CameraComponent->FieldOfView        = FMath::FInterpTo(CameraComponent->FieldOfView, DesiredCameraFOV, DeltaTime, CameraFOVZoomSpeed);
 	}
 }

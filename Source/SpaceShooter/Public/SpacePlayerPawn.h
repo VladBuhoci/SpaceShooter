@@ -43,14 +43,6 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Player Camera", Meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* SpringArmComponent;
 
-	/** Spring Arm Component offset relative to the Central Scene Component. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Player Camera", Meta = (AllowPrivateAccess = "true"))
-	FVector SpringArmOffset;
-
-	/** Spring Arm Component rotation relative to the Central Scene Component. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Player Camera", Meta = (AllowPrivateAccess = "true"))
-	FRotator SpringArmRotation;
-
 public:
 	/** Sets default values. */
 	ASpacePlayerPawn();
@@ -109,13 +101,39 @@ public:
 	**********************************/
 
 private:
-	/** The targeted length of the camera's spring arm. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Player Camera", Meta = (AllowPrivateAccess = "true"))
-	float DesiredCameraSpringArmLength;
+	/** The length value for the camera's spring arm is calculated as SpeedPercentage * Spacecraft Velocity. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Player Camera", Meta = (AllowPrivateAccess = "true"))
+	float SpringArmLength_SpeedFactor;
+
+	/**
+	 * The length value for the camera's spring arm is calculated as SpringArmLength_SpeedFactor * Spacecraft Velocity.
+	 * Then we multiply it using this property to get the final result (during normal flight/idle mode only).
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Player Camera", Meta = (AllowPrivateAccess = "true"))
+	float SpringArmLength_NormalFlightModeMultiplier;
+
+	/**
+	 * The length value for the camera's spring arm is calculated as SpringArmLength_SpeedFactor * Spacecraft Velocity.
+	 * Then we multiply it using this property to get the final result (during turbo flight mode only).
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Player Camera", Meta = (AllowPrivateAccess = "true"))
+	float SpringArmLength_TurboFlightModeMultiplier;
+
+	/** Camera's field of view during idle or normal (slow) flight mode. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Player Camera", Meta = (AllowPrivateAccess = "true"))
+	float CameraNormalFlightFOV;
+
+	/** Camera's field of view during turbo (fast) flight mode. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Player Camera", Meta = (AllowPrivateAccess = "true"))
+	float CameraTurboFlightFOV;
 
 	/** The speed at which the spring arm of the camera changes its length during flight. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Player Camera", Meta = (AllowPrivateAccess = "true"))
 	float CameraZoomSpeed;
+
+	/** The speed at which the FOV of the camera changes its angle during flight. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Player Camera", Meta = (AllowPrivateAccess = "true"))
+	float CameraFOVZoomSpeed;
 
 	void CheckCameraOffset(float DeltaTime);
 };
