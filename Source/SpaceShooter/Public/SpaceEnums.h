@@ -29,6 +29,8 @@ enum class ESpacecraftFaction : uint8
 UENUM(BlueprintType)
 enum class EWeaponType : uint8
 {
+	Unknown,
+
 	/** Normal, (usually) single projectile firing weapon. */
 	Blaster,
 

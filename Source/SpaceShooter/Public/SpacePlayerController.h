@@ -99,4 +99,9 @@ public:
 	/** Get the mouse listening actor that the player is pointing at with the mouse cursor. */
 	UFUNCTION(BlueprintPure, Category = "Space Player Controller")
 	AActor* GetCurrentMouseListeningActorPointedAt() const { return CurrentMouseListeningActorPointedAt; }
+
+private:
+	void Interact();
+	void HighlightPreviousItemInsideChest();
+	void HighlightNextItemInsideChest();
 };

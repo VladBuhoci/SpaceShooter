@@ -4,6 +4,7 @@
 #include "SpacePlayerPawn.h"
 #include "SpaceHUD.h"
 #include "MousePointerListener.h"
+#include "LootChest.h"
 
 
 /** Sets default values. */
@@ -53,6 +54,10 @@ void ASpacePlayerController::SetupInputComponent()
 	InputComponent->BindAction("Equip Weapon 2", IE_Pressed, this, &ASpacePlayerController::EquipWeapon_2);
 	InputComponent->BindAction("Equip Weapon 3", IE_Pressed, this, &ASpacePlayerController::EquipWeapon_3);
 	InputComponent->BindAction("Equip Weapon 4", IE_Pressed, this, &ASpacePlayerController::EquipWeapon_4);
+
+	InputComponent->BindAction("Interact", IE_Pressed, this, &ASpacePlayerController::Interact);
+	InputComponent->BindAction("Previous Item In Loot Chest", IE_Pressed, this, &ASpacePlayerController::HighlightPreviousItemInsideChest);
+	InputComponent->BindAction("Next Item In Loot Chest", IE_Pressed, this, &ASpacePlayerController::HighlightNextItemInsideChest);
 }
 
 void ASpacePlayerController::HandleTargetIconOnScreen()
@@ -213,6 +218,42 @@ void ASpacePlayerController::OnPlayerRespawned()
 	bShowMouseCursor = false;
 
 	OwnedHUD->SetCanDrawCrosshairIcon(true);
+}
+
+void ASpacePlayerController::Interact()
+{
+	if (CurrentMouseListeningActorPointedAt != nullptr)
+	{
+		ALootChest* FoundLootChest = Cast<ALootChest>(CurrentMouseListeningActorPointedAt);
+		if (FoundLootChest)
+		{
+			FoundLootChest->Interact();
+		}
+	}
+}
+
+void ASpacePlayerController::HighlightPreviousItemInsideChest()
+{
+	if (CurrentMouseListeningActorPointedAt != nullptr)
+	{
+		ALootChest* FoundLootChest = Cast<ALootChest>(CurrentMouseListeningActorPointedAt);
+		if (FoundLootChest)
+		{
+			FoundLootChest->HighlightPreviousItemInsideChest();
+		}
+	}
+}
+
+void ASpacePlayerController::HighlightNextItemInsideChest()
+{
+	if (CurrentMouseListeningActorPointedAt != nullptr)
+	{
+		ALootChest* FoundLootChest = Cast<ALootChest>(CurrentMouseListeningActorPointedAt);
+		if (FoundLootChest)
+		{
+			FoundLootChest->HighlightNextItemInsideChest();
+		}
+	}
 }
 
 void ASpacePlayerController::BeginFiringWeapon()

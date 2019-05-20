@@ -3,7 +3,7 @@
   <ItemGroup>
     <None Include="..\..\SpaceShooter.uproject" />
     <Filter Include="Source">
-      <UniqueIdentifier>{3FFAF178-BAEA-443A-8567-0CD2D3F0A9A0}</UniqueIdentifier>
+      <UniqueIdentifier>{6FB5A975-2A52-4ED1-BE30-7752CB536D96}</UniqueIdentifier>
     </Filter>
     <None Include="..\..\Source\SpaceShooter.Target.cs">
       <Filter>Source</Filter>
@@ -12,7 +12,7 @@
       <Filter>Source</Filter>
     </None>
     <Filter Include="Config">
-      <UniqueIdentifier>{3438F86B-21E2-4E07-9972-CF663399717F}</UniqueIdentifier>
+      <UniqueIdentifier>{114F478D-638F-44F1-AE97-12855FFF5142}</UniqueIdentifier>
     </Filter>
     <None Include="..\..\Config\DefaultEditor.ini">
       <Filter>Config</Filter>
@@ -27,7 +27,7 @@
       <Filter>Config</Filter>
     </None>
     <Filter Include="Source\SpaceShooter">
-      <UniqueIdentifier>{0977441B-4B5C-4C6F-95FD-2F9A65E2C586}</UniqueIdentifier>
+      <UniqueIdentifier>{890520AE-F6DC-4389-B696-5BA6A99C6D06}</UniqueIdentifier>
     </Filter>
     <None Include="..\..\Source\SpaceShooter\SpaceShooter.Build.cs">
       <Filter>Source\SpaceShooter</Filter>
@@ -39,15 +39,45 @@
       <Filter>Source\SpaceShooter</Filter>
     </ClInclude>
     <Filter Include="Source\SpaceShooter\Private">
-      <UniqueIdentifier>{366C7A4E-0663-46C9-897E-0D1B12CB3D62}</UniqueIdentifier>
+      <UniqueIdentifier>{B6DD1C71-F1B9-482F-BCF9-C88C0507CFEC}</UniqueIdentifier>
     </Filter>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\AmmunitionBox.cpp">
+      <Filter>Source\SpaceShooter\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Item.cpp">
+      <Filter>Source\SpaceShooter\Private</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\SpaceShooter\Private\MainMenuGameMode.cpp">
       <Filter>Source\SpaceShooter\Private</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\SpaceShooter\Private\MainMenuPlayerPawn.cpp">
       <Filter>Source\SpaceShooter\Private</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\MousePointerListener.cpp">
+      <Filter>Source\SpaceShooter\Private</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\SpaceShooter\Private\Projectile.cpp">
+      <Filter>Source\SpaceShooter\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\SpacecraftDestructionCameraShake.cpp">
+      <Filter>Source\SpaceShooter\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\SpacecraftExplosion.cpp">
+      <Filter>Source\SpaceShooter\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\SpacecraftPawn.cpp">
+      <Filter>Source\SpaceShooter\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\SpacecraftTurboModeCameraShake.cpp">
+      <Filter>Source\SpaceShooter\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\SpaceEnemyController.cpp">
+      <Filter>Source\SpaceShooter\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\SpaceEnemyPawn.cpp">
+      <Filter>Source\SpaceShooter\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\SpaceEnums.cpp">
       <Filter>Source\SpaceShooter\Private</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\SpaceShooter\Private\SpaceGameMode.cpp">
@@ -65,16 +95,49 @@
     <ClCompile Include="..\..\Source\SpaceShooter\Private\Weapon.cpp">
       <Filter>Source\SpaceShooter\Private</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\XYOnlyPhysicsConstraintComponent.cpp">
+      <Filter>Source\SpaceShooter\Private</Filter>
+    </ClCompile>
     <Filter Include="Source\SpaceShooter\Public">
-      <UniqueIdentifier>{33FE5FC3-E2BD-42C9-8444-E74F768A72AE}</UniqueIdentifier>
+      <UniqueIdentifier>{3792C947-62E1-4BA4-8AF6-9F0E6A6BB98B}</UniqueIdentifier>
     </Filter>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\AmmunitionBox.h">
+      <Filter>Source\SpaceShooter\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Item.h">
+      <Filter>Source\SpaceShooter\Public</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\SpaceShooter\Public\MainMenuGameMode.h">
       <Filter>Source\SpaceShooter\Public</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\SpaceShooter\Public\MainMenuPlayerPawn.h">
       <Filter>Source\SpaceShooter\Public</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\MousePointerListener.h">
+      <Filter>Source\SpaceShooter\Public</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\SpaceShooter\Public\Projectile.h">
+      <Filter>Source\SpaceShooter\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\SpacecraftDestructionCameraShake.h">
+      <Filter>Source\SpaceShooter\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\SpacecraftExplosion.h">
+      <Filter>Source\SpaceShooter\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\SpacecraftPawn.h">
+      <Filter>Source\SpaceShooter\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\SpacecraftTurboModeCameraShake.h">
+      <Filter>Source\SpaceShooter\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\SpaceEnemyController.h">
+      <Filter>Source\SpaceShooter\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\SpaceEnemyPawn.h">
+      <Filter>Source\SpaceShooter\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\SpaceEnums.h">
       <Filter>Source\SpaceShooter\Public</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\SpaceShooter\Public\SpaceGameMode.h">
@@ -92,68 +155,35 @@
     <ClInclude Include="..\..\Source\SpaceShooter\Public\Weapon.h">
       <Filter>Source\SpaceShooter\Public</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\Source\SpaceShooter\Public\SpacecraftPawn.h">
-      <Filter>Source\SpaceShooter\Public</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\SpaceShooter\Public\SpaceEnemyPawn.h">
-      <Filter>Source\SpaceShooter\Public</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\SpaceShooter\Public\SpaceEnemyController.h">
-      <Filter>Source\SpaceShooter\Public</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\SpaceShooter\Public\SpaceEnums.h">
-      <Filter>Source\SpaceShooter\Public</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\SpaceShooter\Public\SpacecraftTurboModeCameraShake.h">
-      <Filter>Source\SpaceShooter\Public</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\SpaceShooter\Public\SpacecraftDestructionCameraShake.h">
-      <Filter>Source\SpaceShooter\Public</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\SpaceShooter\Public\LootChest.h">
-      <Filter>Source\SpaceShooter\Public</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\SpaceShooter\Public\SpacecraftExplosion.h">
-      <Filter>Source\SpaceShooter\Public</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Source\SpaceShooter\Public\XYOnlyPhysicsConstraintComponent.h">
       <Filter>Source\SpaceShooter\Public</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\SpaceShooter\Public\MousePointerListener.h">
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\LootChest.h">
+      <Filter>Source\SpaceShooter\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\LootPool.h">
+      <Filter>Source\SpaceShooter\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\LootItemBuilder.h">
+      <Filter>Source\SpaceShooter\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\LootAmmoBuilder.h">
       <Filter>Source\SpaceShooter\Public</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Source\SpaceShooter\Private\SpacecraftPawn.cpp">
-      <Filter>Source\SpaceShooter\Private</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\SpaceShooter\Private\SpaceEnemyPawn.cpp">
-      <Filter>Source\SpaceShooter\Private</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\SpaceShooter\Private\SpaceEnemyController.cpp">
-      <Filter>Source\SpaceShooter\Private</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\SpaceShooter\Private\SpaceEnums.cpp">
-      <Filter>Source\SpaceShooter\Private</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\SpaceShooter\Private\SpacecraftTurboModeCameraShake.cpp">
-      <Filter>Source\SpaceShooter\Private</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\SpaceShooter\Private\SpacecraftDestructionCameraShake.cpp">
-      <Filter>Source\SpaceShooter\Private</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\SpaceShooter\Private\LootChest.cpp">
       <Filter>Source\SpaceShooter\Private</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\SpaceShooter\Private\SpacecraftExplosion.cpp">
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\LootPool.cpp">
       <Filter>Source\SpaceShooter\Private</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\SpaceShooter\Private\XYOnlyPhysicsConstraintComponent.cpp">
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\LootItemBuilder.cpp">
       <Filter>Source\SpaceShooter\Private</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\SpaceShooter\Private\MousePointerListener.cpp">
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\LootAmmoBuilder.cpp">
       <Filter>Source\SpaceShooter\Private</Filter>
     </ClCompile>
   </ItemGroup>

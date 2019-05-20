@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "Item.h"
 #include "Weapon.generated.h"
 
 // Forward declarations.
@@ -14,7 +14,7 @@ class AProjectile;
  * Base class of all spaceship weapons.
  */
 UCLASS()
-class SPACESHOOTER_API AWeapon : public AActor
+class SPACESHOOTER_API AWeapon : public AItem
 {
 	GENERATED_BODY()
 	
@@ -22,10 +22,6 @@ private:
 	/** Mesh component of this weapon. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* MeshComponent;
-
-	/** Name of this weapon. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
-	FText Name;
 
 	/** Type of this weapon. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))

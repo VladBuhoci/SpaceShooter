@@ -17,10 +17,9 @@
 /** Sets default values. */
 AWeapon::AWeapon()
 {
-	PrimaryActorTick.bCanEverTick = true;
-
+	Name                     = FText::FromString("Unnamed Weapon");
 	MeshComponent            = CreateDefaultSubobject<UStaticMeshComponent>("Mesh Component");
-	Type                     = EWeaponType::Blaster;
+	Type                     = EWeaponType::Unknown;
 	Damage                   = 23.0f;
 	SpreadAngle              = 12.5f;
 	Accuracy                 = 85.0f;
