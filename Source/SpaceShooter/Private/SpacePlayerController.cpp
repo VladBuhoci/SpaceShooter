@@ -6,12 +6,16 @@
 #include "MousePointerListener.h"
 #include "LootChest.h"
 
+#include "Engine/World.h"
+
+#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
+
 
 /** Sets default values. */
 ASpacePlayerController::ASpacePlayerController()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	
+
 }
 
 /** Called when the game starts or when spawned. */
@@ -58,11 +62,14 @@ void ASpacePlayerController::SetupInputComponent()
 	InputComponent->BindAction("Interact", IE_Pressed, this, &ASpacePlayerController::Interact);
 	InputComponent->BindAction("Previous Item In Loot Chest", IE_Pressed, this, &ASpacePlayerController::HighlightPreviousItemInsideChest);
 	InputComponent->BindAction("Next Item In Loot Chest", IE_Pressed, this, &ASpacePlayerController::HighlightNextItemInsideChest);
+
+	InputComponent->BindAction("Toggle Inventory", IE_Pressed, this, &ASpacePlayerController::ToggleHUDInventory);
+	InputComponent->BindAction("Toggle In-game Pause Menu", IE_Pressed, this, &ASpacePlayerController::ToggleInGamePauseMenu);
 }
 
 void ASpacePlayerController::HandleTargetIconOnScreen()
 {
-	if (PossessedSpacePawn && PossessedSpacePawn->IsNotDestroyed())
+	if (PossessedSpacePawn && PossessedSpacePawn->IsNotDestroyed() && !UGameplayStatics::IsGamePaused(GetWorld()))
 	{
 		float posX, posY;
 
@@ -76,7 +83,7 @@ void ASpacePlayerController::HandleTargetIconOnScreen()
 /** Gets the position of the cursor on the game screen and asks the player to rotate towards it. */
 void ASpacePlayerController::HandleSpaceshipRotation()
 {
-	if (PossessedSpacePawn && PossessedSpacePawn->IsNotDestroyed())
+	if (PossessedSpacePawn && PossessedSpacePawn->IsNotDestroyed() && !UGameplayStatics::IsGamePaused(GetWorld()))
 	{
 		FRotator TargetRotation;
 		FHitResult HitResult;
@@ -97,7 +104,7 @@ void ASpacePlayerController::HandleSpaceshipRotation()
 
 void ASpacePlayerController::HandleCursorPointingAtMouseListeningActors()
 {
-	if (PossessedSpacePawn && PossessedSpacePawn->IsNotDestroyed())
+	if (PossessedSpacePawn && PossessedSpacePawn->IsNotDestroyed() && !UGameplayStatics::IsGamePaused(GetWorld()))
 	{
 		FHitResult HitResult;
 		bool bHitSuccessful;
@@ -269,5 +276,21 @@ void ASpacePlayerController::EndFiringWeapon()
 	if (PossessedSpacePawn && PossessedSpacePawn->IsNotDestroyed())
 	{
 		PossessedSpacePawn->EndFiringWeapon();
+	}
+}
+
+void ASpacePlayerController::ToggleHUDInventory()
+{
+	if (OwnedHUD)
+	{
+		OwnedHUD->ToggleInventoryInterface();
+	}
+}
+
+void ASpacePlayerController::ToggleInGamePauseMenu()
+{
+	if (OwnedHUD)
+	{
+		OwnedHUD->ToggleInGamePauseMenuInterface();
 	}
 }

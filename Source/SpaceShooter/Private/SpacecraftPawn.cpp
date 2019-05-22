@@ -88,19 +88,23 @@ ASpacecraftPawn::ASpacecraftPawn()
 
 	// BackSideThrusterParticleEmitter setup:
 	BackSideThrusterParticleEmitter->SetupAttachment(SpacecraftMeshComponent, "BackThruster");
+	BackSideThrusterParticleEmitter->SetAutoActivate(false);
 	BackSideThrusterParticleEmitter->SetTemplate(BacksideNormalThrusterParticleSystem);
 	// ~ end of BackSideThrusterParticleEmitter setup.
 
 	// FrontSideThrusterParticleEmitter setup:
 	FrontSideThrusterParticleEmitter->SetupAttachment(SpacecraftMeshComponent, "FrontThruster");
+	FrontSideThrusterParticleEmitter->SetAutoActivate(false);
 	// ~ end of FrontSideThrusterParticleEmitter setup.
 
 	// LeftSideThrusterParticleEmitter setup:
 	LeftSideThrusterParticleEmitter->SetupAttachment(SpacecraftMeshComponent, "LeftThruster");
+	LeftSideThrusterParticleEmitter->SetAutoActivate(false);
 	// ~ end of LeftSideThrusterParticleEmitter setup.
 
 	// RightSideThrusterParticleEmitter setup:
 	RightSideThrusterParticleEmitter->SetupAttachment(SpacecraftMeshComponent, "RightThruster");
+	RightSideThrusterParticleEmitter->SetAutoActivate(false);
 	// ~ end of RightSideThrusterParticleEmitter setup.
 }
 

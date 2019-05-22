@@ -6,6 +6,10 @@
 #include "GameFramework/HUD.h"
 #include "SpaceHUD.generated.h"
 
+// Forward declarations.
+class UUserWidget;
+class ASpacePlayerController;
+
 
 USTRUCT(BlueprintInternalUseOnly)
 struct FCrosshairParams
@@ -30,6 +34,9 @@ class SPACESHOOTER_API ASpaceHUD : public AHUD
 {
 	GENERATED_BODY()
 	
+	/** Store the player controller so we don't look for it all the time. */
+	ASpacePlayerController* SpacePlayerController;
+
 	/** Controls the end result of the crosshair's rendering every frame. */
 	FCrosshairParams CrosshairParams;
 
@@ -37,11 +44,30 @@ class SPACESHOOTER_API ASpaceHUD : public AHUD
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space HUD", Meta = (AllowPrivateAccess = "true"))
 	bool bCanDrawCrosshair;
 
+	/** Type of inventory widget to spawn and add on screen when requested. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Space HUD", Meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UUserWidget> InventoryWidgetType;
+
+	/** Type of in-game menu widget to spawn and add on screen when requested. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Space HUD", Meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UUserWidget> InGamePauseMenuWidgetType;
+
+	/** Pointer to the inventory widget object. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space HUD", Meta = (AllowPrivateAccess = "true"))
+	UUserWidget* InventoryWidget;
+
+	/** Pointer to the in-game menu widget object. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space HUD", Meta = (AllowPrivateAccess = "true"))
+	UUserWidget* InGamePauseMenuWidget;
+
 public:
 	ASpaceHUD();
 
 	/** The Main Draw loop for the HUD. */
 	virtual void DrawHUD() override;
+
+protected:
+	virtual void BeginPlay() override;
 
 	// Public interface:
 public:
@@ -50,5 +76,14 @@ public:
 
 	void SetCanDrawCrosshairIcon(bool NewState) { bCanDrawCrosshair = NewState; }
 
+	UFUNCTION(BlueprintCallable, Category = "Space HUD")
+	void ToggleInventoryInterface();
+
+	UFUNCTION(BlueprintCallable, Category = "Space HUD")
+	void ToggleInGamePauseMenuInterface();
+
 	// ~ end of public interface.
+
+private:
+	void CreateAndAddWidgets();
 };

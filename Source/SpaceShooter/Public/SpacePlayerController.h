@@ -104,4 +104,13 @@ private:
 	void Interact();
 	void HighlightPreviousItemInsideChest();
 	void HighlightNextItemInsideChest();
+
+
+	/**********************************
+			   HUD INTERFACE
+	**********************************/
+
+private:
+	void ToggleHUDInventory();
+	void ToggleInGamePauseMenu();
 };
