@@ -7,6 +7,7 @@
 #include "SpaceEnemyController.generated.h"
 
 // Forward declarations.
+class ASpaceGameMode;
 class ASpaceEnemyPawn;
 class ASpacecraftPawn;
 class UNavigationSystem;
@@ -21,6 +22,13 @@ enum class ESpacecraftState : uint8
 	Attacking
 };
 
+enum class ESpaceControllerNotification : uint8
+{
+	TargetFound,
+	TargetInsideCombatArea,
+	TargetOutOfCombatArea,
+	TargetLost
+};
 
 /**
  * Space Enemy Pawn AI Controller.
@@ -34,8 +42,12 @@ private:
 	/** The navigation system is used to gather navigation mesh data. */
 	UNavigationSystem* NavSystem;
 
-	/** Timer Handle used to work with timers. */
-	FTimerHandle TimerHandle;
+	/** Timer Handle used to manage timing for random idle/flight actions. */
+	FTimerHandle NonAggressiveStateMovementTimerHandle;
+
+	/** Current game mode. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Enemy Controller", Meta = (AllowPrivateAccess = "true"))
+	ASpaceGameMode* SpaceGameMode;
 
 	/** The controlled enemy pawn of this controller. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Enemy Controller", Meta = (AllowPrivateAccess = "true"))
@@ -68,6 +80,15 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Enemy Controller", Meta = (AllowPrivateAccess = "true"))
 	ESpacecraftState SpacecraftState;
 
+	/**
+	 * Time (in seconds) to wait until we search for a new target in our detection radius. (used only when not attacking)
+	 * If failed, we will wait for the same amount of time before doing another search.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Space Enemy Controller", Meta = (AllowPrivateAccess = "true"))
+	float CloseEnemySearchTimeInterval;
+
+	FTimerHandle IdleSearchForEnemiesInCloseProximityTimerHandle;
+
 public:
 	/** Sets default values. */
 	ASpaceEnemyController();
@@ -96,18 +117,29 @@ protected:
 
 
 	/**********************************
-			 MOVEMENT INTERFACE
+			 NOTIFY INTERFACE
 	**********************************/
 
 public:
-	void AttemptAttackOnPlayer(ASpacecraftPawn* SpacecraftToFollow);
-	void StayInPlace(bool bContinueAttack);
+	void NotifyController(ESpaceControllerNotification Notification);
+	void NotifyController(ESpaceControllerNotification Notification, ASpacecraftPawn* OtherPawn);
+
+
+	/**********************************
+			 MOVEMENT INTERFACE
+	**********************************/
 
 private:
+	void AttemptAttackOnSpacecraft(ASpacecraftPawn* SpacecraftToFollow);
+	void GoAfterTarget();
+	void StayInPlace(bool bContinueAttack);
 	void HandleSpaceshipRotation(FVector TargetLocation);
 	void ScheduleNewRandomFlight();
+	void UnscheduleNewRandomFlight();
 	void BeginFlightToRandomLocation();
 	void EnterCompletelyIdleState();
+	void ScheduleSearchingForNewTarget();
+	void UnscheduleSearchingForNewTarget();
 
 	void MovePawnForward(float Value);
 	void MovePawnBackward(float Value);
@@ -116,4 +148,19 @@ private:
 	void DeactivateTurboMode();
 
 	FVector GetNewRandomLocationInNavMesh();
+
+	void LookForAndAttackEnemyInCloseProximity();
+
+
+	/**********************************
+			      UTILS
+	**********************************/
+
+private:
+	/**
+	 * Will search for enemies around this controller's possessed pawn and return one of the closest targets.
+	 * 
+	 * @param bSearchEntireWorldForEnemies If true, it will search in the global array of spacecrafts in the current world.
+	 */
+	ASpacecraftPawn* FindEnemyAroundThisPawn(bool bSearchEntireWorldForEnemies);
 };

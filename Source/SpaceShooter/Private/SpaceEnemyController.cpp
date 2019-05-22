@@ -2,6 +2,7 @@
 
 #include "SpaceEnemyController.h"
 #include "SpaceEnemyPawn.h"
+#include "SpaceGameMode.h"
 
 #include "Kismet/KismetMathLibrary.h"
 
@@ -10,16 +11,20 @@
 #include "Engine/World.h"
 
 #include "Runtime/Engine/Public/TimerManager.h"
+#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
+
+
 
 
 ASpaceEnemyController::ASpaceEnemyController()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	IdleTimeMin      = 3.0f;
-	IdleTimeMax      = 10.0f;
-	WanderAreaRadius = 3000.0f;
-	SpacecraftState  = ESpacecraftState::Idle;
+	IdleTimeMin                  = 3.0f;
+	IdleTimeMax                  = 10.0f;
+	WanderAreaRadius             = 3000.0f;
+	SpacecraftState              = ESpacecraftState::Idle;
+	CloseEnemySearchTimeInterval = 1.0f;
 }
 
 void ASpaceEnemyController::BeginPlay()
@@ -32,10 +37,11 @@ void ASpaceEnemyController::BeginPlay()
 	UWorld* World = GetWorld();
 	if (World)
 	{
+		// Store the game mode for later usage.
+		SpaceGameMode = Cast<ASpaceGameMode>(UGameplayStatics::GetGameMode(World));
+
 		NavSystem = World->GetNavigationSystem();
 	}
-
-	BeginFlightToRandomLocation();
 }
 
 void ASpaceEnemyController::Tick(float DeltaTime)
@@ -48,7 +54,9 @@ void ASpaceEnemyController::Tick(float DeltaTime)
 		{
 		case ESpacecraftState::Idle:
 			EnterCompletelyIdleState();
+
 			ScheduleNewRandomFlight();
+			ScheduleSearchingForNewTarget();
 
 			break;
 
@@ -78,7 +86,6 @@ void ASpaceEnemyController::Tick(float DeltaTime)
 				else
 				{
 					EnterCompletelyIdleState();
-					ScheduleNewRandomFlight();
 				}
 			}
 
@@ -98,7 +105,6 @@ void ASpaceEnemyController::OnMoveCompleted(FAIRequestID RequestID, const FPathF
 	if (SpacecraftState != ESpacecraftState::Attacking)
 	{
 		EnterCompletelyIdleState();
-		ScheduleNewRandomFlight();
 	}
 }
 
@@ -118,26 +124,75 @@ void ASpaceEnemyController::EndFiringWeapon()
 	}
 }
 
-void ASpaceEnemyController::AttemptAttackOnPlayer(ASpacecraftPawn* SpacecraftToFollow)
+void ASpaceEnemyController::NotifyController(ESpaceControllerNotification Notification)
 {
-	// Clear the timer in case there was a MoveTo action scheduled in the near future.
-	GetWorldTimerManager().ClearTimer(TimerHandle);
+	NotifyController(Notification, nullptr);
+}
 
-	MoveToActor(SpacecraftToFollow, 10.0f);
+void ASpaceEnemyController::NotifyController(ESpaceControllerNotification Notification, ASpacecraftPawn* OtherPawn)
+{
+	switch (Notification)
+	{
+	case ESpaceControllerNotification::TargetFound:
+		AttemptAttackOnSpacecraft(OtherPawn);
+		break;
 
-	SpacecraftToReach = SpacecraftToFollow;
-	SpacecraftState   = ESpacecraftState::Attacking;
+	case ESpaceControllerNotification::TargetOutOfCombatArea:
+		GoAfterTarget();
+		break;
 
-	FTimerHandle ShootDelayTimerHandle;
-	float Delay = 0.5f;
+	case ESpaceControllerNotification::TargetInsideCombatArea:
+		StayInPlace(true);
+		break;
 
-	// Don't start shooting immediately because it looks weird until the ship is completely rotated towards the target.
-	GetWorldTimerManager().SetTimer(ShootDelayTimerHandle, this, &ASpaceEnemyController::BeginFiringWeapon, Delay, false);
+	case ESpaceControllerNotification::TargetLost:
+		StayInPlace(false);
+		LookForAndAttackEnemyInCloseProximity();
+		break;
+
+	default:
+		StayInPlace(false);
+		break;
+	}
+}
+
+void ASpaceEnemyController::AttemptAttackOnSpacecraft(ASpacecraftPawn* SpacecraftToFollow)
+{
+	if (SpacecraftToFollow)
+	{
+		// Clear the timers in case there was a MoveTo or SearchNewTarget action scheduled in the near future.
+		UnscheduleNewRandomFlight();
+		UnscheduleSearchingForNewTarget();
+
+		SpacecraftToReach = SpacecraftToFollow;
+		SpacecraftState   = ESpacecraftState::Attacking;
+
+		FTimerHandle ShootDelayTimerHandle;
+		float Delay = 0.5f;
+
+		// Don't start shooting immediately, wait until the ship is completely (sort of) rotated towards the target,
+		//		because it looks weird otherwise (shooting in the wrong direction).
+		GetWorldTimerManager().SetTimer(ShootDelayTimerHandle, this, &ASpaceEnemyController::BeginFiringWeapon, Delay, false);
+
+		GoAfterTarget();
+	}
+	else
+	{
+		EnterCompletelyIdleState();
+	}
+}
+
+void ASpaceEnemyController::GoAfterTarget()
+{
+	if (SpacecraftToReach)
+	{
+		MoveToActor(SpacecraftToReach, 10.0f);
+	}
 }
 
 void ASpaceEnemyController::StayInPlace(bool bContinueAttack)
 {
-	GetWorldTimerManager().ClearTimer(TimerHandle);
+	UnscheduleNewRandomFlight();
 
 	SpacecraftState = bContinueAttack ? ESpacecraftState::Attacking : ESpacecraftState::Idle;
 
@@ -160,7 +215,13 @@ void ASpaceEnemyController::ScheduleNewRandomFlight()
 
 	float IdleTime = UKismetMathLibrary::RandomFloatInRange(IdleTimeMin, IdleTimeMax);
 
-	GetWorldTimerManager().SetTimer(TimerHandle, this, &ASpaceEnemyController::BeginFlightToRandomLocation, IdleTime, false);
+	GetWorldTimerManager().SetTimer(NonAggressiveStateMovementTimerHandle,
+		this, &ASpaceEnemyController::BeginFlightToRandomLocation, IdleTime, false);
+}
+
+void ASpaceEnemyController::UnscheduleNewRandomFlight()
+{
+	GetWorldTimerManager().ClearTimer(NonAggressiveStateMovementTimerHandle);
 }
 
 void ASpaceEnemyController::BeginFlightToRandomLocation()
@@ -173,12 +234,27 @@ void ASpaceEnemyController::BeginFlightToRandomLocation()
 
 void ASpaceEnemyController::EnterCompletelyIdleState()
 {
-	GetWorldTimerManager().ClearTimer(TimerHandle);
+	UnscheduleNewRandomFlight();
+	UnscheduleSearchingForNewTarget();
 
 	SpacecraftToReach = nullptr;
 	SpacecraftState   = ESpacecraftState::Idle;
 
 	EndFiringWeapon();
+}
+
+void ASpaceEnemyController::ScheduleSearchingForNewTarget()
+{
+	// When we're idle/flying randomly (so, without a target to attack), we make a query to see if there are any targets
+	//		already sitting in our detection area (normally found only when they enter the area).
+
+	GetWorldTimerManager().SetTimer(IdleSearchForEnemiesInCloseProximityTimerHandle,
+		this, &ASpaceEnemyController::LookForAndAttackEnemyInCloseProximity, CloseEnemySearchTimeInterval, false);
+}
+
+void ASpaceEnemyController::UnscheduleSearchingForNewTarget()
+{
+	GetWorldTimerManager().ClearTimer(IdleSearchForEnemiesInCloseProximityTimerHandle);
 }
 
 void ASpaceEnemyController::MovePawnForward(float Value)
@@ -226,4 +302,48 @@ FVector ASpaceEnemyController::GetNewRandomLocationInNavMesh()
 	}
 
 	return PossessedSpacePawn != NULL ? PossessedSpacePawn->GetActorLocation() : FVector::ZeroVector;
+}
+
+void ASpaceEnemyController::LookForAndAttackEnemyInCloseProximity()
+{
+	// We don't search for a new target if we're already attacking one.
+	if (SpacecraftState == ESpacecraftState::Attacking)
+		return;
+
+	ASpacecraftPawn* FoundTarget = FindEnemyAroundThisPawn(PossessedSpacePawn->IsAlwaysAggressive());
+
+	if (FoundTarget)
+	{
+		AttemptAttackOnSpacecraft(FoundTarget);
+	}
+}
+
+ASpacecraftPawn* ASpaceEnemyController::FindEnemyAroundThisPawn(bool bSearchEntireWorldForEnemies)
+{
+	ESpacecraftFaction OppositeFaction = PossessedSpacePawn->GetFaction() == ESpacecraftFaction::Human
+		? ESpacecraftFaction::Clone
+		: ESpacecraftFaction::Human;
+
+	TArray<ASpacecraftPawn*> FoundShips = bSearchEntireWorldForEnemies
+		? TArray<ASpacecraftPawn*>(SpaceGameMode->GetAllSpacecraftsInWorld())
+		: PossessedSpacePawn->GetAllSpacecraftsInDetectionArea(OppositeFaction);
+	
+	FoundShips.Remove(PossessedSpacePawn);	// remove our pawn from the array.
+
+	// Iterate through the array and remove all spacecrafts belonging to the same faction as this controller's pawn.
+	for (auto ShipsIterator = FoundShips.CreateIterator(); ShipsIterator; ++ShipsIterator)
+	{
+		if ((* ShipsIterator)->GetFaction() != OppositeFaction)
+		{
+			ShipsIterator.RemoveCurrent();
+		}
+	}
+
+	if (FoundShips.Num() == 0)
+		return nullptr;
+
+	// TODO: make this a clever and slightly random pick up choice (i.e.: pick randomly from 3 closest enemies).
+	int32 ChosenShipIndex = 0;
+
+	return FoundShips[ChosenShipIndex];
 }

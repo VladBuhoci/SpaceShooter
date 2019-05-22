@@ -50,38 +50,39 @@ private:
 	UWidgetComponent* SurvivabilitySummaryWidgetComponent;
 
 	/** The targeted spacecraft of this pawn. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Enemy Pawn", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | NPC", Meta = (AllowPrivateAccess = "true"))
 	ASpacecraftPawn* Target;
 
+	/**
+	 * If set to true, this NPC will not stop hunting down its enemies until there are none
+	 *		left in the level, starting with the closest ones.
+	 * If set to true, the detection area's radius is permanently set to the modified value,
+	 *		using DetectionAreaRadiusModifier to calculate it.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | NPC", Meta = (AllowPrivateAccess = "true"))
+	bool bAlwaysAggressive;
+
 	/** Radius of the detection area (sphere) of this spacecraft. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Space Enemy Pawn", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | NPC", Meta = (AllowPrivateAccess = "true"))
 	float DetectionAreaRadius;
 
 	/** Radius of the close proximity area (sphere) of this spacecraft. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Space Enemy Pawn", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | NPC", Meta = (AllowPrivateAccess = "true"))
 	float CloseQuartersAreaRadius;
 
 	/**
 	 * Whenever this spacecraft detects an enemy, along with the start of moving towards it,
 	 * it will also increase the radius of its detection area by this variable's value per cent.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Space Enemy Pawn", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | NPC", Meta = (AllowPrivateAccess = "true"))
 	float DetectionAreaRadiusModifier;
 
 	/**
 	 * Whenever this spacecraft's enemy gets close enough, along with sitting in place and attacking,
 	 * it will also increase the radius of its close quarters area by this variable's value per cent.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Space Enemy Pawn", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | NPC", Meta = (AllowPrivateAccess = "true"))
 	float CloseQuartersAreaRadiusModifier;
-
-	/** List of loot chests and their respective chances of getting spawned during this spacecraft's destruction. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spacecraft | Loot", Meta = (AllowPrivateAccess = "true"))
-	TArray<FLootChestWithChance_KeyValue_Pair> LootChestsAndChances;
-
-	/** Bounding box inside which loot chests will be spawned. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spacecraft | Loot", Meta = (AllowPrivateAccess = "true"))
-	FBox LootBoundingBox;
 
 public:
 	/** Sets default values. */
@@ -95,22 +96,22 @@ protected:
 	virtual void BeginPlay() override;
 
 	/** Called when an object enters this spacecraft's detection area. */
-	UFUNCTION(BlueprintNativeEvent, Category = "Space Enemy Pawn", Meta = (DisplayName = "OnObjectEnterDetectionArea"))
+	UFUNCTION(BlueprintNativeEvent, Category = "Spacecraft | NPC", Meta = (DisplayName = "OnObjectEnterDetectionArea"))
 	void ExecuteOnObjectEnterDetectionArea               (UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 	void ExecuteOnObjectEnterDetectionArea_Implementation(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 
 	/** Called when an object exits this spacecraft's detection area. */
-	UFUNCTION(BlueprintNativeEvent, Category = "Space Enemy Pawn", Meta = (DisplayName = "OnObjectExitDetectionArea"))
+	UFUNCTION(BlueprintNativeEvent, Category = "Spacecraft | NPC", Meta = (DisplayName = "OnObjectExitDetectionArea"))
 	void ExecuteOnObjectExitDetectionArea               (UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 	void ExecuteOnObjectExitDetectionArea_Implementation(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 	/** Called when an object enters this spacecraft's close proximity area. */
-	UFUNCTION(BlueprintNativeEvent, Category = "Space Enemy Pawn", Meta = (DisplayName = "OnObjectEnterCloseQuartersArea"))
+	UFUNCTION(BlueprintNativeEvent, Category = "Spacecraft | NPC", Meta = (DisplayName = "OnObjectEnterCloseQuartersArea"))
 	void ExecuteOnObjectEnterCloseQuartersArea               (UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 	void ExecuteOnObjectEnterCloseQuartersArea_Implementation(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 
 	/** Called when an object exits this spacecraft's close proximity area. */
-	UFUNCTION(BlueprintNativeEvent, Category = "Space Enemy Pawn", Meta = (DisplayName = "OnObjectExitCloseQuartersArea"))
+	UFUNCTION(BlueprintNativeEvent, Category = "Spacecraft | NPC", Meta = (DisplayName = "OnObjectExitCloseQuartersArea"))
 	void ExecuteOnObjectExitCloseQuartersArea               (UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 	void ExecuteOnObjectExitCloseQuartersArea_Implementation(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
@@ -123,6 +124,10 @@ protected:
 
 	virtual void OnTurboModeActivated() override;
 	virtual void OnTurboModeDeactivated() override;
+
+private:
+	/** Will return OriginalRadius + OriginalRadius * RadiusModifier % 100. */
+	float ComputeModifiedAreaRadius(float OriginalRadius, float RadiusModifier);
 
 
 	/**********************************
@@ -153,7 +158,7 @@ protected:
 	 * Called after taking damage, a value not great enough to be destroyed yet.
 	 * Damage has already been applied and checks done at the time of this method being called.
 	 */
-	virtual void OnDamageTaken() override;
+	virtual void OnDamageTaken(ASpacecraftPawn* DamageCauser) override;
 
 	/**
 	 * Called right before the spacecraft is removed from the world.
@@ -162,6 +167,12 @@ protected:
 	 * @param bShouldBeDestroyedForGood [ref] if set to false, the attempt to remove this actor is canceled.
 	 */
 	virtual void PreDestroy(bool & bShouldPlayDestroyEffects, bool & bShouldBeDestroyed) override;
+
+private:
+	void OnNewEnemyFound(ASpacecraftPawn* NewTarget);
+	void OnEnemyLost();
+	void OnEnemyEnterCombatArea();
+	void OnEnemyExitCombatArea();
 
 private:
 	/** Used to control the timer that takes care of the tiny HP/SP HUD visibility after taking damage. */
@@ -189,6 +200,15 @@ public:
 	**********************************/
 
 private:
+	/** List of loot chests and their respective chances of getting spawned during this spacecraft's destruction. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spacecraft | Loot", Meta = (AllowPrivateAccess = "true"))
+	TArray<FLootChestWithChance_KeyValue_Pair> LootChestsAndChances;
+
+	/** Bounding box inside which loot chests will be spawned. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spacecraft | Loot", Meta = (AllowPrivateAccess = "true"))
+	FBox LootBoundingBox;
+
+private:
 	void TryToCreateLootChests();
 	void SpawnLootChest(TSubclassOf<ALootChest> ChestTypeToSpawn);
 
@@ -198,5 +218,14 @@ private:
 	**********************************/
 
 public:
+	bool IsAlwaysAggressive() const { return bAlwaysAggressive; }
+	TArray<ASpacecraftPawn*> GetAllSpacecraftsInDetectionArea(ESpacecraftFaction Factions = ESpacecraftFaction::Both);
 
+
+	/**********************************
+				  UTILS
+	**********************************/
+
+private:
+	float GetDistanceToCurrentTarget();
 };

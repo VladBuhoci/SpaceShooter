@@ -7,6 +7,7 @@
 #include "SpaceGameMode.generated.h"
 
 // Forward declarations.
+class ASpacecraftPawn;
 class ALootItemBuilder;
 
 
@@ -17,6 +18,10 @@ UCLASS()
 class SPACESHOOTER_API ASpaceGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
+	
+	/** Contains every spacecraft currently spawned in the world. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Game Mode", Meta = (AllowPrivateAccess = "true"))
+	TArray<ASpacecraftPawn*> AllSpacecrafts;
 	
 	/**
 	 * Map of item builders. Since the game mode reference is available from nearly anywhere,
@@ -37,7 +42,13 @@ protected:
 	/** Called when the game starts or when spawned. */
 	virtual void BeginPlay() override;
 
+public:
+	void NotifySpacecraftSpawned(ASpacecraftPawn* NewbornSpacecraft);
+	void NotifySpacecraftDestroyed(ASpacecraftPawn* DestroyedSpacecraft);
+
 private:
+	void FindAllSpacecraftsInWorld();
+
 	void CreateLootBuilders();
 
 	/**********************************
@@ -48,4 +59,8 @@ public:
 	/** Given a type, returns the right loot item builder. */
 	UFUNCTION(BlueprintPure, Category = "Loot Chest")
 	ALootItemBuilder* GetLootBuilder(TSubclassOf<ALootItemBuilder> Type) const;
+
+	/** Returns all spacecrafts found in the current world. */
+	UFUNCTION(BlueprintPure, Category = "Space Game Mode")
+	TArray<ASpacecraftPawn*> GetAllSpacecraftsInWorld() const { return AllSpacecrafts; }
 };

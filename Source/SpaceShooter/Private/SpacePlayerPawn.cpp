@@ -106,6 +106,11 @@ void ASpacePlayerPawn::OnTurboModeDeactivated()
 	
 }
 
+void ASpacePlayerPawn::OnDamageTaken(ASpacecraftPawn * DamageCauser)
+{
+	// TODO: add some hit effects perhaps?
+}
+
 // TODO: W.I.P.
 void ASpacePlayerPawn::PreDestroy(bool & bShouldPlayDestroyEffects, bool & bShouldBeDestroyed)
 {

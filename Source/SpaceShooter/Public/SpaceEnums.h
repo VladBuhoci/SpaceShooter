@@ -8,19 +8,22 @@
 
 
 /**
- * The "side" to which a spacecraft belongs to.
+ * The "side" which a spacecraft belongs to.
  */
 UENUM(BlueprintType)
 enum class ESpacecraftFaction : uint8
 {
 	/** Not belonging to any side. */
-	Unspecified,
+	Unspecified = 0,
 
 	/** The human race. */
-	Human,
+	Human       = 1,
 
 	/** The clone race. */
-	Clone
+	Clone       = 2,
+
+	/** Do not use this directly. Introduced for C++ only. */
+	Both        = Human | Clone
 };
 
 /**

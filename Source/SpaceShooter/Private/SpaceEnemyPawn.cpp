@@ -13,6 +13,8 @@
 
 #include "Runtime/Engine/Public/TimerManager.h"
 
+#include <../Plugins/Experimental/AlembicImporter/Source/ThirdParty/Alembic/openexr/IlmBase/Half/halfLimits.h>
+
 
 ASpaceEnemyPawn::ASpaceEnemyPawn()
 {
@@ -33,10 +35,11 @@ ASpaceEnemyPawn::ASpaceEnemyPawn()
 	ShieldRechargeDelay                 = 2.5f;
 	Name                                = FText::FromString("Unnamed Enemy");
 	Faction                             = ESpacecraftFaction::Clone;
-	DetectionAreaRadius                 = 1500.0f;
-	CloseQuartersAreaRadius             = 500.0f;
-	DetectionAreaRadiusModifier         = 135.0f;
-	CloseQuartersAreaRadiusModifier     = 150.0f;
+	bAlwaysAggressive                   = false;
+	DetectionAreaRadius                 = 1700.0f;
+	CloseQuartersAreaRadius             = 700.0f;
+	DetectionAreaRadiusModifier         = 50.0f;
+	CloseQuartersAreaRadiusModifier     = 40.0f;
 	LootBoundingBox.Min                 = FVector(-75.0f, -50.0f, 20.0f);
 	LootBoundingBox.Max                 = FVector( 75.0f,  50.0f, 40.0f);
 	SurvivabilityWidgetVisibilityTime   = 1.5f;
@@ -63,6 +66,8 @@ void ASpaceEnemyPawn::BeginPlay()
 {
 	Super::BeginPlay();
 
+	DetectionArea->SetSphereRadius(bAlwaysAggressive ? ComputeModifiedAreaRadius(DetectionAreaRadius, DetectionAreaRadiusModifier) : DetectionAreaRadius);
+	CloseQuartersArea->SetSphereRadius(CloseQuartersAreaRadius);
 }
 
 void ASpaceEnemyPawn::Tick(float DeltaTime)
@@ -75,20 +80,12 @@ void ASpaceEnemyPawn::ExecuteOnObjectEnterDetectionArea_Implementation(UPrimitiv
 {
 	if (OtherActor != NULL && OtherActor != this)
 	{
-		ASpacePlayerPawn* Player = Cast<ASpacePlayerPawn>(OtherActor);
+		ASpacePlayerPawn* NewTarget = Cast<ASpacePlayerPawn>(OtherActor);
 
 		// Acquire a target only if there isn't one at the moment.
-		if (Player && Target == NULL)
+		if (NewTarget && Target == NULL)
 		{
-			Target = Player;
-
-			ASpaceEnemyController* SpaceEnemyController = Cast<ASpaceEnemyController>(Controller);
-			if (SpaceEnemyController)
-			{
-				DetectionArea->SetSphereRadius(DetectionAreaRadius * DetectionAreaRadiusModifier / 100.0f);
-
-				SpaceEnemyController->AttemptAttackOnPlayer(Target);
-			}
+			OnNewEnemyFound(NewTarget);
 		}
 	}
 }
@@ -102,14 +99,9 @@ void ASpaceEnemyPawn::ExecuteOnObjectExitDetectionArea_Implementation(UPrimitive
 		// Stop hunting only if the target spacecraft has gone out of the detection area.
 		if (Player && Target == Player)
 		{
-			Target = nullptr;
-
-			ASpaceEnemyController* SpaceEnemyController = Cast<ASpaceEnemyController>(Controller);
-			if (SpaceEnemyController)
+			if (!bAlwaysAggressive)		// aggressive spacecrafts should not stop chasing their target.
 			{
-				DetectionArea->SetSphereRadius(DetectionAreaRadius);
-
-				SpaceEnemyController->StayInPlace(false);
+				OnEnemyLost();
 			}
 		}
 	}
@@ -124,13 +116,7 @@ void ASpaceEnemyPawn::ExecuteOnObjectEnterCloseQuartersArea_Implementation(UPrim
 		// Make sure this spacecraft keeps attacking the same target.
 		if (Player && Target == Player)
 		{
-			ASpaceEnemyController* SpaceEnemyController = Cast<ASpaceEnemyController>(Controller);
-			if (SpaceEnemyController)
-			{
-				CloseQuartersArea->SetSphereRadius(CloseQuartersAreaRadius * CloseQuartersAreaRadiusModifier / 100.0f);
-
-				SpaceEnemyController->StayInPlace(true);
-			}
+			OnEnemyEnterCombatArea();
 		}
 	}
 }
@@ -144,13 +130,7 @@ void ASpaceEnemyPawn::ExecuteOnObjectExitCloseQuartersArea_Implementation(UPrimi
 		// Make sure this spacecraft keeps attacking the same target.
 		if (Player && Target == Player)
 		{
-			ASpaceEnemyController* SpaceEnemyController = Cast<ASpaceEnemyController>(Controller);
-			if (SpaceEnemyController)
-			{
-				CloseQuartersArea->SetSphereRadius(CloseQuartersAreaRadius);
-
-				SpaceEnemyController->AttemptAttackOnPlayer(Target);
-			}
+			OnEnemyExitCombatArea();
 		}
 	}
 }
@@ -163,6 +143,11 @@ void ASpaceEnemyPawn::OnTurboModeActivated()
 void ASpaceEnemyPawn::OnTurboModeDeactivated()
 {
 
+}
+
+float ASpaceEnemyPawn::ComputeModifiedAreaRadius(float OriginalRadius, float RadiusModifier)
+{
+	return OriginalRadius + OriginalRadius * RadiusModifier / 100.0f;
 }
 
 void ASpaceEnemyPawn::OnMouseEnter_Implementation()
@@ -181,9 +166,9 @@ void ASpaceEnemyPawn::OnMouseLeave_Implementation()
 	bCurrentlyPointedAt = false;
 }
 
-void ASpaceEnemyPawn::OnDamageTaken()
+void ASpaceEnemyPawn::OnDamageTaken(ASpacecraftPawn* DamageCauser)
 {
-	// If this Pawn is not currently pointed at, the widget will be visibly only temporarily.
+	// If this Pawn is not currently pointed at, the widget will be visible only temporarily.
 	if (! bCurrentlyPointedAt)
 	{
 		// Make the HP/SP HUD element (widget) for a limited amount of time whenever taking damage.
@@ -204,6 +189,13 @@ void ASpaceEnemyPawn::OnDamageTaken()
 			}
 		}, SurvivabilityWidgetVisibilityTime, false);
 	}
+
+	if (Target == nullptr)
+	{
+		// If this spacecraft is not chasing anyone, follow the one who dared to hit it.
+
+		OnNewEnemyFound(DamageCauser);
+	}
 }
 
 // TODO: W.I.P.
@@ -218,10 +210,68 @@ void ASpaceEnemyPawn::PreDestroy(bool & bShouldPlayDestroyEffects, bool & bShoul
 	bShouldBeDestroyed        = true;
 }
 
+void ASpaceEnemyPawn::OnNewEnemyFound(ASpacecraftPawn* NewTarget)
+{
+	ASpaceEnemyController* SpaceEnemyController = Cast<ASpaceEnemyController>(Controller);
+	Target = NewTarget;
+
+	if (SpaceEnemyController)
+	{
+		DetectionArea->SetSphereRadius(ComputeModifiedAreaRadius(DetectionAreaRadius, DetectionAreaRadiusModifier));
+
+		SpaceEnemyController->NotifyController(ESpaceControllerNotification::TargetFound, Target);
+	}
+}
+
+void ASpaceEnemyPawn::OnEnemyLost()
+{
+	ASpaceEnemyController* SpaceEnemyController = Cast<ASpaceEnemyController>(Controller);
+	Target = nullptr;
+
+	if (SpaceEnemyController)
+	{
+		DetectionArea->SetSphereRadius(DetectionAreaRadius);
+
+		SpaceEnemyController->NotifyController(ESpaceControllerNotification::TargetLost);
+	}
+}
+
+void ASpaceEnemyPawn::OnEnemyEnterCombatArea()
+{
+	ASpaceEnemyController* SpaceEnemyController = Cast<ASpaceEnemyController>(Controller);
+
+	if (SpaceEnemyController)
+	{
+		CloseQuartersArea->SetSphereRadius(ComputeModifiedAreaRadius(CloseQuartersAreaRadius, CloseQuartersAreaRadiusModifier));
+
+		SpaceEnemyController->NotifyController(ESpaceControllerNotification::TargetInsideCombatArea);
+	}
+}
+
+void ASpaceEnemyPawn::OnEnemyExitCombatArea()
+{
+	ASpaceEnemyController* SpaceEnemyController = Cast<ASpaceEnemyController>(Controller);
+
+	if (SpaceEnemyController)
+	{
+		CloseQuartersArea->SetSphereRadius(CloseQuartersAreaRadius);
+
+		SpaceEnemyController->NotifyController(ESpaceControllerNotification::TargetOutOfCombatArea);
+	}
+}
+
 void ASpaceEnemyPawn::BeginFiringWeapon()
 {
-	Super::BeginFiringWeapon();
+	if (Target)
+	{
+		// Only allow firing when the target is within this spacecraft's minimum attacking distance.
+		float MinAttackRange = DetectionArea->GetScaledSphereRadius();
 
+		if (GetDistanceToCurrentTarget() <= MinAttackRange)
+		{
+			Super::BeginFiringWeapon();
+		}
+	}
 }
 
 void ASpaceEnemyPawn::EndFiringWeapon()
@@ -264,4 +314,31 @@ void ASpaceEnemyPawn::SpawnLootChest(TSubclassOf<ALootChest> ChestTypeToSpawn)
 
 		World->SpawnActor<ALootChest>(ChestTypeToSpawn, ChestTransform);
 	}
+}
+
+TArray<ASpacecraftPawn*> ASpaceEnemyPawn::GetAllSpacecraftsInDetectionArea(ESpacecraftFaction Factions)
+{
+	TArray<AActor*> FoundShipsAsActors;
+	TArray<ASpacecraftPawn*> FoundShips;
+
+	DetectionArea->GetOverlappingActors(FoundShipsAsActors, ASpacecraftPawn::StaticClass());
+	
+	for (AActor* ShipActor : FoundShipsAsActors)
+	{
+		ASpacecraftPawn* CastedShip = Cast<ASpacecraftPawn>(ShipActor);
+
+		if (CastedShip && ((uint8) CastedShip->GetFaction() & (uint8) Factions))
+		{
+			FoundShips.Add(CastedShip);
+		}
+	}
+
+	return FoundShips;
+}
+
+float ASpaceEnemyPawn::GetDistanceToCurrentTarget()
+{
+	FVector DistanceToTargetVector = Target->GetActorLocation() - this->GetActorLocation();
+
+	return DistanceToTargetVector.Size();
 }

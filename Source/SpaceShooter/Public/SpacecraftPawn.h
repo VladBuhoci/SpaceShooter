@@ -296,7 +296,7 @@ protected:
 	 * Called after taking damage, a value not great enough to be destroyed yet.
 	 * Damage has already been applied and checks done at the time of this method being called.
 	 */
-	virtual void OnDamageTaken() {};
+	virtual void OnDamageTaken(ASpacecraftPawn* DamageCauser) {};
 
 	/**
 	 * Called right before the spacecraft is removed from the world.
@@ -307,6 +307,7 @@ protected:
 	virtual void PreDestroy(bool & bShouldPlayDestroyEffects, bool & bShouldBeDestroyedForGood) {};
 
 	void PlayDestroyEffects();
+	void NotifyOwnDestruction();
 
 private:
 	void CheckShieldStatus(float DeltaTime);

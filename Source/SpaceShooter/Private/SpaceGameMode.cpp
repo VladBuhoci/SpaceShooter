@@ -8,6 +8,8 @@
 
 #include "Engine/World.h"
 
+#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
+
 
 /** Sets default values. */
 ASpaceGameMode::ASpaceGameMode()
@@ -21,7 +23,47 @@ void ASpaceGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
+	FindAllSpacecraftsInWorld();
+
 	CreateLootBuilders();
+}
+
+void ASpaceGameMode::NotifySpacecraftSpawned(ASpacecraftPawn * NewbornSpacecraft)
+{
+	if (! AllSpacecrafts.Contains(NewbornSpacecraft))
+	{
+		AllSpacecrafts.Add(NewbornSpacecraft);
+	}
+}
+
+void ASpaceGameMode::NotifySpacecraftDestroyed(ASpacecraftPawn* DestroyedSpacecraft)
+{
+	if (AllSpacecrafts.Contains(DestroyedSpacecraft))
+	{
+		AllSpacecrafts.Remove(DestroyedSpacecraft);
+	}
+}
+
+void ASpaceGameMode::FindAllSpacecraftsInWorld()
+{
+	AllSpacecrafts.Empty();
+
+	UWorld* WorldPtr = GetWorld();
+
+	if (WorldPtr)
+	{
+		TArray<AActor*> ShipActors;
+
+		UGameplayStatics::GetAllActorsOfClass(WorldPtr, ASpacecraftPawn::StaticClass(), ShipActors);
+
+		if (ShipActors.Num() > 0)
+		{
+			for (AActor* ShipActor : ShipActors)
+			{
+				AllSpacecrafts.Add(Cast<ASpacecraftPawn>(ShipActor));
+			}
+		}
+	}
 }
 
 void ASpaceGameMode::CreateLootBuilders()

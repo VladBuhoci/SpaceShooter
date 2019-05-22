@@ -5,6 +5,7 @@
 #include "SpacecraftExplosion.h"
 #include "Weapon.h"
 #include "Projectile.h"
+#include "SpaceGameMode.h"
 
 #include "ConstructorHelpers.h"
 
@@ -22,6 +23,7 @@
 #include "Kismet/KismetMathLibrary.h"
 
 #include "Runtime/Engine/Public/TimerManager.h"
+#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 
 
 /** Sets default values. */
@@ -402,7 +404,7 @@ float ASpacecraftPawn::TakeDamage(float Damage, FDamageEvent const& DamageEvent,
 	}
 
 	// Give subclasses a chance to react to this event before returning.
-	OnDamageTaken();
+	OnDamageTaken(Cast<ASpacecraftPawn>(DamageCauser));
 
 	return Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 }
@@ -428,6 +430,9 @@ void ASpacecraftPawn::DestroySpacecraft()
 		PlayDestroyEffects();
 	}
 
+	// Notify SpaceGameMode so it can refresh its array of spacecrafts.
+	NotifyOwnDestruction();
+
 	if (bShouldBeDestroyedForGood)
 	{
 		// Clean-up.
@@ -447,6 +452,21 @@ void ASpacecraftPawn::PlayDestroyEffects()
 		if (ExplosionEffectsHandlerClass != NULL)
 		{
 			WorldPtr->SpawnActor<ASpacecraftExplosion>(ExplosionEffectsHandlerClass, GetActorLocation(), GetActorRotation());
+		}
+	}
+}
+
+void ASpacecraftPawn::NotifyOwnDestruction()
+{
+	UWorld* WorldPtr = GetWorld();
+
+	if (WorldPtr)
+	{
+		ASpaceGameMode* SpaceGameMode = Cast<ASpaceGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
+		if (SpaceGameMode)
+		{
+			SpaceGameMode->NotifySpacecraftDestroyed(this);
 		}
 	}
 }

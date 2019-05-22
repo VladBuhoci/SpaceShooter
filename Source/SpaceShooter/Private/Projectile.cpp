@@ -26,6 +26,7 @@ AProjectile::AProjectile()
 	Damage                      = 0.0f;
 	
 	// MeshComponent setup:
+	MeshComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
 	MeshComponent->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap);
 	// ...
 	MeshComponent->OnComponentBeginOverlap.AddDynamic(this, &AProjectile::ExecuteOnProjectileBeginOverlap);
