@@ -18,12 +18,12 @@ class SPACESHOOTER_API AAmmunitionBox : public AItem
 	
 private:
 	/** Type of weapon this ammunition can be used for. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ammunition Box", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ammunition Box", Meta = (AllowPrivateAccess = "true"))
 	EWeaponType WeaponTypeAmmo;
 
 	/** Amount of ammunition units this box contains. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ammunition Box", Meta = (AllowPrivateAccess = "true"))
-	int32 TotalAmmoUnits;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ammunition Box", Meta = (AllowPrivateAccess = "true"))
+	FItemAttribute TotalAmmoUnits;
 
 public:
 	/** Sets default values. */
@@ -43,7 +43,20 @@ public:
 	**********************************/
 
 public:
+	virtual bool IsEmpty() const override { return GetAmmoAmmount() <= 0; }
+
+	virtual void ProvideAttributes(TArray<FItemAttribute> & AttributesArrayToSupply) override;
+
+	/** Returns the type of weapon this ammo is used for. */
+	UFUNCTION(BlueprintPure, Category = "Ammunition Box")
+	EWeaponType GetAmmoType() const { return WeaponTypeAmmo; }
+
 	/** Returns the total ammo count of this box. */
 	UFUNCTION(BlueprintPure, Category = "Ammunition Box")
-	int32 GetAmmoAmmount() const { return TotalAmmoUnits; }
+	int32 GetAmmoAmmount() const { return TotalAmmoUnits.Value; }
+
+	/**
+	 * Takes ammo from the box and returns that quantity or whatever is left inside.
+	 */
+	int32 TakeAmmo(int32 AmountToTake);
 };

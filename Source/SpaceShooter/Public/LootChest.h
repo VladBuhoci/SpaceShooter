@@ -8,6 +8,7 @@
 #include "LootChest.generated.h"
 
 // Forward declarations.
+class ILootItemReceiver;
 class UWidgetComponent;
 
 class UXYOnlyPhysicsConstraintComponent;
@@ -126,7 +127,7 @@ protected:
 	TSubclassOf<UItemPoolListDefinition> LootDefinitionClass;
 
 public:
-	void Interact();
+	void Interact(ILootItemReceiver* ReceivingPawn);
 	void HighlightPreviousItemInsideChest();
 	void HighlightNextItemInsideChest();
 
@@ -150,7 +151,7 @@ protected:
 			and removed from the array.
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Loot Chest")
-	void OnGrabHighlightedItemFromChest(int32 RemovedHighlightedItemIndex);
+	void OnGrabHighlightedItemFromChest(int32 RemovedHighlightedItemIndex, bool bRemoveItem);
 
 private:
 	void PresentChestIdentity();
@@ -160,7 +161,7 @@ private:
 
 	void GenerateItems();
 	void OpenChest();
-	AItem* GrabHighlightedItemFromChest();
+	void GrabHighlightedItemFromChest(ILootItemReceiver* ReceivingPawn);
 
 	bool AreItemsLeft() const;
 

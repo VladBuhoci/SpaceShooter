@@ -3,6 +3,8 @@
 #include "LootChest.h"
 #include "XYOnlyPhysicsConstraintComponent.h"
 #include "LootPool.h"
+#include "AmmunitionBox.h"
+#include "LootItemReceiver.h"
 
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/WidgetComponent.h"
@@ -99,8 +101,11 @@ void ALootChest::OnMouseLeave_Implementation()
 	EndChestInspection();
 }
 
-void ALootChest::Interact()
+void ALootChest::Interact(ILootItemReceiver* ReceivingPawn)
 {
+	if (ReceivingPawn == nullptr)
+		return;
+
 	HideChestIdentity();
 
 	if (CurrentState == ELootChestState::Opened)
@@ -115,7 +120,7 @@ void ALootChest::Interact()
 		}
 		else
 		{
-			GrabHighlightedItemFromChest();
+			GrabHighlightedItemFromChest(ReceivingPawn);
 		}
 	}
 	else if (CurrentState == ELootChestState::Closed)
@@ -211,6 +216,9 @@ void ALootChest::OpenChest()
 		GetWorldTimerManager().SetTimer(ChestOpeningTimerHandle, [this]() {
 			CurrentState = ELootChestState::Opened;
 
+			// Make sure the Items Overview widget does not show up on top of the Identity widget.
+			HideChestIdentity();
+
 			// If the chest is still being pointed at...
 			if (bCurrentlyPointedAt)
 			{
@@ -222,33 +230,46 @@ void ALootChest::OpenChest()
 	}
 }
 
-AItem* ALootChest::GrabHighlightedItemFromChest()
+void ALootChest::GrabHighlightedItemFromChest(ILootItemReceiver* ReceivingPawn)
 {
 	AItem* GrabbedItem = NULL;
+	UObject* Receiver = Cast<UObject>(ReceivingPawn);
 
-	if (AreItemsLeft())
+	if (Receiver && AreItemsLeft())
 	{
 		int32 PreviousHighlightedItemIndex = CurrentlySelectedItemIndex;
 
 		// Get a reference to the item of interest.
 		GrabbedItem = ContainedItems[PreviousHighlightedItemIndex];
 
-		// Remove the item from the chest's array.
-		ContainedItems.Remove(GrabbedItem);
-
-		// Calculate the index for the next highlighted item because there must always be a highlighted item...
-		if (CurrentlySelectedItemIndex >= ContainedItems.Num())
+		if (GrabbedItem)
 		{
-			// ... but only change the index if its current value is not in the array's bounds anymore.
-			CurrentlySelectedItemIndex = ContainedItems.Num() - 1;
+			// Provide the item to the receiver.
+			ILootItemReceiver::Execute_Supply(Receiver, GrabbedItem);
+
+			if (GrabbedItem->IsEmpty())
+			{
+				// Remove the item from the chest's array.
+				ContainedItems.Remove(GrabbedItem);
+
+				// Calculate the index for the next highlighted item because there must always be a highlighted item...
+				if (CurrentlySelectedItemIndex >= ContainedItems.Num())
+				{
+					// ... but only change the index if its current value is not in the array's bounds anymore.
+					CurrentlySelectedItemIndex = ContainedItems.Num() - 1;
+				}
+			}
+
+			// The blueprint implementation of this method will communicate with the Items Overview widget
+			//		to maintain synchronization between the chest and the HUD.
+			OnGrabHighlightedItemFromChest(PreviousHighlightedItemIndex, GrabbedItem->IsEmpty());
+
+			if (GrabbedItem->IsEmpty())
+			{
+				GrabbedItem->Destroy();
+			}
 		}
-
-		// The blueprint implementation of this method will communicate with the Items Overview widget
-		//		to maintain synchronization between the chest and the HUD.
-		OnGrabHighlightedItemFromChest(PreviousHighlightedItemIndex);
 	}
-
-	return GrabbedItem;
 }
 
 bool ALootChest::AreItemsLeft() const

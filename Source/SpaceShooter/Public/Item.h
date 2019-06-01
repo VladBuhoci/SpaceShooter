@@ -6,6 +6,31 @@
 #include "GameFramework/Actor.h"
 #include "Item.generated.h"
 
+// Forward declarations.
+class UMaterialInterface;
+
+
+USTRUCT(BlueprintType)
+struct FItemAttribute
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item | Attribute")
+	UMaterialInterface* Icon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item | Attribute")
+	FText Name;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item | Attribute")
+	float Value;
+
+	FItemAttribute()
+	{}
+
+	FItemAttribute(UMaterialInterface* _Icon, FText _Name, float _Value)
+		: Icon(_Icon), Name(_Name), Value(_Value)
+	{}
+};
 
 /**
  * Base class of all player-usable items (ammo, weapons etc).
@@ -17,13 +42,13 @@ class SPACESHOOTER_API AItem : public AActor
 
 protected:
 	/** Name of this item. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item", Meta = (AllowPrivateAccess = "true"))
 	FText Name;
 
 	/** Icon of this item. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item", Meta = (AllowPrivateAccess = "true"))
 	UTexture2D* Icon;
-	
+
 public:	
 	/** Sets default values. */
 	AItem();
@@ -31,6 +56,8 @@ public:
 protected:
 	/** Called when the game starts or when spawned. */
 	virtual void BeginPlay() override;
+
+	virtual void ProvideAttributes(TArray<FItemAttribute> & AttributesArrayToSupply) {}
 
 public:	
 	/** Called every frame. */
@@ -49,4 +76,11 @@ public:
 	/** Returns the visual representation of this item as an icon. */
 	UFUNCTION(BlueprintPure, Category = "Item")
 	UTexture2D* GetItemIcon() const { return Icon; }
+
+	/** Returns true if this item is no longer able to supply a spacecraft in any way and should be removed. */
+	virtual bool IsEmpty() const { return true; }
+
+	/** Returns all the attributes of this item that can be displayed in an card-type item info widget. */
+	UFUNCTION(BlueprintCallable, Category = "Item | Attribute")
+	TArray<FItemAttribute> GetPrintableItemAttributes();
 };

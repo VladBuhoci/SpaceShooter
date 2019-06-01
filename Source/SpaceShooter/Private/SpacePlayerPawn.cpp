@@ -6,6 +6,7 @@
 #include "SpacecraftTurboModeCameraShake.h"
 #include "SpacecraftDestructionCameraShake.h"
 #include "SpacePlayerController.h"
+#include "SpaceHUD.h"
 
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/FloatingPawnMovement.h"
@@ -22,6 +23,9 @@
 #include "Engine/World.h"
 
 #include "Kismet/GameplayStatics.h"
+
+// TODO: temporary: delete it.
+#include "AmmunitionBox.h"
 
 
 /** Sets default values. */
@@ -106,9 +110,10 @@ void ASpacePlayerPawn::OnTurboModeDeactivated()
 	
 }
 
-void ASpacePlayerPawn::OnDamageTaken(ASpacecraftPawn * DamageCauser)
+void ASpacePlayerPawn::OnDamageTaken(ASpacecraftPawn* DamageCauser)
 {
 	// TODO: add some hit effects perhaps?
+
 }
 
 // TODO: W.I.P.
@@ -133,6 +138,15 @@ void ASpacePlayerPawn::PreDestroy(bool & bShouldPlayDestroyEffects, bool & bShou
 			UGameplayStatics::SetGlobalTimeDilation(World, 1.0f);
 			UGameplayStatics::SetGlobalPitchModulation(World, 1.0f, 1.0f);
 		}, 0.75f, false);
+
+		GetWorldTimerManager().SetTimer(DisableSlowmotionTimerHandle, [this]() {
+			ASpaceHUD* SpaceHUD = Cast<ASpaceHUD>(Cast<ASpacePlayerController>(GetController())->GetHUD());
+
+			if (SpaceHUD)
+			{
+				SpaceHUD->ToggleInGamePauseMenuInterface();
+			}
+		}, 1.0f, false);
 	}
 
 	// Make the player's ship invisible.
@@ -157,6 +171,43 @@ void ASpacePlayerPawn::EndFiringWeapon()
 {
 	Super::EndFiringWeapon();
 
+}
+
+int32 ASpacePlayerPawn::GetMaximumAmmoCapacity(EWeaponType WeaponTypeAmmo) const
+{
+	return AmmoPools[WeaponTypeAmmo].MaxAmmoQuantity;
+}
+
+int32 ASpacePlayerPawn::GetRemainingAmmo(EWeaponType WeaponTypeAmmo) const
+{
+	return AmmoPools[WeaponTypeAmmo].CurrentAmmoQuantity;
+}
+
+int32 ASpacePlayerPawn::GetNeededAmmoAmount(EWeaponType WeaponTypeAmmo) const
+{
+	return GetMaximumAmmoCapacity(WeaponTypeAmmo) - GetRemainingAmmo(WeaponTypeAmmo);
+}
+
+void ASpacePlayerPawn::SupplyAmmo(EWeaponType WeaponTypeAmmo, int32 AmmoAmount)
+{
+	int32 ActualAmmoAmount = FMath::Clamp(AmmoAmount, 0, AmmoPools[WeaponTypeAmmo].MaxAmmoQuantity - AmmoPools[WeaponTypeAmmo].CurrentAmmoQuantity);
+
+	AmmoPools[WeaponTypeAmmo].CurrentAmmoQuantity += ActualAmmoAmount;
+}
+
+void ASpacePlayerPawn::Supply_Implementation(AItem* ItemToProvide)
+{
+	if (ItemToProvide == nullptr)
+		return;
+
+	// TODO: maybe this isn't the best way... perhaps use separate entities (interceptors) to handle the receiving?
+	if (AAmmunitionBox* AmmoBox = Cast<AAmmunitionBox>(ItemToProvide))
+	{
+		int32 AmmoAmountNeeded = GetNeededAmmoAmount(AmmoBox->GetAmmoType());
+		int32 AmmoAmountFound = AmmoBox->TakeAmmo(AmmoAmountNeeded);
+
+		SupplyAmmo(AmmoBox->GetAmmoType(), AmmoAmountFound);
+	}
 }
 
 void ASpacePlayerPawn::CheckCameraOffset(float DeltaTime)

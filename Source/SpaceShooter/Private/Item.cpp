@@ -22,3 +22,12 @@ void AItem::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
+
+TArray<FItemAttribute> AItem::GetPrintableItemAttributes()
+{
+	TArray<FItemAttribute> Attributes;
+
+	ProvideAttributes(Attributes);
+
+	return Attributes;
+}

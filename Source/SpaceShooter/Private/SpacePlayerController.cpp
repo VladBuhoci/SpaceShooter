@@ -234,7 +234,7 @@ void ASpacePlayerController::Interact()
 		ALootChest* FoundLootChest = Cast<ALootChest>(CurrentMouseListeningActorPointedAt);
 		if (FoundLootChest)
 		{
-			FoundLootChest->Interact();
+			FoundLootChest->Interact(PossessedSpacePawn);
 		}
 	}
 }

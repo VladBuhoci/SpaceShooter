@@ -14,14 +14,12 @@
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 
 
-
-
 ASpaceEnemyController::ASpaceEnemyController()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	IdleTimeMin                  = 3.0f;
-	IdleTimeMax                  = 10.0f;
+	IdleTimeMin                  = 0.1f;
+	IdleTimeMax                  = 3.0f;
 	WanderAreaRadius             = 3000.0f;
 	SpacecraftState              = ESpacecraftState::Idle;
 	CloseEnemySearchTimeInterval = 1.0f;

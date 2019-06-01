@@ -266,9 +266,11 @@
     <None Include="..\..\Config\DefaultInput.ini" />
     <None Include="..\..\Source\SpaceShooter\SpaceShooter.Build.cs" />
     <ClCompile Include="..\..\Source\SpaceShooter\Private\LootItemBuilder.cpp" />
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\LootItemReceiver.cpp" />
     <ClCompile Include="..\..\Source\SpaceShooter\Private\LootPool.cpp" />
     <ClCompile Include="..\..\Source\SpaceShooter\SpaceShooter.cpp" />
     <ClInclude Include="..\..\Source\SpaceShooter\Public\LootItemBuilder.h" />
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\LootItemReceiver.h" />
     <ClInclude Include="..\..\Source\SpaceShooter\Public\LootPool.h" />
     <ClInclude Include="..\..\Source\SpaceShooter\SpaceShooter.h" />
     <ClCompile Include="..\..\Source\SpaceShooter\Private\AmmunitionBox.cpp" />

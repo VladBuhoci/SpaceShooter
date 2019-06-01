@@ -172,6 +172,9 @@
     <ClInclude Include="..\..\Source\SpaceShooter\Public\LootAmmoBuilder.h">
       <Filter>Source\SpaceShooter\Public</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\LootItemReceiver.h">
+      <Filter>Source\SpaceShooter\Public</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\SpaceShooter\Private\LootChest.cpp">
@@ -184,6 +187,9 @@
       <Filter>Source\SpaceShooter\Private</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\SpaceShooter\Private\LootAmmoBuilder.cpp">
+      <Filter>Source\SpaceShooter\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\LootItemReceiver.cpp">
       <Filter>Source\SpaceShooter\Private</Filter>
     </ClCompile>
   </ItemGroup>

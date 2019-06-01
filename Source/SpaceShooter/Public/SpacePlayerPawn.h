@@ -3,6 +3,7 @@
 #pragma once
 
 #include "SpacecraftPawn.h"
+#include "LootItemReceiver.h"
 
 #include "CoreMinimal.h"
 #include "SpacePlayerPawn.generated.h"
@@ -18,7 +19,7 @@ class UParticleSystemComponent;
  * It is instantiated whenever a playable level is loaded.
  */
 UCLASS()
-class SPACESHOOTER_API ASpacePlayerPawn : public ASpacecraftPawn
+class SPACESHOOTER_API ASpacePlayerPawn : public ASpacecraftPawn, public ILootItemReceiver
 {
 	GENERATED_BODY()
 
@@ -96,10 +97,22 @@ public:
 	virtual void EndFiringWeapon() override;
 
 	/**********************************
-				GETTERS
+		      LOOT INTERFACE
 	**********************************/
-
+	
 public:
+	int32 GetMaximumAmmoCapacity(EWeaponType WeaponTypeAmmo) const;
+	int32 GetRemainingAmmo(EWeaponType WeaponTypeAmmo) const;
+	int32 GetNeededAmmoAmount(EWeaponType WeaponTypeAmmo) const;
+	void SupplyAmmo(EWeaponType WeaponTypeAmmo, int32 AmmoAmount);
+
+	/**
+	 * Loot Item Receiver Interface implementation.
+	 */
+public:
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Spacecraft | Loot Item Receiver Interface")
+	void Supply(AItem* ItemToProvide);
+	virtual void Supply_Implementation(AItem* ItemToProvide) override;
 
 
 	/**********************************
