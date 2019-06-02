@@ -127,7 +127,7 @@ void ASpacecraftPawn::InitializeAttributes()
 
 	AmmoPools.Add(EWeaponType::Blaster, FAmmunitionStock(128));
 	AmmoPools.Add(EWeaponType::Cannon, FAmmunitionStock(256));
-	AmmoPools.Add(EWeaponType::Shotgun, FAmmunitionStock(64));
+	AmmoPools.Add(EWeaponType::Volley, FAmmunitionStock(64));
 	AmmoPools.Add(EWeaponType::Launcher, FAmmunitionStock(32));
 }
 

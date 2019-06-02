@@ -34,27 +34,15 @@ enum class EWeaponType : uint8
 {
 	Unknown,
 
-	/** Normal, (usually) single projectile firing weapon. */
+	/** Normal, single projectile firing weapon. */
 	Blaster,
 
-	/** Faster firing weapon. */
+	/** Fast, single projectile firing weapon. */
 	Cannon,
 
 	/** Multi-projectile firing weapon. */
-	Shotgun,
+	Volley,
 
 	/** Missile firing weapon. */
 	Launcher
-};
-
-/**
- * 
- */
-UCLASS()
-class SPACESHOOTER_API USpaceEnums : public UObject
-{
-	GENERATED_BODY()
-
-public:
-	USpaceEnums(const FObjectInitializer & ObjectInitializer);
 };

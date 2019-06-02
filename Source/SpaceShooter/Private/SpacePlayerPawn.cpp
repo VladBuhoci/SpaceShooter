@@ -137,7 +137,7 @@ void ASpacePlayerPawn::PreDestroy(bool & bShouldPlayDestroyEffects, bool & bShou
 		GetWorldTimerManager().SetTimer(DisableSlowmotionTimerHandle, [World]() {
 			UGameplayStatics::SetGlobalTimeDilation(World, 1.0f);
 			UGameplayStatics::SetGlobalPitchModulation(World, 1.0f, 1.0f);
-		}, 0.75f, false);
+		}, 1.0f, false);
 
 		GetWorldTimerManager().SetTimer(DisableSlowmotionTimerHandle, [this]() {
 			ASpaceHUD* SpaceHUD = Cast<ASpaceHUD>(Cast<ASpacePlayerController>(GetController())->GetHUD());
@@ -146,7 +146,7 @@ void ASpacePlayerPawn::PreDestroy(bool & bShouldPlayDestroyEffects, bool & bShou
 			{
 				SpaceHUD->ToggleInGamePauseMenuInterface();
 			}
-		}, 1.0f, false);
+		}, 2.0f, false);
 	}
 
 	// Make the player's ship invisible.

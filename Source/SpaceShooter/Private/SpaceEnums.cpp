@@ -3,8 +3,3 @@
 #include "SpaceEnums.h"
 
 
-USpaceEnums::USpaceEnums(const FObjectInitializer & ObjectInitializer)
-	: Super(ObjectInitializer)
-{
-
-}
