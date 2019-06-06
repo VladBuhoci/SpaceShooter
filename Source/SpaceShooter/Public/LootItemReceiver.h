@@ -17,7 +17,7 @@ class ULootItemReceiver : public UInterface
 };
 
 /**
- * Implementing classes can receive items via the Supply(AItem*) method.
+ * Implementing classes can receive items via the Supply(AItem*, bool&) method.
  */
 class SPACESHOOTER_API ILootItemReceiver
 {
@@ -27,5 +27,5 @@ class SPACESHOOTER_API ILootItemReceiver
 public:
 	/** Offers an item of any kind to an entity and lets it handle the receiving in its own way. */
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Loot Item Receiver")
-	void Supply(AItem* ItemToProvide);
+	void Supply(AItem* ItemToProvide, bool & bItemTaken);
 };

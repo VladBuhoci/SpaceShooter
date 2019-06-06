@@ -4,24 +4,24 @@
 
 #include "CoreMinimal.h"
 #include "ItemBox.h"
-#include "AmmunitionBox.generated.h"
+#include "WeaponBox.generated.h"
 
 // Forward declarations.
-class AAmmunitionPile;
+class AWeapon;
 
 
 /**
- * Item box holding an AAmmunitionPile object.
+ * Item box holding an AWeapon object.
  */
 UCLASS()
-class SPACESHOOTER_API AAmmunitionBox : public AItemBox
+class SPACESHOOTER_API AWeaponBox : public AItemBox
 {
 	GENERATED_BODY()
 	
-private:
+	private:
 	/** Item inside this item box. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item Box | Ammunition Box", Meta = (AllowPrivateAccess = "true"))
-	AAmmunitionPile* ContainedItem;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item Box | Weapon Box", Meta = (AllowPrivateAccess = "true"))
+	AWeapon* ContainedItem;
 
 
 	/**********************************
@@ -30,7 +30,7 @@ private:
 
 public:
 	/** Returns the item wrapped by this box. */
-	UFUNCTION(BlueprintPure, Category = "Item Box | Ammunition Box")
+	UFUNCTION(BlueprintPure, Category = "Item Box | Weapon Box")
 	virtual AItem* GetContainedItem() const override;
 
 	/**********************************
@@ -39,6 +39,6 @@ public:
 
 public:
 	/** Sets the item wrapped by this box. */
-	UFUNCTION(BlueprintCallable, Category = "Item Box | Ammunition Box")
+	UFUNCTION(BlueprintCallable, Category = "Item Box | Weapon Box")
 	virtual void SetContainedItem(AItem* NewItem) override;
 };

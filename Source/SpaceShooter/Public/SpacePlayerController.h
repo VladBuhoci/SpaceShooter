@@ -102,8 +102,8 @@ public:
 
 private:
 	void Interact();
-	void HighlightPreviousItemInsideChest();
-	void HighlightNextItemInsideChest();
+	void HighlightPreviousItemBoxInsideChest();
+	void HighlightNextItemBoxInsideChest();
 
 
 	/**********************************

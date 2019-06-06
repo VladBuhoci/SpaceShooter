@@ -2,8 +2,6 @@
 
 #pragma once
 
-#include "Item.h"
-
 #include "CoreMinimal.h"
 #include "GameFramework/Info.h"
 #include "LootPool.generated.h"
@@ -13,6 +11,8 @@
 class ASpaceGameMode;
 class ULootDefinition;
 class ALootItemBuilder;
+class AItem;
+class AItemBox;
 
 
 USTRUCT(BlueprintType)
@@ -23,6 +23,10 @@ struct SPACESHOOTER_API FLootDefinitionWrapper
 	/** Type of the item to be spawned. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Loot Pool")
 	TSubclassOf<AItem> ItemTypeToSpawn;
+
+	/** Type of item box that will contain this item. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Loot Pool")
+	TSubclassOf<AItemBox> ItemBoxTypeToSpawn;
 
 	/** Type of builder that handles the spawning of this item. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Loot Pool")
@@ -108,10 +112,13 @@ class SPACESHOOTER_API UItemPoolListDefinition : public UObject
 
 public:
 	TArray<AItem*> GetRandomItems();
+	TArray<AItemBox*> GetRandomItemsWrappedInBoxes();
 
 	virtual UWorld* GetWorld() const override { return GetOuter() != nullptr ? GetOuter()->GetWorld() : nullptr; }
 
 private:
+	TArray<ULootDefinition*> GetRandomLootDefinitions();
+
 	/**
 	 * Rolls a die.
 	 * If the "chance" value happens to be lower than or equal to the generated number from the interval, it returns true.
@@ -119,4 +126,5 @@ private:
 	bool IsCandidateAllowedInDeepSearchPhase(float Chance, float IntervalMin = 1.0f, float IntervalMax = 100.0f);
 
 	AItem* BuildItemFromDefinition(const FLootDefinitionWrapper & ItemDefWrapper, ASpaceGameMode* SpaceGameMode, const FTransform & Transform = FTransform::Identity);
+	AItemBox* BuildItemBoxFromDefinition(const FLootDefinitionWrapper & ItemDefWrapper, const FTransform & Transform = FTransform::Identity);
 };

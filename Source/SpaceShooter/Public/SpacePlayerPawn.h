@@ -97,22 +97,28 @@ public:
 	virtual void EndFiringWeapon() override;
 
 	/**********************************
-		      LOOT INTERFACE
+		    INVENTORY INTERFACE
 	**********************************/
 	
 public:
 	int32 GetMaximumAmmoCapacity(EWeaponType WeaponTypeAmmo) const;
 	int32 GetRemainingAmmo(EWeaponType WeaponTypeAmmo) const;
 	int32 GetNeededAmmoAmount(EWeaponType WeaponTypeAmmo) const;
+
 	void SupplyAmmo(EWeaponType WeaponTypeAmmo, int32 AmmoAmount);
+	void SupplyWeapon(AWeapon* NewWeapon);
+
+private:
+	bool IsSpaceAvailableOnSpacecraft();
+	bool IsSpaceAvailableInInventory();
 
 	/**
 	 * Loot Item Receiver Interface implementation.
 	 */
 public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Spacecraft | Loot Item Receiver Interface")
-	void Supply(AItem* ItemToProvide);
-	virtual void Supply_Implementation(AItem* ItemToProvide) override;
+	void Supply(AItem* ItemToProvide, bool & bItemTaken);
+	virtual void Supply_Implementation(AItem* ItemToProvide, bool & bItemTaken) override;
 
 
 	/**********************************

@@ -125,9 +125,9 @@ void ASpacecraftPawn::InitializeAttributes()
 	CurrentHitPoints    = MaxHitPoints;
 	CurrentShieldPoints = MaxShieldPoints;
 
-	AmmoPools.Add(EWeaponType::Blaster, FAmmunitionStock(128));
-	AmmoPools.Add(EWeaponType::Cannon, FAmmunitionStock(256));
-	AmmoPools.Add(EWeaponType::Volley, FAmmunitionStock(64));
+	AmmoPools.Add(EWeaponType::Blaster , FAmmunitionStock(128));
+	AmmoPools.Add(EWeaponType::Cannon  , FAmmunitionStock(256));
+	AmmoPools.Add(EWeaponType::Volley  , FAmmunitionStock(64));
 	AmmoPools.Add(EWeaponType::Launcher, FAmmunitionStock(32));
 }
 
@@ -348,27 +348,85 @@ void ASpacecraftPawn::InitializeWeaponry(int32 InitiallyEquippedWeaponIndex)
 		if (World)
 		{
 			PreparedWeapons.Slot_1 = ConstructWeapon(World);
-			PreparedWeapons.Slot_2 = ConstructWeapon(World);
+			/*PreparedWeapons.Slot_2 = ConstructWeapon(World);
 			PreparedWeapons.Slot_3 = ConstructWeapon(World);
-			PreparedWeapons.Slot_4 = ConstructWeapon(World);
-
-			// Hide them all except the active one because the construction method leaves the weapons 100% visible,
-			//		which is odd looking since they all spawn with the same location and rotation and thus overlap.
-
-			PreparedWeapons.Slot_1->SetVisibility(InitiallyEquippedWeaponIndex == 1);
-			PreparedWeapons.Slot_2->SetVisibility(InitiallyEquippedWeaponIndex == 2);
-			PreparedWeapons.Slot_3->SetVisibility(InitiallyEquippedWeaponIndex == 3);
-			PreparedWeapons.Slot_4->SetVisibility(InitiallyEquippedWeaponIndex == 4);
+			PreparedWeapons.Slot_4 = ConstructWeapon(World);*/
 		}
 	}
 }
 
 void ASpacecraftPawn::DestroyWeaponry()
 {
-	PreparedWeapons.Slot_1->Destroy();
-	PreparedWeapons.Slot_2->Destroy();
-	PreparedWeapons.Slot_3->Destroy();
-	PreparedWeapons.Slot_4->Destroy();
+	DestructWeapon(PreparedWeapons.Slot_1);
+	DestructWeapon(PreparedWeapons.Slot_2);
+	DestructWeapon(PreparedWeapons.Slot_3);
+	DestructWeapon(PreparedWeapons.Slot_4);
+}
+
+AWeapon* ASpacecraftPawn::SetWeaponOnPreparedSlot_1(AWeapon* WeaponToAdd, FAttachmentTransformRules & AttachRules)
+{
+	AWeapon* PreviousWeaponSittingInSlot = PreparedWeapons.Slot_1;
+
+	PreparedWeapons.Slot_1 = WeaponToAdd;
+	PreparedWeapons.Slot_1->AttachToComponent(SpacecraftMeshComponent, AttachRules, TEXT("Weapon_AttachPoint_DEV"));
+
+	EquipWeaponFromSlot_1();
+
+	return PreviousWeaponSittingInSlot;
+}
+
+AWeapon* ASpacecraftPawn::SetWeaponOnPreparedSlot_2(AWeapon* WeaponToAdd, FAttachmentTransformRules & AttachRules)
+{
+	AWeapon* PreviousWeaponSittingInSlot = PreparedWeapons.Slot_2;
+
+	PreparedWeapons.Slot_2 = WeaponToAdd;
+	PreparedWeapons.Slot_2->AttachToComponent(SpacecraftMeshComponent, AttachRules, TEXT("Weapon_AttachPoint_DEV"));
+
+	EquipWeaponFromSlot_2();
+
+	return PreviousWeaponSittingInSlot;
+}
+
+AWeapon* ASpacecraftPawn::SetWeaponOnPreparedSlot_3(AWeapon* WeaponToAdd, FAttachmentTransformRules & AttachRules)
+{
+	AWeapon* PreviousWeaponSittingInSlot = PreparedWeapons.Slot_3;
+
+	PreparedWeapons.Slot_3 = WeaponToAdd;
+	PreparedWeapons.Slot_3->AttachToComponent(SpacecraftMeshComponent, AttachRules, TEXT("Weapon_AttachPoint_DEV"));
+
+	EquipWeaponFromSlot_3();
+
+	return PreviousWeaponSittingInSlot;
+}
+
+AWeapon* ASpacecraftPawn::SetWeaponOnPreparedSlot_4(AWeapon* WeaponToAdd, FAttachmentTransformRules & AttachRules)
+{
+	AWeapon* PreviousWeaponSittingInSlot = PreparedWeapons.Slot_4;
+
+	PreparedWeapons.Slot_4 = WeaponToAdd;
+	PreparedWeapons.Slot_4->AttachToComponent(SpacecraftMeshComponent, AttachRules, TEXT("Weapon_AttachPoint_DEV"));
+
+	EquipWeaponFromSlot_4();
+
+	return PreviousWeaponSittingInSlot;
+}
+
+AWeapon* ASpacecraftPawn::SetWeaponOnPreparedSlot(AWeapon * WeaponToAdd, int32 SlotIndex)
+{
+	if (SlotIndex < 1 || SlotIndex > 4)
+		return nullptr;
+
+	FAttachmentTransformRules AttachRules = FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true);
+
+	switch (SlotIndex)
+	{
+	case 1: return SetWeaponOnPreparedSlot_1(WeaponToAdd, AttachRules);
+	case 2: return SetWeaponOnPreparedSlot_2(WeaponToAdd, AttachRules);
+	case 3: return SetWeaponOnPreparedSlot_3(WeaponToAdd, AttachRules);
+	case 4: return SetWeaponOnPreparedSlot_4(WeaponToAdd, AttachRules);
+
+	default: return nullptr;
+	}
 }
 
 float ASpacecraftPawn::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -543,6 +601,23 @@ void ASpacecraftPawn::EquipWeaponFromSlot_4()
 	EquipWeapon(PreparedWeapons.Slot_4);
 }
 
+bool ASpacecraftPawn::IsSpaceAvailableForAnotherWeapon()
+{
+	return PreparedWeapons.Slot_1 == nullptr
+		|| PreparedWeapons.Slot_2 == nullptr
+		|| PreparedWeapons.Slot_3 == nullptr
+		|| PreparedWeapons.Slot_4 == nullptr;
+}
+
+int32 ASpacecraftPawn::GetFirstFreeWeaponSlotIndex()
+{
+	return
+		PreparedWeapons.Slot_1 == nullptr ? 1 :
+		PreparedWeapons.Slot_2 == nullptr ? 2 :
+		PreparedWeapons.Slot_3 == nullptr ? 3 :
+		PreparedWeapons.Slot_4 == nullptr ? 4 : 0;
+}
+
 void ASpacecraftPawn::FireWeapon_Internal()
 {
 	if (EquippedWeapon)
@@ -568,9 +643,18 @@ AWeapon* ASpacecraftPawn::ConstructWeapon(UWorld* World)
 		FAttachmentTransformRules AttachRules = FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true);
 
 		NewWeapon->AttachToComponent(SpacecraftMeshComponent, AttachRules, TEXT("Weapon_AttachPoint_DEV"));
+		NewWeapon->SetVisibility(false);
 	}
 
 	return NewWeapon;
+}
+
+void ASpacecraftPawn::DestructWeapon(AWeapon* WeaponToDestroy)
+{
+	if (WeaponToDestroy)
+	{
+		WeaponToDestroy->Destroy();
+	}
 }
 
 // TODO: slow down the process, add some visual effect?

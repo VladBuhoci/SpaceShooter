@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Object.h"
 #include "SpaceEnums.generated.h"
 
 

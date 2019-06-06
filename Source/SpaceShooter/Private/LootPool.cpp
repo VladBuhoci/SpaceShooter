@@ -3,6 +3,8 @@
 #include "LootPool.h"
 #include "SpaceGameMode.h"
 #include "LootItemBuilder.h"
+#include "ItemBox.h"
+#include "Item.h"
 
 #include "Kismet/GameplayStatics.h"
 
@@ -62,37 +64,83 @@ FLootDefinitionWrapper UItemPoolDefinition::GetRandomItemDefinition()
 TArray<AItem*> UItemPoolListDefinition::GetRandomItems()
 {
 	TArray<AItem*> SpawnedItems;
-	
+	TArray<ULootDefinition*> RandomDefinitions = GetRandomLootDefinitions();
+
+	UWorld* WorldPtr = GetWorld();
+
+	if (WorldPtr)
+	{
+		ASpaceGameMode* SpaceGameMode = Cast<ASpaceGameMode>(UGameplayStatics::GetGameMode(WorldPtr));
+
+		for (ULootDefinition* LootDef : RandomDefinitions)
+		{
+			AItem* BuiltItem = BuildItemFromDefinition(LootDef->GetRandomItemDefinition(), SpaceGameMode);
+
+			if (BuiltItem)
+			{
+				SpawnedItems.Add(BuiltItem);
+			}
+		}
+	}
+
+	return SpawnedItems;
+}
+
+TArray<AItemBox*> UItemPoolListDefinition::GetRandomItemsWrappedInBoxes()
+{
+	TArray<AItemBox*> ItemBoxes;
+	TArray<ULootDefinition*> RandomDefinitions = GetRandomLootDefinitions();
+
+	UWorld* WorldPtr = GetWorld();
+
+	if (WorldPtr)
+	{
+		ASpaceGameMode* SpaceGameMode = Cast<ASpaceGameMode>(UGameplayStatics::GetGameMode(WorldPtr));
+
+		for (ULootDefinition* LootDef : RandomDefinitions)
+		{
+			AItem* BuiltItem = BuildItemFromDefinition(LootDef->GetRandomItemDefinition(), SpaceGameMode);
+			AItemBox* BuiltBox = BuildItemBoxFromDefinition(LootDef->GetRandomItemDefinition());
+
+			if (BuiltItem && BuiltBox)
+			{
+				BuiltBox->SetContainedItem(BuiltItem);
+
+				ItemBoxes.Add(BuiltBox);
+			}
+		}
+	}
+
+	return ItemBoxes;
+}
+
+TArray<ULootDefinition*> UItemPoolListDefinition::GetRandomLootDefinitions()
+{
+	TArray<ULootDefinition*> ChosenDefinitions;
+
 	if (Candidates.Num() > 0)
 	{
-		UWorld* WorldPtr = GetWorld();
-
-		if (WorldPtr)
+		for (int32 i = 0; i < NumberOfCycles; i++)
 		{
-			ASpaceGameMode* SpaceGameMode = Cast<ASpaceGameMode>(UGameplayStatics::GetGameMode(WorldPtr));
+			// We roll a die for each possible candidate in a cycle.
+			// Anyone can win (get spawned), one or more (even all).
 
-			if (SpaceGameMode)
+			for (FItemPoolCandidate Candidate : Candidates)
 			{
-				for (int32 i = 0; i < NumberOfCycles; i++)
+				if (IsCandidateAllowedInDeepSearchPhase(Candidate.SelectionChance))
 				{
-					// We roll a die for each possible candidate in a cycle.
-					// Anyone can win (get spawned), one or more (even all).
-
-					for (FItemPoolCandidate Candidate : Candidates)
-					{
-						if (IsCandidateAllowedInDeepSearchPhase(Candidate.SelectionChance))
-						{
-							ULootDefinition* LootDef = NewObject<ULootDefinition>(this, Candidate.ItemOrPoolDefinition);
+					ULootDefinition* LootDef = NewObject<ULootDefinition>(this, Candidate.ItemOrPoolDefinition);
 							
-							SpawnedItems.Add(BuildItemFromDefinition(LootDef->GetRandomItemDefinition(), SpaceGameMode));
-						}
+					if (LootDef)
+					{
+						ChosenDefinitions.Add(LootDef);
 					}
 				}
 			}
 		}
 	}
 
-	return SpawnedItems;
+	return ChosenDefinitions;
 }
 
 // TODO: is this the best way to calculate the chance?
@@ -108,4 +156,17 @@ AItem* UItemPoolListDefinition::BuildItemFromDefinition(const FLootDefinitionWra
 	return SpaceGameMode
 		->GetLootBuilder(ItemDefWrapper.BuilderType)
 		->Build(ItemDefWrapper.ItemTypeToSpawn, Transform);
+}
+
+AItemBox* UItemPoolListDefinition::BuildItemBoxFromDefinition(const FLootDefinitionWrapper & ItemDefWrapper, const FTransform & Transform)
+{
+	AItemBox* SpawnedItemBox = nullptr;
+	UWorld* WorldPtr = GetWorld();
+
+	if (ItemDefWrapper.ItemBoxTypeToSpawn && WorldPtr)
+	{
+		SpawnedItemBox = WorldPtr->SpawnActor<AItemBox>(ItemDefWrapper.ItemBoxTypeToSpawn, Transform);
+	}
+
+	return SpawnedItemBox;
 }

@@ -49,8 +49,9 @@ struct FAmmunitionStock
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spacecraft | Weapons")
 	int32 MaxAmmoQuantity;
 
-	FAmmunitionStock()				: CurrentAmmoQuantity(0)      , MaxAmmoQuantity(0)       {};
-	FAmmunitionStock(int32 MaxAmmo) : CurrentAmmoQuantity(MaxAmmo), MaxAmmoQuantity(MaxAmmo) {};
+	FAmmunitionStock()				                   : CurrentAmmoQuantity(0)          , MaxAmmoQuantity(0)           {};
+	FAmmunitionStock(int32 CurrMaxAmmo)                : CurrentAmmoQuantity(CurrMaxAmmo), MaxAmmoQuantity(CurrMaxAmmo) {};
+	FAmmunitionStock(int32 CurrentAmmo, int32 MaxAmmo) : CurrentAmmoQuantity(CurrentAmmo), MaxAmmoQuantity(MaxAmmo)     {};
 };
 
 /**
@@ -343,7 +344,25 @@ protected:
 	/** Destructs the weapons attached to the spacecraft. */
 	virtual void DestroyWeaponry();
 
+	/**
+	 * Sets the given weapon on the chosen prepared weapon slot.
+	 * Providing an incorrect index value (not between 1 and 4) has no effect.
+	 * @returns The previous weapon sitting there or null if the slot was empty.
+	 */
+	AWeapon* SetWeaponOnPreparedSlot(AWeapon* WeaponToAdd, int32 SlotIndex);
+
+	/** Returns true if at least one weapon or inventory slot is empty. */
+	bool IsSpaceAvailableForAnotherWeapon();
+
+	/** Returns the index of the first empty weapon slot found, or 0 if none is free. */
+	int32 GetFirstFreeWeaponSlotIndex();
+
 private:
+	AWeapon* SetWeaponOnPreparedSlot_1(AWeapon* WeaponToAdd, FAttachmentTransformRules & AttachRules);
+	AWeapon* SetWeaponOnPreparedSlot_2(AWeapon* WeaponToAdd, FAttachmentTransformRules & AttachRules);
+	AWeapon* SetWeaponOnPreparedSlot_3(AWeapon* WeaponToAdd, FAttachmentTransformRules & AttachRules);
+	AWeapon* SetWeaponOnPreparedSlot_4(AWeapon* WeaponToAdd, FAttachmentTransformRules & AttachRules);
+	
 	/** Will trigger the firing of the equipped weapon held by this spacecraft. */
 	void FireWeapon_Internal();
 
@@ -351,6 +370,7 @@ private:
 	void CheckIfWeaponNeedsToBeFired();
 
 	AWeapon* ConstructWeapon(UWorld* World);
+	void DestructWeapon(AWeapon* WeaponToDestroy);
 	void EquipWeapon(AWeapon* WeaponToEquip);
 	void UnequipCurrentWeapon();
 

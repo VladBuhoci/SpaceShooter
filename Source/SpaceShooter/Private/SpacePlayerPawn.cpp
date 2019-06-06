@@ -25,7 +25,7 @@
 #include "Kismet/GameplayStatics.h"
 
 // TODO: temporary: delete it.
-#include "AmmunitionBox.h"
+#include "AmmunitionPile.h"
 
 
 /** Sets default values. */
@@ -146,7 +146,7 @@ void ASpacePlayerPawn::PreDestroy(bool & bShouldPlayDestroyEffects, bool & bShou
 			{
 				SpaceHUD->ToggleInGamePauseMenuInterface();
 			}
-		}, 2.0f, false);
+		}, 1.5f, false);
 	}
 
 	// Make the player's ship invisible.
@@ -195,18 +195,61 @@ void ASpacePlayerPawn::SupplyAmmo(EWeaponType WeaponTypeAmmo, int32 AmmoAmount)
 	AmmoPools[WeaponTypeAmmo].CurrentAmmoQuantity += ActualAmmoAmount;
 }
 
-void ASpacePlayerPawn::Supply_Implementation(AItem* ItemToProvide)
+void ASpacePlayerPawn::SupplyWeapon(AWeapon* NewWeapon)
+{
+	int32 FreeSlotIndex = GetFirstFreeWeaponSlotIndex();
+
+	if (FreeSlotIndex > 0)
+	{
+		SetWeaponOnPreparedSlot(NewWeapon, FreeSlotIndex);
+	}
+	else
+	{
+		// TODO: add in inventory if there's space available.
+		// SetWeaponInInventorySlot(NewWeapon, FreeInventorySlotIndex);
+	}
+}
+
+bool ASpacePlayerPawn::IsSpaceAvailableOnSpacecraft()
+{
+	return IsSpaceAvailableForAnotherWeapon() || IsSpaceAvailableInInventory();
+}
+
+bool ASpacePlayerPawn::IsSpaceAvailableInInventory()
+{
+	// TODO: add an inventory and implement this.
+	return false;
+}
+
+void ASpacePlayerPawn::Supply_Implementation(AItem* ItemToProvide, bool & bItemTaken)
 {
 	if (ItemToProvide == nullptr)
 		return;
 
 	// TODO: maybe this isn't the best way... perhaps use separate entities (interceptors) to handle the receiving?
-	if (AAmmunitionBox* AmmoBox = Cast<AAmmunitionBox>(ItemToProvide))
+	if (AAmmunitionPile* AmmoPile = Cast<AAmmunitionPile>(ItemToProvide))
 	{
-		int32 AmmoAmountNeeded = GetNeededAmmoAmount(AmmoBox->GetAmmoType());
-		int32 AmmoAmountFound = AmmoBox->TakeAmmo(AmmoAmountNeeded);
+		// Take as much ammo as the spacecraft can carry.
 
-		SupplyAmmo(AmmoBox->GetAmmoType(), AmmoAmountFound);
+		int32 AmmoAmountNeeded = GetNeededAmmoAmount(AmmoPile->GetAmmoType());
+		int32 AmmoAmountFound = AmmoPile->TakeAmmo(AmmoAmountNeeded);
+
+		SupplyAmmo(AmmoPile->GetAmmoType(), AmmoAmountFound);
+
+		bItemTaken = AmmoPile->IsEmpty();
+	}
+	else if (AWeapon* Weapon = Cast<AWeapon>(ItemToProvide))
+	{
+		// Take the weapon if there's any space left for it aboard the spacecraft.
+
+		bool bHasRoomForNewWeapon = IsSpaceAvailableOnSpacecraft();
+
+		if (bHasRoomForNewWeapon)
+		{
+			SupplyWeapon(Weapon);
+		}
+
+		bItemTaken = bHasRoomForNewWeapon;
 	}
 }
 

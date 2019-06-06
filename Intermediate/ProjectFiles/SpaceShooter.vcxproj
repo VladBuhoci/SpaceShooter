@@ -253,8 +253,16 @@
     <NMakeOutput>..\..\Binaries\Win64\SpaceShooter-Win64-Shipping.exe</NMakeOutput>
   </PropertyGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\AmmunitionBox.cpp" />
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\AmmunitionPile.cpp" />
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\ItemAttributes.cpp" />
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\ItemBox.cpp" />
     <ClCompile Include="..\..\Source\SpaceShooter\Private\LootAmmoBuilder.cpp" />
     <ClCompile Include="..\..\Source\SpaceShooter\Private\LootChest.cpp" />
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\AmmunitionBox.h" />
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\AmmunitionPile.h" />
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\ItemAttributes.h" />
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\ItemBox.h" />
     <ClInclude Include="..\..\Source\SpaceShooter\Public\LootAmmoBuilder.h" />
     <ClInclude Include="..\..\Source\SpaceShooter\Public\LootChest.h" />
     <None Include="..\..\SpaceShooter.uproject" />
@@ -268,12 +276,15 @@
     <ClCompile Include="..\..\Source\SpaceShooter\Private\LootItemBuilder.cpp" />
     <ClCompile Include="..\..\Source\SpaceShooter\Private\LootItemReceiver.cpp" />
     <ClCompile Include="..\..\Source\SpaceShooter\Private\LootPool.cpp" />
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\LootWeaponBuilder.cpp" />
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\WeaponBox.cpp" />
     <ClCompile Include="..\..\Source\SpaceShooter\SpaceShooter.cpp" />
     <ClInclude Include="..\..\Source\SpaceShooter\Public\LootItemBuilder.h" />
     <ClInclude Include="..\..\Source\SpaceShooter\Public\LootItemReceiver.h" />
     <ClInclude Include="..\..\Source\SpaceShooter\Public\LootPool.h" />
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\LootWeaponBuilder.h" />
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\WeaponBox.h" />
     <ClInclude Include="..\..\Source\SpaceShooter\SpaceShooter.h" />
-    <ClCompile Include="..\..\Source\SpaceShooter\Private\AmmunitionBox.cpp" />
     <ClCompile Include="..\..\Source\SpaceShooter\Private\Item.cpp" />
     <ClCompile Include="..\..\Source\SpaceShooter\Private\MainMenuGameMode.cpp" />
     <ClCompile Include="..\..\Source\SpaceShooter\Private\MainMenuPlayerPawn.cpp" />
@@ -292,7 +303,6 @@
     <ClCompile Include="..\..\Source\SpaceShooter\Private\SpacePlayerPawn.cpp" />
     <ClCompile Include="..\..\Source\SpaceShooter\Private\Weapon.cpp" />
     <ClCompile Include="..\..\Source\SpaceShooter\Private\XYOnlyPhysicsConstraintComponent.cpp" />
-    <ClInclude Include="..\..\Source\SpaceShooter\Public\AmmunitionBox.h" />
     <ClInclude Include="..\..\Source\SpaceShooter\Public\Item.h" />
     <ClInclude Include="..\..\Source\SpaceShooter\Public\MainMenuGameMode.h" />
     <ClInclude Include="..\..\Source\SpaceShooter\Public\MainMenuPlayerPawn.h" />

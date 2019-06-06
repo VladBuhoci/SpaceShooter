@@ -3,8 +3,8 @@
 #include "LootChest.h"
 #include "XYOnlyPhysicsConstraintComponent.h"
 #include "LootPool.h"
-#include "AmmunitionBox.h"
 #include "LootItemReceiver.h"
+#include "ItemBox.h"
 
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/WidgetComponent.h"
@@ -22,14 +22,14 @@ ALootChest::ALootChest()
 	ChestMeshComponent                = CreateDefaultSubobject<USkeletalMeshComponent           >("Chest Mesh Component");
 	XYPlanePhysicsConstraintComponent = CreateDefaultSubobject<UXYOnlyPhysicsConstraintComponent>("XY Plane Physics Constraint Component");
 	InfoWidgetComponent               = CreateDefaultSubobject<UWidgetComponent                 >("Info Widget Component");
-	ItemsOverviewWidgetComponent      = CreateDefaultSubobject<UWidgetComponent                 >("Items Overview Widget Component");
+	ChestOverviewWidgetComponent      = CreateDefaultSubobject<UWidgetComponent                 >("Treasure Chest Overview Widget Component");
 
 	ChestName                  = FText::FromString("Unnamed Chest");
 	CurrentState               = ELootChestState::Closed;
 	TimeBeforePhysicsOff       = 10.0f;
 	bCurrentlyPointedAt        = false;
 	bCurrentlyBeingInspected   = false;
-	CurrentlySelectedItemIndex = 0;
+	CurrentlySelectedItemBoxIndex = 0;
 
 	RootComponent = ChestMeshComponent;
 
@@ -45,12 +45,12 @@ ALootChest::ALootChest()
 	InfoWidgetComponent->SetPivot(FVector2D(0.5f, 1.5f));			// Offset from origin of this actor's local space.
 	InfoWidgetComponent->SetVisibility(false);
 
-	ItemsOverviewWidgetComponent->SetupAttachment(RootComponent);
-	ItemsOverviewWidgetComponent->PrimaryComponentTick.bCanEverTick = true;	// false by default, no clue why, but it won't render the widget that way.
-	ItemsOverviewWidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);		// Draw using screen coordinates so the widget looks 2D, not 3D.
-	ItemsOverviewWidgetComponent->SetDrawSize(FVector2D(200.0f, 100.0f));	// Size of the rectangular surface the widget is drawn on.
-	ItemsOverviewWidgetComponent->SetPivot(FVector2D(0.5f, 1.0f));			// Offset from origin of this actor's local space.
-	ItemsOverviewWidgetComponent->SetVisibility(false);
+	ChestOverviewWidgetComponent->SetupAttachment(RootComponent);
+	ChestOverviewWidgetComponent->PrimaryComponentTick.bCanEverTick = true;	// false by default, no clue why, but it won't render the widget that way.
+	ChestOverviewWidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);		// Draw using screen coordinates so the widget looks 2D, not 3D.
+	ChestOverviewWidgetComponent->SetDrawSize(FVector2D(200.0f, 100.0f));	// Size of the rectangular surface the widget is drawn on.
+	ChestOverviewWidgetComponent->SetPivot(FVector2D(0.5f, 1.0f));			// Offset from origin of this actor's local space.
+	ChestOverviewWidgetComponent->SetVisibility(false);
 }
 
 void ALootChest::BeginPlay()
@@ -111,8 +111,8 @@ void ALootChest::Interact(ILootItemReceiver* ReceivingPawn)
 	if (CurrentState == ELootChestState::Opened)
 	{
 		// If the chest is already opened, this current interaction means one of two things:
-		//		either enable the widget responsible with displaying all items in the chest
-		//		or grab the currently selected item from the aforementioned widget.
+		//		either enable the widget responsible with displaying all item boxes in the
+		//		chest or grab the currently selected box's item from the aforementioned widget.
 
 		if (!bCurrentlyBeingInspected)
 		{
@@ -120,43 +120,43 @@ void ALootChest::Interact(ILootItemReceiver* ReceivingPawn)
 		}
 		else
 		{
-			GrabHighlightedItemFromChest(ReceivingPawn);
+			GrabHighlightedItemBoxFromChest(ReceivingPawn);
 		}
 	}
 	else if (CurrentState == ELootChestState::Closed)
 	{
-		GenerateItems();
+		GenerateItemsAndItemBoxes();
 
-		// The blueprint implementation will send the array data to the Items Overview widget.
+		// The blueprint implementation will send the array data to the Treasure Chest Overview widget.
 		OnChestPreOpen();
 		
 		OpenChest();
 	}
 }
 
-void ALootChest::HighlightPreviousItemInsideChest()
+void ALootChest::HighlightPreviousItemBoxInsideChest()
 {
 	if (CurrentState == ELootChestState::Closed && !bCurrentlyBeingInspected)
 		return;
 
-	if (AreItemsLeft() && CurrentlySelectedItemIndex > 0)
+	if (AreItemsLeft() && CurrentlySelectedItemBoxIndex > 0)
 	{
-		CurrentlySelectedItemIndex -= 1;
+		CurrentlySelectedItemBoxIndex -= 1;
 
-		OnHighlightPreviousItemInsideChest();
+		OnHighlightPreviousItemBoxInsideChest();
 	}
 }
 
-void ALootChest::HighlightNextItemInsideChest()
+void ALootChest::HighlightNextItemBoxInsideChest()
 {
 	if (CurrentState == ELootChestState::Closed && !bCurrentlyBeingInspected)
 		return;
 
-	if (AreItemsLeft() && CurrentlySelectedItemIndex < ContainedItems.Num() - 1)
+	if (AreItemsLeft() && CurrentlySelectedItemBoxIndex < ContainedItemBoxes.Num() - 1)
 	{
-		CurrentlySelectedItemIndex += 1;
+		CurrentlySelectedItemBoxIndex += 1;
 
-		OnHighlightNextItemInsideChest();
+		OnHighlightNextItemBoxInsideChest();
 	}
 }
 
@@ -174,24 +174,24 @@ void ALootChest::BeginChestInspection()
 {
 	bCurrentlyBeingInspected = true;
 
-	ItemsOverviewWidgetComponent->SetVisibility(true);
+	ChestOverviewWidgetComponent->SetVisibility(true);
 }
 
 void ALootChest::EndChestInspection()
 {
 	bCurrentlyBeingInspected = false;
 
-	ItemsOverviewWidgetComponent->SetVisibility(false);
+	ChestOverviewWidgetComponent->SetVisibility(false);
 
 	// Go back to zero to be prepared for the next time when inspection is activated.
-	CurrentlySelectedItemIndex = 0;
+	CurrentlySelectedItemBoxIndex = 0;
 }
 
-void ALootChest::GenerateItems()
+void ALootChest::GenerateItemsAndItemBoxes()
 {
 	UItemPoolListDefinition* ItemPoolListDef = NewObject<UItemPoolListDefinition>(this, LootDefinitionClass);
 
-	ContainedItems = ItemPoolListDef->GetRandomItems();
+	ContainedItemBoxes = ItemPoolListDef->GetRandomItemsWrappedInBoxes();
 }
 
 void ALootChest::OpenChest()
@@ -230,43 +230,45 @@ void ALootChest::OpenChest()
 	}
 }
 
-void ALootChest::GrabHighlightedItemFromChest(ILootItemReceiver* ReceivingPawn)
+void ALootChest::GrabHighlightedItemBoxFromChest(ILootItemReceiver* ReceivingPawn)
 {
-	AItem* GrabbedItem = NULL;
+	AItemBox* GrabbedItemBox = NULL;
 	UObject* Receiver = Cast<UObject>(ReceivingPawn);
 
 	if (Receiver && AreItemsLeft())
 	{
-		int32 PreviousHighlightedItemIndex = CurrentlySelectedItemIndex;
+		int32 PreviousHighlightedItemIndex = CurrentlySelectedItemBoxIndex;
 
-		// Get a reference to the item of interest.
-		GrabbedItem = ContainedItems[PreviousHighlightedItemIndex];
+		// Get a reference to the item box of interest.
+		GrabbedItemBox = ContainedItemBoxes[PreviousHighlightedItemIndex];
 
-		if (GrabbedItem)
+		if (GrabbedItemBox)
 		{
-			// Provide the item to the receiver.
-			ILootItemReceiver::Execute_Supply(Receiver, GrabbedItem);
+			bool bItemTaken = false;
 
-			if (GrabbedItem->IsEmpty())
+			// Provide the actual item to the receiver.
+			ILootItemReceiver::Execute_Supply(Receiver, GrabbedItemBox->GetContainedItem(), bItemTaken);
+
+			if (bItemTaken)
 			{
-				// Remove the item from the chest's array.
-				ContainedItems.Remove(GrabbedItem);
+				// Remove the item box from the chest's array.
+				ContainedItemBoxes.Remove(GrabbedItemBox);
 
-				// Calculate the index for the next highlighted item because there must always be a highlighted item...
-				if (CurrentlySelectedItemIndex >= ContainedItems.Num())
+				// Calculate the index for the next highlighted item box because there must always be a highlighted box...
+				if (CurrentlySelectedItemBoxIndex >= ContainedItemBoxes.Num())
 				{
 					// ... but only change the index if its current value is not in the array's bounds anymore.
-					CurrentlySelectedItemIndex = ContainedItems.Num() - 1;
+					CurrentlySelectedItemBoxIndex = ContainedItemBoxes.Num() - 1;
 				}
 			}
 
-			// The blueprint implementation of this method will communicate with the Items Overview widget
+			// The blueprint implementation of this method will communicate with the Treasure Chest Overview widget
 			//		to maintain synchronization between the chest and the HUD.
-			OnGrabHighlightedItemFromChest(PreviousHighlightedItemIndex, GrabbedItem->IsEmpty());
+			OnGrabHighlightedItemBoxFromChest(PreviousHighlightedItemIndex, bItemTaken);
 
-			if (GrabbedItem->IsEmpty())
+			if (bItemTaken)
 			{
-				GrabbedItem->Destroy();
+				GrabbedItemBox->Destroy();
 			}
 		}
 	}
@@ -274,5 +276,5 @@ void ALootChest::GrabHighlightedItemFromChest(ILootItemReceiver* ReceivingPawn)
 
 bool ALootChest::AreItemsLeft() const
 {
-	return ContainedItems.Num() > 0;
+	return ContainedItemBoxes.Num() > 0;
 }

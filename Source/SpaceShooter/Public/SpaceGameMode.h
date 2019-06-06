@@ -24,6 +24,13 @@ class SPACESHOOTER_API ASpaceGameMode : public AGameModeBase
 	TArray<ASpacecraftPawn*> AllSpacecrafts;
 	
 	/**
+	 * Base class for loot item builders.
+	 * Does nothing when calling its Build() method, but GetLootBuilder() returns it if needed to avoid null reference issues.
+	 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Game Mode", Meta = (AllowPrivateAccess = "true"))
+	ALootItemBuilder* GenericItemBuilder;
+
+	/**
 	 * Map of item builders. Since the game mode reference is available from nearly anywhere,
 			it makes this map easy to access.
 	 */

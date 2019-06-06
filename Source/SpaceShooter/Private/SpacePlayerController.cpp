@@ -60,8 +60,8 @@ void ASpacePlayerController::SetupInputComponent()
 	InputComponent->BindAction("Equip Weapon 4", IE_Pressed, this, &ASpacePlayerController::EquipWeapon_4);
 
 	InputComponent->BindAction("Interact", IE_Pressed, this, &ASpacePlayerController::Interact);
-	InputComponent->BindAction("Previous Item In Loot Chest", IE_Pressed, this, &ASpacePlayerController::HighlightPreviousItemInsideChest);
-	InputComponent->BindAction("Next Item In Loot Chest", IE_Pressed, this, &ASpacePlayerController::HighlightNextItemInsideChest);
+	InputComponent->BindAction("Previous Item In Loot Chest", IE_Pressed, this, &ASpacePlayerController::HighlightPreviousItemBoxInsideChest);
+	InputComponent->BindAction("Next Item In Loot Chest", IE_Pressed, this, &ASpacePlayerController::HighlightNextItemBoxInsideChest);
 
 	InputComponent->BindAction("Toggle Inventory", IE_Pressed, this, &ASpacePlayerController::ToggleHUDInventory);
 	InputComponent->BindAction("Toggle In-game Pause Menu", IE_Pressed, this, &ASpacePlayerController::ToggleInGamePauseMenu);
@@ -239,26 +239,26 @@ void ASpacePlayerController::Interact()
 	}
 }
 
-void ASpacePlayerController::HighlightPreviousItemInsideChest()
+void ASpacePlayerController::HighlightPreviousItemBoxInsideChest()
 {
 	if (CurrentMouseListeningActorPointedAt != nullptr)
 	{
 		ALootChest* FoundLootChest = Cast<ALootChest>(CurrentMouseListeningActorPointedAt);
 		if (FoundLootChest)
 		{
-			FoundLootChest->HighlightPreviousItemInsideChest();
+			FoundLootChest->HighlightPreviousItemBoxInsideChest();
 		}
 	}
 }
 
-void ASpacePlayerController::HighlightNextItemInsideChest()
+void ASpacePlayerController::HighlightNextItemBoxInsideChest()
 {
 	if (CurrentMouseListeningActorPointedAt != nullptr)
 	{
 		ALootChest* FoundLootChest = Cast<ALootChest>(CurrentMouseListeningActorPointedAt);
 		if (FoundLootChest)
 		{
-			FoundLootChest->HighlightNextItemInsideChest();
+			FoundLootChest->HighlightNextItemBoxInsideChest();
 		}
 	}
 }

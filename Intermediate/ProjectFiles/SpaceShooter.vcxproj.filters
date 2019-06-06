@@ -41,9 +41,6 @@
     <Filter Include="Source\SpaceShooter\Private">
       <UniqueIdentifier>{B6DD1C71-F1B9-482F-BCF9-C88C0507CFEC}</UniqueIdentifier>
     </Filter>
-    <ClCompile Include="..\..\Source\SpaceShooter\Private\AmmunitionBox.cpp">
-      <Filter>Source\SpaceShooter\Private</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\SpaceShooter\Private\Item.cpp">
       <Filter>Source\SpaceShooter\Private</Filter>
     </ClCompile>
@@ -101,9 +98,6 @@
     <Filter Include="Source\SpaceShooter\Public">
       <UniqueIdentifier>{3792C947-62E1-4BA4-8AF6-9F0E6A6BB98B}</UniqueIdentifier>
     </Filter>
-    <ClInclude Include="..\..\Source\SpaceShooter\Public\AmmunitionBox.h">
-      <Filter>Source\SpaceShooter\Public</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Source\SpaceShooter\Public\Item.h">
       <Filter>Source\SpaceShooter\Public</Filter>
     </ClInclude>
@@ -175,6 +169,24 @@
     <ClInclude Include="..\..\Source\SpaceShooter\Public\LootItemReceiver.h">
       <Filter>Source\SpaceShooter\Public</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\LootWeaponBuilder.h">
+      <Filter>Source\SpaceShooter\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\ItemAttributes.h">
+      <Filter>Source\SpaceShooter\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\ItemBox.h">
+      <Filter>Source\SpaceShooter\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\AmmunitionPile.h">
+      <Filter>Source\SpaceShooter\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\AmmunitionBox.h">
+      <Filter>Source\SpaceShooter\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\WeaponBox.h">
+      <Filter>Source\SpaceShooter\Public</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\SpaceShooter\Private\LootChest.cpp">
@@ -190,6 +202,24 @@
       <Filter>Source\SpaceShooter\Private</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\SpaceShooter\Private\LootItemReceiver.cpp">
+      <Filter>Source\SpaceShooter\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\LootWeaponBuilder.cpp">
+      <Filter>Source\SpaceShooter\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\ItemAttributes.cpp">
+      <Filter>Source\SpaceShooter\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\ItemBox.cpp">
+      <Filter>Source\SpaceShooter\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\AmmunitionPile.cpp">
+      <Filter>Source\SpaceShooter\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\AmmunitionBox.cpp">
+      <Filter>Source\SpaceShooter\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\WeaponBox.cpp">
       <Filter>Source\SpaceShooter\Private</Filter>
     </ClCompile>
   </ItemGroup>

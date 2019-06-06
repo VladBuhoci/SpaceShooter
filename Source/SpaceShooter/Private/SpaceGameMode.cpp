@@ -17,6 +17,8 @@ ASpaceGameMode::ASpaceGameMode()
 	DefaultPawnClass      = ASpacePlayerPawn::StaticClass();
 	PlayerControllerClass = ASpacePlayerController::StaticClass();
 	HUDClass              = ASpaceHUD::StaticClass();
+
+	GenericItemBuilder    = CreateDefaultSubobject<ALootItemBuilder>("Generic Item Builder");
 }
 
 void ASpaceGameMode::BeginPlay()
@@ -89,5 +91,5 @@ void ASpaceGameMode::CreateLootBuilders()
 
 ALootItemBuilder* ASpaceGameMode::GetLootBuilder(TSubclassOf<ALootItemBuilder> Type) const
 {
-	return LootItemBuilders[Type];
+	return LootItemBuilders.Contains(Type) ? LootItemBuilders[Type] : GenericItemBuilder;
 }

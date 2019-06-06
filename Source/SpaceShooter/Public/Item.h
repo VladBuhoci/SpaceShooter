@@ -6,9 +6,6 @@
 #include "GameFramework/Actor.h"
 #include "Item.generated.h"
 
-// Forward declarations.
-class UMaterialInterface;
-
 
 USTRUCT(BlueprintType)
 struct FItemAttribute
@@ -16,7 +13,7 @@ struct FItemAttribute
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item | Attribute")
-	UMaterialInterface* Icon;
+	UTexture2D* Icon;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item | Attribute")
 	FText Name;
@@ -27,7 +24,7 @@ struct FItemAttribute
 	FItemAttribute()
 	{}
 
-	FItemAttribute(UMaterialInterface* _Icon, FText _Name, float _Value)
+	FItemAttribute(UTexture2D* _Icon, FText _Name, float _Value)
 		: Icon(_Icon), Name(_Name), Value(_Value)
 	{}
 };
@@ -77,10 +74,7 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Item")
 	UTexture2D* GetItemIcon() const { return Icon; }
 
-	/** Returns true if this item is no longer able to supply a spacecraft in any way and should be removed. */
-	virtual bool IsEmpty() const { return true; }
-
-	/** Returns all the attributes of this item that can be displayed in an card-type item info widget. */
+	/** Returns all the attributes of this item that can be displayed in a card-type item info widget. */
 	UFUNCTION(BlueprintCallable, Category = "Item | Attribute")
 	TArray<FItemAttribute> GetPrintableItemAttributes();
 };

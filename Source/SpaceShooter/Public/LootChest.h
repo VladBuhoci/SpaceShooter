@@ -10,9 +10,11 @@
 // Forward declarations.
 class ILootItemReceiver;
 class UWidgetComponent;
+class UAnimSequence;
 
 class UXYOnlyPhysicsConstraintComponent;
 class AItem;
+class AItemBox;
 class UItemPoolListDefinition;
 
 
@@ -65,17 +67,17 @@ class SPACESHOOTER_API ALootChest : public AActor, public IMousePointerListener
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Loot Chest", Meta = (AllowPrivateAccess = "true"))
 	float TimeBeforePhysicsOff;
 
-	/** Widget component presenting the items of this chest in a simple overview-like widget. */
+	/** Widget component presenting the item boxes (more like items) of this chest in a simple overview-like widget. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Loot Chest", Meta = (AllowPrivateAccess = "true"))
-	UWidgetComponent* ItemsOverviewWidgetComponent;
+	UWidgetComponent* ChestOverviewWidgetComponent;
 
-	/** Widget component presenting the items of this chest in a simple overview-like widget. */
+	/** Array of the item boxes inside this treasure chest. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Loot Chest", Meta = (AllowPrivateAccess = "true"))
-	TArray<AItem*> ContainedItems;
+	TArray<AItemBox*> ContainedItemBoxes;
 
-	/** Index of the highlighted item at the moment. */
+	/** Index of the highlighted item box at the moment. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Loot Chest", Meta = (AllowPrivateAccess = "true"))
-	int32 CurrentlySelectedItemIndex;
+	int32 CurrentlySelectedItemBoxIndex;
 
 public:
 	/** Sets default values. */
@@ -112,7 +114,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Loot Chest | Mouse Listener Interface")
 	bool bCurrentlyPointedAt;
 
-	/** True if the chest's contained items are currently being seen by someone (implies this chest is opened). */
+	/** True if the chest's contained item boxes are currently being seen by someone (implies this chest is opened). */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Loot Chest | Mouse Listener Interface")
 	bool bCurrentlyBeingInspected;
 
@@ -122,36 +124,36 @@ protected:
 	**********************************/
 
 protected:
-	/** Item pool list definition for this chest type. The chest will be filled with items from this list. */
+	/** Item pool list definition for this chest type. The chest will be filled with boxes containing items from this list. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Loot Chest")
 	TSubclassOf<UItemPoolListDefinition> LootDefinitionClass;
 
 public:
 	void Interact(ILootItemReceiver* ReceivingPawn);
-	void HighlightPreviousItemInsideChest();
-	void HighlightNextItemInsideChest();
+	void HighlightPreviousItemBoxInsideChest();
+	void HighlightNextItemBoxInsideChest();
 
 protected:
-	/** Called just before the chest is getting opened. Good for setting things up such as the Items Overview widget. */
+	/** Called just before the chest is getting opened. Good for setting things up such as the Treasure Chest Overview widget. */
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Loot Chest")
 	void OnChestPreOpen();
 	
-	/** Called when receiving a request to select (highlight/move to) the previous item in the list. */
+	/** Called when receiving a request to select (highlight/move to) the previous item box in the list. */
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Loot Chest")
-	void OnHighlightPreviousItemInsideChest();
+	void OnHighlightPreviousItemBoxInsideChest();
 	
-	/** Called when receiving a request to select (highlight/move to) the next item in the list. */
+	/** Called when receiving a request to select (highlight/move to) the next item box in the list. */
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Loot Chest")
-	void OnHighlightNextItemInsideChest();
+	void OnHighlightNextItemBoxInsideChest();
 
 	/**
-	 * Called when receiving a request to grab the currently highlighted item in the list.
+	 * Called when receiving a request to grab the currently highlighted item box in the list.
 	 * 
-	 * @param RemovedHighlightedItemIndex index of the previously highlighted item which has been grabbed now
-			and removed from the array.
+	 * @param RemovedHighlightedItemBoxIndex index of the previously highlighted item box whose
+			item has been grabbed now and is removed from the array.
 	 */
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Loot Chest")
-	void OnGrabHighlightedItemFromChest(int32 RemovedHighlightedItemIndex, bool bRemoveItem);
+	void OnGrabHighlightedItemBoxFromChest(int32 RemovedHighlightedItemBoxIndex, bool bRemoveItem);
 
 private:
 	void PresentChestIdentity();
@@ -159,9 +161,9 @@ private:
 	void BeginChestInspection();
 	void EndChestInspection();
 
-	void GenerateItems();
+	void GenerateItemsAndItemBoxes();
 	void OpenChest();
-	void GrabHighlightedItemFromChest(ILootItemReceiver* ReceivingPawn);
+	void GrabHighlightedItemBoxFromChest(ILootItemReceiver* ReceivingPawn);
 
 	bool AreItemsLeft() const;
 
@@ -171,11 +173,11 @@ private:
 	**********************************/
 
 public:
-	/** Returns the stored items from this chest. */
+	/** Returns the stored item boxes from this chest. */
 	UFUNCTION(BlueprintPure, Category = "Loot Chest")
-	TArray<AItem*> GetContainedItems() const { return ContainedItems; }
+	TArray<AItemBox*> GetContainedItemBoxes() const { return ContainedItemBoxes; }
 
-	/** Returns the index of the highlighted item from this chest during inspections. */
+	/** Returns the index of the highlighted item box from this chest during inspections. */
 	UFUNCTION(BlueprintPure, Category = "Loot Chest")
-	int32 GetCurrentItemIndex() const { return CurrentlySelectedItemIndex; }
+	int32 GetCurrentItemBoxIndex() const { return CurrentlySelectedItemBoxIndex; }
 };
