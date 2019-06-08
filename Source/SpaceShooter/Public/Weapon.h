@@ -35,6 +35,10 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
 	float Damage;
 
+	/** Determines the amount of projectiles spawned per shot. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
+	int32 ProjectilesPerShot;
+
 	/**
 	 * Determines the triangular area in which projectiles can be fired.
 	 * Higher values mean more space can be covered but it becomes harder to hit a specific target.
@@ -129,6 +133,11 @@ public:
 	void SetVisibility(bool CurrentState);
 
 private:
+	float ComputeInaccuracyFactor(float ProjectileSpreadAngle);
+	AProjectile* SpawnProjectile(UWorld* World, FVector & ProjectileLocation, FRotator & ProjectileRotationBase,
+		ASpacecraftPawn* ProjectileOwner, float InitialRotationDeviation, float InaccuracyFactorMin, float InaccuracyFactorMax);
+	
+	void DoPostFiringTasks(int32 & AmmoToUse);
 	void ResetTimeSinceLastWeaponUsage();
 	bool IsAllowedToFireWeapon();
 	void PlayWeaponFiringEffects();

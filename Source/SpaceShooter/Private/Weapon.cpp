@@ -21,6 +21,7 @@ AWeapon::AWeapon()
 	MeshComponent            = CreateDefaultSubobject<UStaticMeshComponent>("Mesh Component");
 	Type                     = EWeaponType::Unknown;
 	Damage                   = 23.0f;
+	ProjectilesPerShot       = 1;
 	SpreadAngle              = 12.5f;
 	Accuracy                 = 85.0f;
 	AccuracyRecoveryRate     = 21.3f;
@@ -64,40 +65,31 @@ void AWeapon::FireWeapon(ASpacecraftPawn* ProjectileOwner, int32 & AmmoToUse)
 
 		if (World)
 		{
+			// Prepare transform helpers.
+			FVector  ProjectileLocation = MeshComponent->GetSocketLocation("Muzzle");
+			FRotator ProjectileRotation = GetActorRotation();
+
 			// Set up the spawn parameters for the projectile that'll be fired.
-			float InaccuracyFactorRaw = SpreadAngle - (CurrentAccuracy * SpreadAngle / 100);			// Formula used: SpreadAngle - Accuracy % SpreadAngle.
-			float InaccuracyFactorMax = FMath::Clamp(InaccuracyFactorRaw, 0.0f, SpreadAngle);
-			float InaccuracyFactor    = FMath::FRandRange(-InaccuracyFactorMax, InaccuracyFactorMax);
+			float InitialRotationDeviation = (-SpreadAngle) + (SpreadAngle / ProjectilesPerShot);
+			float SpreadAnglePerProjectile = SpreadAngle * 2 / ProjectilesPerShot;		// Formula used: Cone aperture's angle / ProjectilesPerShot. [aperture angle = spread angle * 2]
+			float InaccuracyFactorMax      = ComputeInaccuracyFactor(SpreadAnglePerProjectile);
 
-			FTransform ProjectileTransform;
-			FVector    ProjectileLocation = MeshComponent->GetSocketLocation("Muzzle");
-			FRotator   ProjectileRotation = GetActorRotation();
+			bool bProjectilesFired = false;
 
-			ProjectileRotation.Yaw += InaccuracyFactor;
-
-			ProjectileTransform.SetLocation(ProjectileLocation);
-			ProjectileTransform.SetRotation(ProjectileRotation.Quaternion());
-			
-			// Spawn the projectile.
-			AProjectile* FiredProjectile = World->SpawnActor<AProjectile>(ProjectileClass, ProjectileTransform);
-			
-			if (FiredProjectile)
+			for (int32 i = 0; i < ProjectilesPerShot; i++)
 			{
-				StopAccuracyRecoveryProcess();
+				if (SpawnProjectile(World, ProjectileLocation, ProjectileRotation, ProjectileOwner, InitialRotationDeviation, -InaccuracyFactorMax, InaccuracyFactorMax))
+				{
+					bProjectilesFired = true;
+				}
 
-				FiredProjectile->SetProjectileOwner(ProjectileOwner);
-				FiredProjectile->SetDamage(Damage);
+				// Update the initial deviation for the next projectile that spawns (creating some sort of radial effect).
+				InitialRotationDeviation += SpreadAnglePerProjectile;
+			}
 
-				PlayWeaponFiringEffects();
-				ApplyRecoil();
-				ProduceHeat();
-				ConsumeAmmoForOneShot(AmmoToUse);
-				
-				// Reset the counter for time which had passed between shots.
-				ResetTimeSinceLastWeaponUsage();
-
-				// Prepare for future accuracy recovery.
-				ScheduleAccuracyRecoveryProcess();
+			if (bProjectilesFired)
+			{
+				DoPostFiringTasks(AmmoToUse);
 			}
 		}
 	}
@@ -106,6 +98,53 @@ void AWeapon::FireWeapon(ASpacecraftPawn* ProjectileOwner, int32 & AmmoToUse)
 void AWeapon::SetVisibility(bool CurrentState)
 {
 	MeshComponent->SetVisibility(CurrentState, true);
+}
+
+float AWeapon::ComputeInaccuracyFactor(float ProjectileSpreadAngle)
+{
+	// Formula used: ProjectileSpreadAngle - Accuracy % ProjectileSpreadAngle.
+	float InaccuracyFactorRaw = ProjectileSpreadAngle - (CurrentAccuracy * ProjectileSpreadAngle / 100);
+	float InaccuracyFactorMax = FMath::Clamp(InaccuracyFactorRaw, 0.0f, ProjectileSpreadAngle);
+
+	return InaccuracyFactorMax;
+}
+
+AProjectile* AWeapon::SpawnProjectile(UWorld* World, FVector & ProjectileLocation, FRotator & ProjectileRotationBase,
+	ASpacecraftPawn* ProjectileOwner, float InitialRotationDeviation, float InaccuracyFactorMin, float InaccuracyFactorMax)
+{
+	float InaccuracyFactor = FMath::FRandRange(-InaccuracyFactorMax, InaccuracyFactorMax);
+
+	FRotator ParticularProjectileRotation = ProjectileRotationBase;
+
+	ParticularProjectileRotation.Yaw += InitialRotationDeviation;
+	ParticularProjectileRotation.Yaw += InaccuracyFactor;
+
+	// Spawn the projectile.
+	AProjectile* SpawnedProjectile = World->SpawnActor<AProjectile>(ProjectileClass, ProjectileLocation, ParticularProjectileRotation);
+
+	if (SpawnedProjectile)
+	{
+		SpawnedProjectile->SetProjectileOwner(ProjectileOwner);
+		SpawnedProjectile->SetDamage(Damage);
+	}
+
+	return SpawnedProjectile;
+}
+
+void AWeapon::DoPostFiringTasks(int32 & AmmoToUse)
+{
+	StopAccuracyRecoveryProcess();
+
+	PlayWeaponFiringEffects();
+	ApplyRecoil();
+	ProduceHeat();
+	ConsumeAmmoForOneShot(AmmoToUse);
+
+	// Reset the counter for time which had passed between shots.
+	ResetTimeSinceLastWeaponUsage();
+
+	// Prepare for future accuracy recovery.
+	ScheduleAccuracyRecoveryProcess();
 }
 
 void AWeapon::ResetTimeSinceLastWeaponUsage()
