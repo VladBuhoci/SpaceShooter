@@ -7,6 +7,7 @@
 #include "LootItemBuilder.generated.h"
 
 // Forward class declarations.
+class UItemBlueprint;
 class AItem;
 
 
@@ -24,5 +25,5 @@ public:
 	/** Sets defaults values. */
 	ALootItemBuilder();
 
-	virtual AItem* Build(TSubclassOf<AItem> ItemToBuildType, const FTransform & SpawnedItemTransform);
+	virtual AItem* Build(TSubclassOf<UItemBlueprint> ItemToBuildBlueprint, const FTransform & SpawnedItemTransform);
 };

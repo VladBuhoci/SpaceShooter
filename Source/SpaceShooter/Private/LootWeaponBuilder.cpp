@@ -1,21 +1,38 @@
 // This application is the final year project (2018-2019) of a Computer Science student (me - Vlad Buhoci).
 
 #include "LootWeaponBuilder.h"
+#include "Loot/ItemBlueprint.h"
+#include "Loot/WeaponBlueprint.h"
 #include "Item.h"
+#include "Weapon.h"
 
 #include "Engine/World.h"
 
 
-AItem* ALootWeaponBuilder::Build(TSubclassOf<AItem> ItemToBuildType, const FTransform & SpawnedItemTransform)
+AItem* ALootWeaponBuilder::Build(TSubclassOf<UItemBlueprint> ItemToBuildBlueprint, const FTransform & SpawnedItemTransform)
 {
-	AItem* SpawnedItem = nullptr;
+	AWeapon* SpawnedWeapon = nullptr;
 	UWorld* WorldPtr = GetWorld();
 
-	if (ItemToBuildType && WorldPtr)
+	if (ItemToBuildBlueprint && WorldPtr)
 	{
-		SpawnedItem = WorldPtr->SpawnActor<AItem>(ItemToBuildType, SpawnedItemTransform);
+		UWeaponBlueprint* WeaponBP = NewObject<UWeaponBlueprint>(this, ItemToBuildBlueprint);
+
+		if (WeaponBP)
+		{
+			SpawnedWeapon = WorldPtr->SpawnActor<AWeapon>(AWeapon::StaticClass(), SpawnedItemTransform);
+
+			if (SpawnedWeapon)
+			{
+				FText ItemName = WeaponBP->GetItemName();
+
+				SpawnedWeapon->SetItemName(ItemName);
+				SpawnedWeapon->SetItemIcon(WeaponBP->GetItemIcon());
+				SpawnedWeapon->SetType(WeaponBP->GetType());
+			}
+		}
 	}
 
-	return SpawnedItem;
+	return SpawnedWeapon;
 }
 

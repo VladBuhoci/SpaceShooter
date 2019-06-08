@@ -2,32 +2,12 @@
 
 #pragma once
 
+#include "Globals/ItemAttributes.h"
+
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Item.generated.h"
 
-
-USTRUCT(BlueprintType)
-struct FItemAttribute
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item | Attribute")
-	UTexture2D* Icon;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item | Attribute")
-	FText Name;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item | Attribute")
-	float Value;
-
-	FItemAttribute()
-	{}
-
-	FItemAttribute(UTexture2D* _Icon, FText _Name, float _Value)
-		: Icon(_Icon), Name(_Name), Value(_Value)
-	{}
-};
 
 /**
  * Base class of all player-usable items (ammo, weapons etc).
@@ -54,7 +34,7 @@ protected:
 	/** Called when the game starts or when spawned. */
 	virtual void BeginPlay() override;
 
-	virtual void ProvideAttributes(TArray<FItemAttribute> & AttributesArrayToSupply) {}
+	virtual void ProvideAttributes(TArray<FItemAttribute_Float> & AttributesArrayToSupply) {}
 
 public:	
 	/** Called every frame. */
@@ -62,7 +42,7 @@ public:
 
 
 	/**********************************
-				GETTERS
+				 GETTERS
 	**********************************/
 
 public:
@@ -76,5 +56,14 @@ public:
 
 	/** Returns all the attributes of this item that can be displayed in a card-type item info widget. */
 	UFUNCTION(BlueprintCallable, Category = "Item | Attribute")
-	TArray<FItemAttribute> GetPrintableItemAttributes();
+	TArray<FItemAttribute_Float> GetPrintableItemAttributes();
+
+
+	/**********************************
+				 SETTERS
+	**********************************/
+
+public:
+	void SetItemName(FText & ItemName) { this->Name = ItemName; }
+	void SetItemIcon(UTexture2D* ItemIcon) { this->Icon = ItemIcon; }
 };

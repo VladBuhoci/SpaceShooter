@@ -23,7 +23,7 @@ private:
 
 	/** Amount of ammunition units this pile contains. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ammunition Pile", Meta = (AllowPrivateAccess = "true"))
-	FItemAttribute CurrentAmmoUnitsCount;
+	FItemAttribute_Float CurrentAmmoUnitsCount;
 
 public:
 	/** Sets default values. */
@@ -37,16 +37,21 @@ public:
 	/** Called every frame. */
 	virtual void Tick(float DeltaTime) override;
 
+	/**
+	 * Takes ammo from the pile and returns that quantity or whatever is left inside.
+	 */
+	int32 TakeAmmo(int32 AmountToTake);
+
 
 	/**********************************
-				GETTERS
+				 GETTERS
 	**********************************/
 
 public:
 	/** Returns true if this ammo pile is no longer able to supply a spacecraft. */
 	bool IsEmpty() const { return GetAmmoAmmount() <= 0; }
 
-	virtual void ProvideAttributes(TArray<FItemAttribute> & AttributesArrayToSupply) override;
+	virtual void ProvideAttributes(TArray<FItemAttribute_Float> & AttributesArrayToSupply) override;
 
 	/** Returns the type of weapon this ammo is used for. */
 	UFUNCTION(BlueprintPure, Category = "Ammunition Pile")
@@ -56,8 +61,12 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Ammunition Pile")
 	int32 GetAmmoAmmount() const { return CurrentAmmoUnitsCount.Value; }
 
-	/**
-	 * Takes ammo from the pile and returns that quantity or whatever is left inside.
-	 */
-	int32 TakeAmmo(int32 AmountToTake);
+
+	/**********************************
+				 SETTERS
+	**********************************/
+
+public:
+	void SetAmmoType(EWeaponType Type) { WeaponTypeAmmo = Type; }
+	void SetAmmoCountAttribute(FItemAttribute_Float & AmmoAttr);
 };

@@ -3,8 +3,9 @@
 #include "LootPool.h"
 #include "SpaceGameMode.h"
 #include "LootItemBuilder.h"
-#include "ItemBox.h"
+#include "Loot/ItemBlueprint.h"
 #include "Item.h"
+#include "ItemBox.h"
 
 #include "Kismet/GameplayStatics.h"
 
@@ -155,7 +156,7 @@ AItem* UItemPoolListDefinition::BuildItemFromDefinition(const FLootDefinitionWra
 {
 	return SpaceGameMode
 		->GetLootBuilder(ItemDefWrapper.BuilderType)
-		->Build(ItemDefWrapper.ItemTypeToSpawn, Transform);
+		->Build(ItemDefWrapper.ItemToSpawnBlueprint, Transform);
 }
 
 AItemBox* UItemPoolListDefinition::BuildItemBoxFromDefinition(const FLootDefinitionWrapper & ItemDefWrapper, const FTransform & Transform)
@@ -163,9 +164,9 @@ AItemBox* UItemPoolListDefinition::BuildItemBoxFromDefinition(const FLootDefinit
 	AItemBox* SpawnedItemBox = nullptr;
 	UWorld* WorldPtr = GetWorld();
 
-	if (ItemDefWrapper.ItemBoxTypeToSpawn && WorldPtr)
+	if (ItemDefWrapper.ItemBoxToSpawnType && WorldPtr)
 	{
-		SpawnedItemBox = WorldPtr->SpawnActor<AItemBox>(ItemDefWrapper.ItemBoxTypeToSpawn, Transform);
+		SpawnedItemBox = WorldPtr->SpawnActor<AItemBox>(ItemDefWrapper.ItemBoxToSpawnType, Transform);
 	}
 
 	return SpawnedItemBox;

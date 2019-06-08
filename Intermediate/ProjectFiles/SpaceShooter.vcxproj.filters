@@ -187,6 +187,18 @@
     <ClInclude Include="..\..\Source\SpaceShooter\Public\WeaponBox.h">
       <Filter>Source\SpaceShooter\Public</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\ItemBlueprint.h">
+      <Filter>Source\SpaceShooter\Public\Loot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\AmmunitionBlueprint.h">
+      <Filter>Source\SpaceShooter\Public\Loot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\WeaponBlueprint.h">
+      <Filter>Source\SpaceShooter\Public\Loot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Globals\ItemAttributes.h">
+      <Filter>Source\SpaceShooter\Public\Globals</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\SpaceShooter\Private\LootChest.cpp">
@@ -222,5 +234,25 @@
     <ClCompile Include="..\..\Source\SpaceShooter\Private\WeaponBox.cpp">
       <Filter>Source\SpaceShooter\Private</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Loot\ItemBlueprint.cpp">
+      <Filter>Source\SpaceShooter\Private\Loot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Loot\AmmunitionBlueprint.cpp">
+      <Filter>Source\SpaceShooter\Private\Loot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Loot\WeaponBlueprint.cpp">
+      <Filter>Source\SpaceShooter\Private\Loot</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source\SpaceShooter\Public\Loot">
+      <UniqueIdentifier>{9757a314-6c13-4063-ae07-1aa0847c374a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\SpaceShooter\Private\Loot">
+      <UniqueIdentifier>{e46b268b-093c-4aee-ba3a-3eeee5cabdce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\SpaceShooter\Public\Globals">
+      <UniqueIdentifier>{e1a01499-45ac-44c7-9a4a-b5ee65ce90db}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

@@ -23,9 +23,9 @@ void AItem::Tick(float DeltaTime)
 
 }
 
-TArray<FItemAttribute> AItem::GetPrintableItemAttributes()
+TArray<FItemAttribute_Float> AItem::GetPrintableItemAttributes()
 {
-	TArray<FItemAttribute> Attributes;
+	TArray<FItemAttribute_Float> Attributes;
 
 	ProvideAttributes(Attributes);
 

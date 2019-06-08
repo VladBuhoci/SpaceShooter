@@ -159,11 +159,19 @@ public:
 
 
 	/**********************************
-				GETTERS
+				 GETTERS
 	**********************************/
 
 public:
 	/** Returns the type of this weapon. */
 	UFUNCTION(BlueprintPure, Category = "Weapon")
 	EWeaponType GetType() const { return Type; }
+
+
+	/**********************************
+				 SETTERS
+	**********************************/
+
+public:
+	void SetType(EWeaponType WeaponType) { this->Type = WeaponType; }
 };

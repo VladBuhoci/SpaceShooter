@@ -11,6 +11,7 @@
 class ASpaceGameMode;
 class ULootDefinition;
 class ALootItemBuilder;
+class UItemBlueprint;
 class AItem;
 class AItemBox;
 
@@ -20,13 +21,13 @@ struct SPACESHOOTER_API FLootDefinitionWrapper
 {
 	GENERATED_USTRUCT_BODY()
 
-	/** Type of the item to be spawned. */
+	/** Blueprint of the item to be spawned. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Loot Pool")
-	TSubclassOf<AItem> ItemTypeToSpawn;
+	TSubclassOf<UItemBlueprint> ItemToSpawnBlueprint;
 
 	/** Type of item box that will contain this item. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Loot Pool")
-	TSubclassOf<AItemBox> ItemBoxTypeToSpawn;
+	TSubclassOf<AItemBox> ItemBoxToSpawnType;
 
 	/** Type of builder that handles the spawning of this item. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Loot Pool")

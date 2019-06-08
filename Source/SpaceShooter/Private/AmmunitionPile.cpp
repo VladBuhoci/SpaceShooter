@@ -7,7 +7,7 @@ AAmmunitionPile::AAmmunitionPile()
 {
 	Name                  = FText::FromString("Unnamed Ammo Pile");
 	WeaponTypeAmmo        = EWeaponType::Unknown;
-	CurrentAmmoUnitsCount = FItemAttribute(NULL, FText::FromString("Ammo Count"), 0);
+	CurrentAmmoUnitsCount = FItemAttribute_Float(NULL, FText::FromString("Ammo Count"), 0);
 }
 
 void AAmmunitionPile::BeginPlay()
@@ -22,9 +22,16 @@ void AAmmunitionPile::Tick(float DeltaTime)
 
 }
 
-void AAmmunitionPile::ProvideAttributes(TArray<FItemAttribute> & AttributesArrayToSupply)
+void AAmmunitionPile::ProvideAttributes(TArray<FItemAttribute_Float> & AttributesArrayToSupply)
 {
 	AttributesArrayToSupply.Add(CurrentAmmoUnitsCount);
+}
+
+void AAmmunitionPile::SetAmmoCountAttribute(FItemAttribute_Float & AmmoAttr)
+{
+	CurrentAmmoUnitsCount.Icon  = AmmoAttr.Icon;
+	CurrentAmmoUnitsCount.Name  = AmmoAttr.Name;
+	CurrentAmmoUnitsCount.Value = AmmoAttr.Value;
 }
 
 int32 AAmmunitionPile::TakeAmmo(int32 AmountToTake)
