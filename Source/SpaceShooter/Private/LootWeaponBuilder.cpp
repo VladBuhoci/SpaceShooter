@@ -9,7 +9,7 @@
 #include "Engine/World.h"
 
 
-AItem* ALootWeaponBuilder::Build(TSubclassOf<UItemBlueprint> ItemToBuildBlueprint, const FTransform & SpawnedItemTransform)
+AItem* ULootWeaponBuilder::Build(TSubclassOf<UItemBlueprint> ItemToBuildBlueprint, const FTransform & SpawnedItemTransform)
 {
 	AWeapon* SpawnedWeapon = nullptr;
 	UWorld* WorldPtr = GetWorld();

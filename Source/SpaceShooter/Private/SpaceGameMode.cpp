@@ -18,7 +18,7 @@ ASpaceGameMode::ASpaceGameMode()
 	PlayerControllerClass = ASpacePlayerController::StaticClass();
 	HUDClass              = ASpaceHUD::StaticClass();
 
-	GenericItemBuilder    = CreateDefaultSubobject<ALootItemBuilder>("Generic Item Builder");
+	GenericItemBuilder    = CreateDefaultSubobject<ULootItemBuilder>("Generic Item Builder");
 }
 
 void ASpaceGameMode::BeginPlay()
@@ -74,11 +74,11 @@ void ASpaceGameMode::CreateLootBuilders()
 
 	if (WorldPtr)
 	{
-		for (TSubclassOf<ALootItemBuilder> BuilderClass : LootItemBuilderTypes)
+		for (TSubclassOf<ULootItemBuilder> BuilderClass : LootItemBuilderTypes)
 		{
 			if (BuilderClass)
 			{
-				ALootItemBuilder* NewBuilder = WorldPtr->SpawnActor<ALootItemBuilder>(BuilderClass, FTransform::Identity);
+				ULootItemBuilder* NewBuilder = NewObject<ULootItemBuilder>(this, BuilderClass);
 
 				if (NewBuilder)
 				{
@@ -89,7 +89,7 @@ void ASpaceGameMode::CreateLootBuilders()
 	}
 }
 
-ALootItemBuilder* ASpaceGameMode::GetLootBuilder(TSubclassOf<ALootItemBuilder> Type) const
+ULootItemBuilder* ASpaceGameMode::GetLootBuilder(TSubclassOf<ULootItemBuilder> Type) const
 {
 	return LootItemBuilders.Contains(Type) ? LootItemBuilders[Type] : GenericItemBuilder;
 }

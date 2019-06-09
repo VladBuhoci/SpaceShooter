@@ -8,7 +8,7 @@
 
 // Forward declarations.
 class ASpacecraftPawn;
-class ALootItemBuilder;
+class ULootItemBuilder;
 
 
 /**
@@ -28,18 +28,18 @@ class SPACESHOOTER_API ASpaceGameMode : public AGameModeBase
 	 * Does nothing when calling its Build() method, but GetLootBuilder() returns it if needed to avoid null reference issues.
 	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Game Mode", Meta = (AllowPrivateAccess = "true"))
-	ALootItemBuilder* GenericItemBuilder;
+	ULootItemBuilder* GenericItemBuilder;
 
 	/**
 	 * Map of item builders. Since the game mode reference is available from nearly anywhere,
 			it makes this map easy to access.
 	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Game Mode", Meta = (AllowPrivateAccess = "true"))
-	TMap<TSubclassOf<ALootItemBuilder>, ALootItemBuilder*> LootItemBuilders;
+	TMap<TSubclassOf<ULootItemBuilder>, ULootItemBuilder*> LootItemBuilders;
 
 	/** Types of loot builders that will be spawned at game start. They will be accessible via this class. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Space Game Mode", Meta = (AllowPrivateAccess = "true"))
-	TSet<TSubclassOf<ALootItemBuilder>> LootItemBuilderTypes;
+	TSet<TSubclassOf<ULootItemBuilder>> LootItemBuilderTypes;
 
 public:
 	/** Sets default values. */
@@ -65,7 +65,7 @@ private:
 public:
 	/** Given a type, returns the right loot item builder. */
 	UFUNCTION(BlueprintPure, Category = "Loot Chest")
-	ALootItemBuilder* GetLootBuilder(TSubclassOf<ALootItemBuilder> Type) const;
+	ULootItemBuilder* GetLootBuilder(TSubclassOf<ULootItemBuilder> Type) const;
 
 	/** Returns all spacecrafts found in the current world. */
 	UFUNCTION(BlueprintPure, Category = "Space Game Mode")

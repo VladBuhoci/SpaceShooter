@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "Loot/WorldAwareObject.h"
+
 #include "CoreMinimal.h"
 #include "GameFramework/Info.h"
 #include "LootPool.generated.h"
@@ -10,7 +12,7 @@
 // Forward declarations.
 class ASpaceGameMode;
 class ULootDefinition;
-class ALootItemBuilder;
+class ULootItemBuilder;
 class UItemBlueprint;
 class AItem;
 class AItemBox;
@@ -31,7 +33,7 @@ struct SPACESHOOTER_API FLootDefinitionWrapper
 
 	/** Type of builder that handles the spawning of this item. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Loot Pool")
-	TSubclassOf<ALootItemBuilder> BuilderType;
+	TSubclassOf<ULootItemBuilder> BuilderType;
 };
 
 USTRUCT(BlueprintType)
@@ -94,7 +96,7 @@ public:
 };
 
 UCLASS(Blueprintable)
-class SPACESHOOTER_API UItemPoolListDefinition : public UObject
+class SPACESHOOTER_API UItemPoolListDefinition : public UWorldAwareObject
 {
 	GENERATED_BODY()
 
@@ -114,8 +116,6 @@ class SPACESHOOTER_API UItemPoolListDefinition : public UObject
 public:
 	TArray<AItem*> GetRandomItems();
 	TArray<AItemBox*> GetRandomItemsWrappedInBoxes();
-
-	virtual UWorld* GetWorld() const override { return GetOuter() != nullptr ? GetOuter()->GetWorld() : nullptr; }
 
 private:
 	TArray<ULootDefinition*> GetRandomLootDefinitions();

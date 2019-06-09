@@ -11,7 +11,7 @@
  * Weapon-type loot item builder.
  */
 UCLASS()
-class SPACESHOOTER_API ALootWeaponBuilder : public ALootItemBuilder
+class SPACESHOOTER_API ULootWeaponBuilder : public ULootItemBuilder
 {
 	GENERATED_BODY()
 	

@@ -199,6 +199,9 @@
     <ClInclude Include="..\..\Source\SpaceShooter\Public\Globals\ItemAttributes.h">
       <Filter>Source\SpaceShooter\Public\Globals</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\WorldAwareObject.h">
+      <Filter>Source\SpaceShooter\Public\Loot</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\SpaceShooter\Private\LootChest.cpp">

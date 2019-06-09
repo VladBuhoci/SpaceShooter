@@ -5,12 +5,12 @@
 #include "Item.h"
 
 
-ALootItemBuilder::ALootItemBuilder()
+ULootItemBuilder::ULootItemBuilder()
 {
 	
 }
 
-AItem* ALootItemBuilder::Build(TSubclassOf<UItemBlueprint> ItemToBuildBlueprint, const FTransform & SpawnedItemTransform)
+AItem* ULootItemBuilder::Build(TSubclassOf<UItemBlueprint> ItemToBuildBlueprint, const FTransform & SpawnedItemTransform)
 {
 	return nullptr;
 }

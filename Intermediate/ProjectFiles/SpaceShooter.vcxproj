@@ -290,6 +290,7 @@
     <ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\AmmunitionBlueprint.h" />
     <ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\ItemBlueprint.h" />
     <ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\WeaponBlueprint.h" />
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\WorldAwareObject.h" />
     <ClInclude Include="..\..\Source\SpaceShooter\Public\WeaponBox.h" />
     <ClInclude Include="..\..\Source\SpaceShooter\SpaceShooter.h" />
     <ClCompile Include="..\..\Source\SpaceShooter\Private\Item.cpp" />

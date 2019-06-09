@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "UObject/NoExportTypes.h"
 #include "LootItemBuilder.generated.h"
 
 // Forward class declarations.
@@ -17,13 +17,13 @@ class AItem;
  * Builders handle the spawning and setting up of loot.
  */
 UCLASS()
-class SPACESHOOTER_API ALootItemBuilder : public AActor
+class SPACESHOOTER_API ULootItemBuilder : public UObject
 {
 	GENERATED_BODY()
 	
 public:
 	/** Sets defaults values. */
-	ALootItemBuilder();
+	ULootItemBuilder();
 
 	virtual AItem* Build(TSubclassOf<UItemBlueprint> ItemToBuildBlueprint, const FTransform & SpawnedItemTransform);
 };
