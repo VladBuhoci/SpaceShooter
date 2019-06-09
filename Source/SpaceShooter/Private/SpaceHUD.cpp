@@ -14,7 +14,7 @@
 
 ASpaceHUD::ASpaceHUD()
 {
-	ConstructorHelpers::FObjectFinder<UMaterialInterface> CrosshairIconFinder(TEXT("Material'/Game/Materials/Crosshairs/M_Crosshair_01.M_Crosshair_01'"));
+	ConstructorHelpers::FObjectFinder<UMaterialInterface> CrosshairIconFinder(TEXT("Material'/Game/Materials/HUD/Crosshairs/M_Crosshair_01.M_Crosshair_01'"));
 	
 	if (CrosshairIconFinder.Succeeded())
 	{
