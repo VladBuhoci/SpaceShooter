@@ -5,10 +5,11 @@
 #include "Loot/Creation/ItemBlueprint.h"
 
 #include "CoreMinimal.h"
+#include "SubclassOf.h"
 #include "AmmunitionBlueprint.generated.h"
 
 // Forward declarations.
-class UTexture2D;
+class UItemRarity;
 
 
 /**
@@ -28,6 +29,10 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ammunition Blueprint", Meta = (AllowPrivateAccess = "true"))
 	UTexture2D* Icon;
 
+	/** Rarity of the ammunition pile. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ammunition Blueprint", Meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UItemRarity> Rarity;
+
 	/** Type of weapon the ammunition pile will be used for. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ammunition Blueprint", Meta = (AllowPrivateAccess = "true"))
 	EWeaponType WeaponTypeAmmo;
@@ -43,5 +48,6 @@ public:
 	FText GetItemName() const { return Name; }
 	UTexture2D* GetItemIcon() const { return Icon; }
 	EWeaponType GetAmmoType() const { return WeaponTypeAmmo; }
+	TSubclassOf<UItemRarity> GetAmmoRarity() const { return Rarity; }
 	void GetAmmoCountRandomized(FItemAttribute_Float & AmmoAttr) const;
 };

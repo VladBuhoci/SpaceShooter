@@ -1,313 +1,322 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<ItemGroup>
-		<None Include="..\..\SpaceShooter.uproject" />
-		<Filter Include="Source">
-			<UniqueIdentifier>{F8576413-0677-4606-B67A-D88D97449A85}</UniqueIdentifier>
-		</Filter>
-		<None Include="..\..\Source\SpaceShooter.Target.cs">
-			<Filter>Source</Filter>
-		</None >
-		<None Include="..\..\Source\SpaceShooterEditor.Target.cs">
-			<Filter>Source</Filter>
-		</None >
-		<Filter Include="Config">
-			<UniqueIdentifier>{13485CAE-F4FD-4CDE-BEA8-FB065E6A46F8}</UniqueIdentifier>
-		</Filter>
-		<None Include="..\..\Config\DefaultEditor.ini">
-			<Filter>Config</Filter>
-		</None >
-		<None Include="..\..\Config\DefaultEngine.ini">
-			<Filter>Config</Filter>
-		</None >
-		<None Include="..\..\Config\DefaultGame.ini">
-			<Filter>Config</Filter>
-		</None >
-		<None Include="..\..\Config\DefaultInput.ini">
-			<Filter>Config</Filter>
-		</None >
-		<Filter Include="Source\SpaceShooter">
-			<UniqueIdentifier>{E36AC921-40CA-493D-B0B5-B1A943D21BE8}</UniqueIdentifier>
-		</Filter>
-		<None Include="..\..\Source\SpaceShooter\SpaceShooter.Build.cs">
-			<Filter>Source\SpaceShooter</Filter>
-		</None >
-		<ClCompile Include="..\..\Source\SpaceShooter\SpaceShooter.cpp">
-			<Filter>Source\SpaceShooter</Filter>
-		</ClCompile >
-		<ClInclude Include="..\..\Source\SpaceShooter\SpaceShooter.h">
-			<Filter>Source\SpaceShooter</Filter>
-		</ClInclude >
-		<Filter Include="Source\SpaceShooter\Private">
-			<UniqueIdentifier>{B56B5AAE-BB75-4178-9456-61B30463262D}</UniqueIdentifier>
-		</Filter>
-		<Filter Include="Source\SpaceShooter\Private\Components">
-			<UniqueIdentifier>{BF47B3C1-7260-4B6D-A9E3-1102F1A8A2EF}</UniqueIdentifier>
-		</Filter>
-		<ClCompile Include="..\..\Source\SpaceShooter\Private\Components\XYOnlyPhysicsConstraintComponent.cpp">
-			<Filter>Source\SpaceShooter\Private\Components</Filter>
-		</ClCompile >
-		<Filter Include="Source\SpaceShooter\Private\Controllers">
-			<UniqueIdentifier>{0D9320E6-30AB-438E-B405-A29112F79E33}</UniqueIdentifier>
-		</Filter>
-		<ClCompile Include="..\..\Source\SpaceShooter\Private\Controllers\SpaceEnemyController.cpp">
-			<Filter>Source\SpaceShooter\Private\Controllers</Filter>
-		</ClCompile >
-		<ClCompile Include="..\..\Source\SpaceShooter\Private\Controllers\SpacePlayerController.cpp">
-			<Filter>Source\SpaceShooter\Private\Controllers</Filter>
-		</ClCompile >
-		<Filter Include="Source\SpaceShooter\Private\Effects">
-			<UniqueIdentifier>{C68D3DAA-4943-4C77-8013-40DD83DF737B}</UniqueIdentifier>
-		</Filter>
-		<ClCompile Include="..\..\Source\SpaceShooter\Private\Effects\SpacecraftDestructionCameraShake.cpp">
-			<Filter>Source\SpaceShooter\Private\Effects</Filter>
-		</ClCompile >
-		<ClCompile Include="..\..\Source\SpaceShooter\Private\Effects\SpacecraftExplosion.cpp">
-			<Filter>Source\SpaceShooter\Private\Effects</Filter>
-		</ClCompile >
-		<ClCompile Include="..\..\Source\SpaceShooter\Private\Effects\SpacecraftTurboModeCameraShake.cpp">
-			<Filter>Source\SpaceShooter\Private\Effects</Filter>
-		</ClCompile >
-		<Filter Include="Source\SpaceShooter\Private\GameModes">
-			<UniqueIdentifier>{228201C1-61CB-403E-8676-AC2D7324BF33}</UniqueIdentifier>
-		</Filter>
-		<ClCompile Include="..\..\Source\SpaceShooter\Private\GameModes\MainMenuGameMode.cpp">
-			<Filter>Source\SpaceShooter\Private\GameModes</Filter>
-		</ClCompile >
-		<ClCompile Include="..\..\Source\SpaceShooter\Private\GameModes\SpaceGameMode.cpp">
-			<Filter>Source\SpaceShooter\Private\GameModes</Filter>
-		</ClCompile >
-		<Filter Include="Source\SpaceShooter\Private\Listeners">
-			<UniqueIdentifier>{F60C8F99-1BA9-43F1-90AF-DF3111BA916F}</UniqueIdentifier>
-		</Filter>
-		<ClCompile Include="..\..\Source\SpaceShooter\Private\Listeners\MousePointerListener.cpp">
-			<Filter>Source\SpaceShooter\Private\Listeners</Filter>
-		</ClCompile >
-		<Filter Include="Source\SpaceShooter\Private\Loot">
-			<UniqueIdentifier>{675B69F6-A7BE-4369-B004-6354FE385AA2}</UniqueIdentifier>
-		</Filter>
-		<Filter Include="Source\SpaceShooter\Private\Loot\Containers">
-			<UniqueIdentifier>{F62CA743-2992-40A4-9E53-40AEE125FD67}</UniqueIdentifier>
-		</Filter>
-		<ClCompile Include="..\..\Source\SpaceShooter\Private\Loot\Containers\AmmunitionBox.cpp">
-			<Filter>Source\SpaceShooter\Private\Loot\Containers</Filter>
-		</ClCompile >
-		<ClCompile Include="..\..\Source\SpaceShooter\Private\Loot\Containers\ItemBox.cpp">
-			<Filter>Source\SpaceShooter\Private\Loot\Containers</Filter>
-		</ClCompile >
-		<ClCompile Include="..\..\Source\SpaceShooter\Private\Loot\Containers\LootChest.cpp">
-			<Filter>Source\SpaceShooter\Private\Loot\Containers</Filter>
-		</ClCompile >
-		<ClCompile Include="..\..\Source\SpaceShooter\Private\Loot\Containers\WeaponBox.cpp">
-			<Filter>Source\SpaceShooter\Private\Loot\Containers</Filter>
-		</ClCompile >
-		<Filter Include="Source\SpaceShooter\Private\Loot\Creation">
-			<UniqueIdentifier>{73AEDD77-ED69-4641-98C5-67176C335AE5}</UniqueIdentifier>
-		</Filter>
-		<ClCompile Include="..\..\Source\SpaceShooter\Private\Loot\Creation\AmmunitionBlueprint.cpp">
-			<Filter>Source\SpaceShooter\Private\Loot\Creation</Filter>
-		</ClCompile >
-		<ClCompile Include="..\..\Source\SpaceShooter\Private\Loot\Creation\ItemBlueprint.cpp">
-			<Filter>Source\SpaceShooter\Private\Loot\Creation</Filter>
-		</ClCompile >
-		<ClCompile Include="..\..\Source\SpaceShooter\Private\Loot\Creation\LootAmmoBuilder.cpp">
-			<Filter>Source\SpaceShooter\Private\Loot\Creation</Filter>
-		</ClCompile >
-		<ClCompile Include="..\..\Source\SpaceShooter\Private\Loot\Creation\LootItemBuilder.cpp">
-			<Filter>Source\SpaceShooter\Private\Loot\Creation</Filter>
-		</ClCompile >
-		<ClCompile Include="..\..\Source\SpaceShooter\Private\Loot\Creation\LootPool.cpp">
-			<Filter>Source\SpaceShooter\Private\Loot\Creation</Filter>
-		</ClCompile >
-		<ClCompile Include="..\..\Source\SpaceShooter\Private\Loot\Creation\LootWeaponBuilder.cpp">
-			<Filter>Source\SpaceShooter\Private\Loot\Creation</Filter>
-		</ClCompile >
-		<ClCompile Include="..\..\Source\SpaceShooter\Private\Loot\Creation\WeaponBlueprint.cpp">
-			<Filter>Source\SpaceShooter\Private\Loot\Creation</Filter>
-		</ClCompile >
-		<Filter Include="Source\SpaceShooter\Private\Loot\Items">
-			<UniqueIdentifier>{E5CB9386-CD00-415A-A2E9-DAC505FBBDC9}</UniqueIdentifier>
-		</Filter>
-		<ClCompile Include="..\..\Source\SpaceShooter\Private\Loot\Items\AmmunitionPile.cpp">
-			<Filter>Source\SpaceShooter\Private\Loot\Items</Filter>
-		</ClCompile >
-		<ClCompile Include="..\..\Source\SpaceShooter\Private\Loot\Items\Item.cpp">
-			<Filter>Source\SpaceShooter\Private\Loot\Items</Filter>
-		</ClCompile >
-		<ClCompile Include="..\..\Source\SpaceShooter\Private\Loot\Items\LootItemReceiver.cpp">
-			<Filter>Source\SpaceShooter\Private\Loot\Items</Filter>
-		</ClCompile >
-		<ClCompile Include="..\..\Source\SpaceShooter\Private\Loot\Items\Weapon.cpp">
-			<Filter>Source\SpaceShooter\Private\Loot\Items</Filter>
-		</ClCompile >
-		<Filter Include="Source\SpaceShooter\Private\Pawns">
-			<UniqueIdentifier>{63EB4255-D761-4147-B3E8-336ABFC3A095}</UniqueIdentifier>
-		</Filter>
-		<ClCompile Include="..\..\Source\SpaceShooter\Private\Pawns\MainMenuPlayerPawn.cpp">
-			<Filter>Source\SpaceShooter\Private\Pawns</Filter>
-		</ClCompile >
-		<ClCompile Include="..\..\Source\SpaceShooter\Private\Pawns\SpacecraftPawn.cpp">
-			<Filter>Source\SpaceShooter\Private\Pawns</Filter>
-		</ClCompile >
-		<ClCompile Include="..\..\Source\SpaceShooter\Private\Pawns\SpaceEnemyPawn.cpp">
-			<Filter>Source\SpaceShooter\Private\Pawns</Filter>
-		</ClCompile >
-		<ClCompile Include="..\..\Source\SpaceShooter\Private\Pawns\SpacePlayerPawn.cpp">
-			<Filter>Source\SpaceShooter\Private\Pawns</Filter>
-		</ClCompile >
-		<Filter Include="Source\SpaceShooter\Private\Projectiles">
-			<UniqueIdentifier>{4C601C7A-D5A9-4281-A4C3-38C4B97D9C74}</UniqueIdentifier>
-		</Filter>
-		<ClCompile Include="..\..\Source\SpaceShooter\Private\Projectiles\Projectile.cpp">
-			<Filter>Source\SpaceShooter\Private\Projectiles</Filter>
-		</ClCompile >
-		<Filter Include="Source\SpaceShooter\Private\UI">
-			<UniqueIdentifier>{9F3FDDD3-ED02-4484-8CE6-35880207D434}</UniqueIdentifier>
-		</Filter>
-		<ClCompile Include="..\..\Source\SpaceShooter\Private\UI\SpaceHUD.cpp">
-			<Filter>Source\SpaceShooter\Private\UI</Filter>
-		</ClCompile >
-		<Filter Include="Source\SpaceShooter\Public">
-			<UniqueIdentifier>{6FDD03D8-B1D1-40DF-86E5-4821A5FCAD13}</UniqueIdentifier>
-		</Filter>
-		<Filter Include="Source\SpaceShooter\Public\Components">
-			<UniqueIdentifier>{3AAB6026-A096-458B-BDB7-343B6C01EE72}</UniqueIdentifier>
-		</Filter>
-		<ClInclude Include="..\..\Source\SpaceShooter\Public\Components\XYOnlyPhysicsConstraintComponent.h">
-			<Filter>Source\SpaceShooter\Public\Components</Filter>
-		</ClInclude >
-		<Filter Include="Source\SpaceShooter\Public\Controllers">
-			<UniqueIdentifier>{670C5F78-DAD2-4F09-897E-346E88A2C06B}</UniqueIdentifier>
-		</Filter>
-		<ClInclude Include="..\..\Source\SpaceShooter\Public\Controllers\SpaceEnemyController.h">
-			<Filter>Source\SpaceShooter\Public\Controllers</Filter>
-		</ClInclude >
-		<ClInclude Include="..\..\Source\SpaceShooter\Public\Controllers\SpacePlayerController.h">
-			<Filter>Source\SpaceShooter\Public\Controllers</Filter>
-		</ClInclude >
-		<Filter Include="Source\SpaceShooter\Public\Effects">
-			<UniqueIdentifier>{C1173B9B-4163-4E86-B7CC-EE06537C4F82}</UniqueIdentifier>
-		</Filter>
-		<ClInclude Include="..\..\Source\SpaceShooter\Public\Effects\SpacecraftDestructionCameraShake.h">
-			<Filter>Source\SpaceShooter\Public\Effects</Filter>
-		</ClInclude >
-		<ClInclude Include="..\..\Source\SpaceShooter\Public\Effects\SpacecraftExplosion.h">
-			<Filter>Source\SpaceShooter\Public\Effects</Filter>
-		</ClInclude >
-		<ClInclude Include="..\..\Source\SpaceShooter\Public\Effects\SpacecraftTurboModeCameraShake.h">
-			<Filter>Source\SpaceShooter\Public\Effects</Filter>
-		</ClInclude >
-		<Filter Include="Source\SpaceShooter\Public\GameModes">
-			<UniqueIdentifier>{6DE55A1A-017C-4EF6-AD3C-D9A1FCE1B679}</UniqueIdentifier>
-		</Filter>
-		<ClInclude Include="..\..\Source\SpaceShooter\Public\GameModes\MainMenuGameMode.h">
-			<Filter>Source\SpaceShooter\Public\GameModes</Filter>
-		</ClInclude >
-		<ClInclude Include="..\..\Source\SpaceShooter\Public\GameModes\SpaceGameMode.h">
-			<Filter>Source\SpaceShooter\Public\GameModes</Filter>
-		</ClInclude >
-		<Filter Include="Source\SpaceShooter\Public\Globals">
-			<UniqueIdentifier>{9BBDCFFF-6FFB-4A3F-8174-5880F885BCCB}</UniqueIdentifier>
-		</Filter>
-		<ClInclude Include="..\..\Source\SpaceShooter\Public\Globals\ItemAttributes.h">
-			<Filter>Source\SpaceShooter\Public\Globals</Filter>
-		</ClInclude >
-		<ClInclude Include="..\..\Source\SpaceShooter\Public\Globals\SpaceEnums.h">
-			<Filter>Source\SpaceShooter\Public\Globals</Filter>
-		</ClInclude >
-		<Filter Include="Source\SpaceShooter\Public\Listeners">
-			<UniqueIdentifier>{238EE990-1827-4B26-B931-16B66E594368}</UniqueIdentifier>
-		</Filter>
-		<ClInclude Include="..\..\Source\SpaceShooter\Public\Listeners\MousePointerListener.h">
-			<Filter>Source\SpaceShooter\Public\Listeners</Filter>
-		</ClInclude >
-		<Filter Include="Source\SpaceShooter\Public\Loot">
-			<UniqueIdentifier>{9E257927-41ED-4E67-8D1B-93BECFFD9FE1}</UniqueIdentifier>
-		</Filter>
-		<ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\WorldAwareObject.h">
-			<Filter>Source\SpaceShooter\Public\Loot</Filter>
-		</ClInclude >
-		<Filter Include="Source\SpaceShooter\Public\Loot\Containers">
-			<UniqueIdentifier>{DF84F95C-3C3F-4D61-9F40-A7AE3B52AF31}</UniqueIdentifier>
-		</Filter>
-		<ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\Containers\AmmunitionBox.h">
-			<Filter>Source\SpaceShooter\Public\Loot\Containers</Filter>
-		</ClInclude >
-		<ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\Containers\ItemBox.h">
-			<Filter>Source\SpaceShooter\Public\Loot\Containers</Filter>
-		</ClInclude >
-		<ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\Containers\LootChest.h">
-			<Filter>Source\SpaceShooter\Public\Loot\Containers</Filter>
-		</ClInclude >
-		<ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\Containers\WeaponBox.h">
-			<Filter>Source\SpaceShooter\Public\Loot\Containers</Filter>
-		</ClInclude >
-		<Filter Include="Source\SpaceShooter\Public\Loot\Creation">
-			<UniqueIdentifier>{74BDEAB2-3BEC-4C2F-8CBC-0CC5563072C3}</UniqueIdentifier>
-		</Filter>
-		<ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\Creation\AmmunitionBlueprint.h">
-			<Filter>Source\SpaceShooter\Public\Loot\Creation</Filter>
-		</ClInclude >
-		<ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\Creation\ItemBlueprint.h">
-			<Filter>Source\SpaceShooter\Public\Loot\Creation</Filter>
-		</ClInclude >
-		<ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\Creation\LootAmmoBuilder.h">
-			<Filter>Source\SpaceShooter\Public\Loot\Creation</Filter>
-		</ClInclude >
-		<ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\Creation\LootItemBuilder.h">
-			<Filter>Source\SpaceShooter\Public\Loot\Creation</Filter>
-		</ClInclude >
-		<ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\Creation\LootPool.h">
-			<Filter>Source\SpaceShooter\Public\Loot\Creation</Filter>
-		</ClInclude >
-		<ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\Creation\LootWeaponBuilder.h">
-			<Filter>Source\SpaceShooter\Public\Loot\Creation</Filter>
-		</ClInclude >
-		<ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\Creation\WeaponBlueprint.h">
-			<Filter>Source\SpaceShooter\Public\Loot\Creation</Filter>
-		</ClInclude >
-		<Filter Include="Source\SpaceShooter\Public\Loot\Items">
-			<UniqueIdentifier>{C221D52E-1481-4E12-AB83-27AF4295102A}</UniqueIdentifier>
-		</Filter>
-		<ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\Items\AmmunitionPile.h">
-			<Filter>Source\SpaceShooter\Public\Loot\Items</Filter>
-		</ClInclude >
-		<ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\Items\Item.h">
-			<Filter>Source\SpaceShooter\Public\Loot\Items</Filter>
-		</ClInclude >
-		<ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\Items\LootItemReceiver.h">
-			<Filter>Source\SpaceShooter\Public\Loot\Items</Filter>
-		</ClInclude >
-		<ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\Items\Weapon.h">
-			<Filter>Source\SpaceShooter\Public\Loot\Items</Filter>
-		</ClInclude >
-		<Filter Include="Source\SpaceShooter\Public\Pawns">
-			<UniqueIdentifier>{412B5D18-D94B-4AD3-971E-A754F365648F}</UniqueIdentifier>
-		</Filter>
-		<ClInclude Include="..\..\Source\SpaceShooter\Public\Pawns\MainMenuPlayerPawn.h">
-			<Filter>Source\SpaceShooter\Public\Pawns</Filter>
-		</ClInclude >
-		<ClInclude Include="..\..\Source\SpaceShooter\Public\Pawns\SpacecraftPawn.h">
-			<Filter>Source\SpaceShooter\Public\Pawns</Filter>
-		</ClInclude >
-		<ClInclude Include="..\..\Source\SpaceShooter\Public\Pawns\SpaceEnemyPawn.h">
-			<Filter>Source\SpaceShooter\Public\Pawns</Filter>
-		</ClInclude >
-		<ClInclude Include="..\..\Source\SpaceShooter\Public\Pawns\SpacePlayerPawn.h">
-			<Filter>Source\SpaceShooter\Public\Pawns</Filter>
-		</ClInclude >
-		<Filter Include="Source\SpaceShooter\Public\Projectiles">
-			<UniqueIdentifier>{826393C7-2E9C-4B9B-AC46-C6AE1F75AB85}</UniqueIdentifier>
-		</Filter>
-		<ClInclude Include="..\..\Source\SpaceShooter\Public\Projectiles\Projectile.h">
-			<Filter>Source\SpaceShooter\Public\Projectiles</Filter>
-		</ClInclude >
-		<Filter Include="Source\SpaceShooter\Public\UI">
-			<UniqueIdentifier>{C5A6310C-5B9D-44C3-ADE6-AA73E95F03A2}</UniqueIdentifier>
-		</Filter>
-		<ClInclude Include="..\..\Source\SpaceShooter\Public\UI\SpaceHUD.h">
-			<Filter>Source\SpaceShooter\Public\UI</Filter>
-		</ClInclude >
-	</ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\SpaceShooter.uproject" />
+    <Filter Include="Source">
+      <UniqueIdentifier>{F8576413-0677-4606-B67A-D88D97449A85}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Source\SpaceShooter.Target.cs">
+      <Filter>Source</Filter>
+    </None>
+    <None Include="..\..\Source\SpaceShooterEditor.Target.cs">
+      <Filter>Source</Filter>
+    </None>
+    <Filter Include="Config">
+      <UniqueIdentifier>{13485CAE-F4FD-4CDE-BEA8-FB065E6A46F8}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Config\DefaultEditor.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultEngine.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultGame.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultInput.ini">
+      <Filter>Config</Filter>
+    </None>
+    <Filter Include="Source\SpaceShooter">
+      <UniqueIdentifier>{E36AC921-40CA-493D-B0B5-B1A943D21BE8}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Source\SpaceShooter\SpaceShooter.Build.cs">
+      <Filter>Source\SpaceShooter</Filter>
+    </None>
+    <ClCompile Include="..\..\Source\SpaceShooter\SpaceShooter.cpp">
+      <Filter>Source\SpaceShooter</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\SpaceShooter\SpaceShooter.h">
+      <Filter>Source\SpaceShooter</Filter>
+    </ClInclude>
+    <Filter Include="Source\SpaceShooter\Private">
+      <UniqueIdentifier>{B56B5AAE-BB75-4178-9456-61B30463262D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\SpaceShooter\Private\Components">
+      <UniqueIdentifier>{BF47B3C1-7260-4B6D-A9E3-1102F1A8A2EF}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Components\XYOnlyPhysicsConstraintComponent.cpp">
+      <Filter>Source\SpaceShooter\Private\Components</Filter>
+    </ClCompile>
+    <Filter Include="Source\SpaceShooter\Private\Controllers">
+      <UniqueIdentifier>{0D9320E6-30AB-438E-B405-A29112F79E33}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Controllers\SpaceEnemyController.cpp">
+      <Filter>Source\SpaceShooter\Private\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Controllers\SpacePlayerController.cpp">
+      <Filter>Source\SpaceShooter\Private\Controllers</Filter>
+    </ClCompile>
+    <Filter Include="Source\SpaceShooter\Private\Effects">
+      <UniqueIdentifier>{C68D3DAA-4943-4C77-8013-40DD83DF737B}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Effects\SpacecraftDestructionCameraShake.cpp">
+      <Filter>Source\SpaceShooter\Private\Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Effects\SpacecraftExplosion.cpp">
+      <Filter>Source\SpaceShooter\Private\Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Effects\SpacecraftTurboModeCameraShake.cpp">
+      <Filter>Source\SpaceShooter\Private\Effects</Filter>
+    </ClCompile>
+    <Filter Include="Source\SpaceShooter\Private\GameModes">
+      <UniqueIdentifier>{228201C1-61CB-403E-8676-AC2D7324BF33}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\GameModes\MainMenuGameMode.cpp">
+      <Filter>Source\SpaceShooter\Private\GameModes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\GameModes\SpaceGameMode.cpp">
+      <Filter>Source\SpaceShooter\Private\GameModes</Filter>
+    </ClCompile>
+    <Filter Include="Source\SpaceShooter\Private\Listeners">
+      <UniqueIdentifier>{F60C8F99-1BA9-43F1-90AF-DF3111BA916F}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Listeners\MousePointerListener.cpp">
+      <Filter>Source\SpaceShooter\Private\Listeners</Filter>
+    </ClCompile>
+    <Filter Include="Source\SpaceShooter\Private\Loot">
+      <UniqueIdentifier>{675B69F6-A7BE-4369-B004-6354FE385AA2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\SpaceShooter\Private\Loot\Containers">
+      <UniqueIdentifier>{F62CA743-2992-40A4-9E53-40AEE125FD67}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Loot\Containers\AmmunitionBox.cpp">
+      <Filter>Source\SpaceShooter\Private\Loot\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Loot\Containers\ItemBox.cpp">
+      <Filter>Source\SpaceShooter\Private\Loot\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Loot\Containers\LootChest.cpp">
+      <Filter>Source\SpaceShooter\Private\Loot\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Loot\Containers\WeaponBox.cpp">
+      <Filter>Source\SpaceShooter\Private\Loot\Containers</Filter>
+    </ClCompile>
+    <Filter Include="Source\SpaceShooter\Private\Loot\Creation">
+      <UniqueIdentifier>{73AEDD77-ED69-4641-98C5-67176C335AE5}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Loot\Creation\AmmunitionBlueprint.cpp">
+      <Filter>Source\SpaceShooter\Private\Loot\Creation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Loot\Creation\ItemBlueprint.cpp">
+      <Filter>Source\SpaceShooter\Private\Loot\Creation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Loot\Creation\LootAmmoBuilder.cpp">
+      <Filter>Source\SpaceShooter\Private\Loot\Creation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Loot\Creation\LootItemBuilder.cpp">
+      <Filter>Source\SpaceShooter\Private\Loot\Creation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Loot\Creation\LootPool.cpp">
+      <Filter>Source\SpaceShooter\Private\Loot\Creation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Loot\Creation\LootWeaponBuilder.cpp">
+      <Filter>Source\SpaceShooter\Private\Loot\Creation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Loot\Creation\WeaponBlueprint.cpp">
+      <Filter>Source\SpaceShooter\Private\Loot\Creation</Filter>
+    </ClCompile>
+    <Filter Include="Source\SpaceShooter\Private\Loot\Items">
+      <UniqueIdentifier>{E5CB9386-CD00-415A-A2E9-DAC505FBBDC9}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Loot\Items\AmmunitionPile.cpp">
+      <Filter>Source\SpaceShooter\Private\Loot\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Loot\Items\Item.cpp">
+      <Filter>Source\SpaceShooter\Private\Loot\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Loot\Items\LootItemReceiver.cpp">
+      <Filter>Source\SpaceShooter\Private\Loot\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Loot\Items\Weapon.cpp">
+      <Filter>Source\SpaceShooter\Private\Loot\Items</Filter>
+    </ClCompile>
+    <Filter Include="Source\SpaceShooter\Private\Pawns">
+      <UniqueIdentifier>{63EB4255-D761-4147-B3E8-336ABFC3A095}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Pawns\MainMenuPlayerPawn.cpp">
+      <Filter>Source\SpaceShooter\Private\Pawns</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Pawns\SpacecraftPawn.cpp">
+      <Filter>Source\SpaceShooter\Private\Pawns</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Pawns\SpaceEnemyPawn.cpp">
+      <Filter>Source\SpaceShooter\Private\Pawns</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Pawns\SpacePlayerPawn.cpp">
+      <Filter>Source\SpaceShooter\Private\Pawns</Filter>
+    </ClCompile>
+    <Filter Include="Source\SpaceShooter\Private\Projectiles">
+      <UniqueIdentifier>{4C601C7A-D5A9-4281-A4C3-38C4B97D9C74}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Projectiles\Projectile.cpp">
+      <Filter>Source\SpaceShooter\Private\Projectiles</Filter>
+    </ClCompile>
+    <Filter Include="Source\SpaceShooter\Private\UI">
+      <UniqueIdentifier>{9F3FDDD3-ED02-4484-8CE6-35880207D434}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\UI\SpaceHUD.cpp">
+      <Filter>Source\SpaceShooter\Private\UI</Filter>
+    </ClCompile>
+    <Filter Include="Source\SpaceShooter\Public">
+      <UniqueIdentifier>{6FDD03D8-B1D1-40DF-86E5-4821A5FCAD13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\SpaceShooter\Public\Components">
+      <UniqueIdentifier>{3AAB6026-A096-458B-BDB7-343B6C01EE72}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Components\XYOnlyPhysicsConstraintComponent.h">
+      <Filter>Source\SpaceShooter\Public\Components</Filter>
+    </ClInclude>
+    <Filter Include="Source\SpaceShooter\Public\Controllers">
+      <UniqueIdentifier>{670C5F78-DAD2-4F09-897E-346E88A2C06B}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Controllers\SpaceEnemyController.h">
+      <Filter>Source\SpaceShooter\Public\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Controllers\SpacePlayerController.h">
+      <Filter>Source\SpaceShooter\Public\Controllers</Filter>
+    </ClInclude>
+    <Filter Include="Source\SpaceShooter\Public\Effects">
+      <UniqueIdentifier>{C1173B9B-4163-4E86-B7CC-EE06537C4F82}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Effects\SpacecraftDestructionCameraShake.h">
+      <Filter>Source\SpaceShooter\Public\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Effects\SpacecraftExplosion.h">
+      <Filter>Source\SpaceShooter\Public\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Effects\SpacecraftTurboModeCameraShake.h">
+      <Filter>Source\SpaceShooter\Public\Effects</Filter>
+    </ClInclude>
+    <Filter Include="Source\SpaceShooter\Public\GameModes">
+      <UniqueIdentifier>{6DE55A1A-017C-4EF6-AD3C-D9A1FCE1B679}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\GameModes\MainMenuGameMode.h">
+      <Filter>Source\SpaceShooter\Public\GameModes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\GameModes\SpaceGameMode.h">
+      <Filter>Source\SpaceShooter\Public\GameModes</Filter>
+    </ClInclude>
+    <Filter Include="Source\SpaceShooter\Public\Globals">
+      <UniqueIdentifier>{9BBDCFFF-6FFB-4A3F-8174-5880F885BCCB}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Globals\ItemAttributes.h">
+      <Filter>Source\SpaceShooter\Public\Globals</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Globals\SpaceEnums.h">
+      <Filter>Source\SpaceShooter\Public\Globals</Filter>
+    </ClInclude>
+    <Filter Include="Source\SpaceShooter\Public\Listeners">
+      <UniqueIdentifier>{238EE990-1827-4B26-B931-16B66E594368}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Listeners\MousePointerListener.h">
+      <Filter>Source\SpaceShooter\Public\Listeners</Filter>
+    </ClInclude>
+    <Filter Include="Source\SpaceShooter\Public\Loot">
+      <UniqueIdentifier>{9E257927-41ED-4E67-8D1B-93BECFFD9FE1}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\WorldAwareObject.h">
+      <Filter>Source\SpaceShooter\Public\Loot</Filter>
+    </ClInclude>
+    <Filter Include="Source\SpaceShooter\Public\Loot\Containers">
+      <UniqueIdentifier>{DF84F95C-3C3F-4D61-9F40-A7AE3B52AF31}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\Containers\AmmunitionBox.h">
+      <Filter>Source\SpaceShooter\Public\Loot\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\Containers\ItemBox.h">
+      <Filter>Source\SpaceShooter\Public\Loot\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\Containers\LootChest.h">
+      <Filter>Source\SpaceShooter\Public\Loot\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\Containers\WeaponBox.h">
+      <Filter>Source\SpaceShooter\Public\Loot\Containers</Filter>
+    </ClInclude>
+    <Filter Include="Source\SpaceShooter\Public\Loot\Creation">
+      <UniqueIdentifier>{74BDEAB2-3BEC-4C2F-8CBC-0CC5563072C3}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\Creation\AmmunitionBlueprint.h">
+      <Filter>Source\SpaceShooter\Public\Loot\Creation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\Creation\ItemBlueprint.h">
+      <Filter>Source\SpaceShooter\Public\Loot\Creation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\Creation\LootAmmoBuilder.h">
+      <Filter>Source\SpaceShooter\Public\Loot\Creation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\Creation\LootItemBuilder.h">
+      <Filter>Source\SpaceShooter\Public\Loot\Creation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\Creation\LootPool.h">
+      <Filter>Source\SpaceShooter\Public\Loot\Creation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\Creation\LootWeaponBuilder.h">
+      <Filter>Source\SpaceShooter\Public\Loot\Creation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\Creation\WeaponBlueprint.h">
+      <Filter>Source\SpaceShooter\Public\Loot\Creation</Filter>
+    </ClInclude>
+    <Filter Include="Source\SpaceShooter\Public\Loot\Items">
+      <UniqueIdentifier>{C221D52E-1481-4E12-AB83-27AF4295102A}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\Items\AmmunitionPile.h">
+      <Filter>Source\SpaceShooter\Public\Loot\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\Items\Item.h">
+      <Filter>Source\SpaceShooter\Public\Loot\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\Items\LootItemReceiver.h">
+      <Filter>Source\SpaceShooter\Public\Loot\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\Items\Weapon.h">
+      <Filter>Source\SpaceShooter\Public\Loot\Items</Filter>
+    </ClInclude>
+    <Filter Include="Source\SpaceShooter\Public\Pawns">
+      <UniqueIdentifier>{412B5D18-D94B-4AD3-971E-A754F365648F}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Pawns\MainMenuPlayerPawn.h">
+      <Filter>Source\SpaceShooter\Public\Pawns</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Pawns\SpacecraftPawn.h">
+      <Filter>Source\SpaceShooter\Public\Pawns</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Pawns\SpaceEnemyPawn.h">
+      <Filter>Source\SpaceShooter\Public\Pawns</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Pawns\SpacePlayerPawn.h">
+      <Filter>Source\SpaceShooter\Public\Pawns</Filter>
+    </ClInclude>
+    <Filter Include="Source\SpaceShooter\Public\Projectiles">
+      <UniqueIdentifier>{826393C7-2E9C-4B9B-AC46-C6AE1F75AB85}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Projectiles\Projectile.h">
+      <Filter>Source\SpaceShooter\Public\Projectiles</Filter>
+    </ClInclude>
+    <Filter Include="Source\SpaceShooter\Public\UI">
+      <UniqueIdentifier>{C5A6310C-5B9D-44C3-ADE6-AA73E95F03A2}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\UI\SpaceHUD.h">
+      <Filter>Source\SpaceShooter\Public\UI</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\ItemRarity.h">
+      <Filter>Source\SpaceShooter\Public\Loot</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Loot\ItemRarity.cpp">
+      <Filter>Source\SpaceShooter\Private\Loot</Filter>
+    </ClCompile>
+  </ItemGroup>
 </Project>

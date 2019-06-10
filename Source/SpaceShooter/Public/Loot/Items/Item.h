@@ -8,6 +8,9 @@
 #include "GameFramework/Actor.h"
 #include "Item.generated.h"
 
+// Forward declarations.
+class UItemRarity;
+
 
 /**
  * Base class of all player-usable items (ammo, weapons etc).
@@ -25,6 +28,10 @@ protected:
 	/** Icon of this item. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item", Meta = (AllowPrivateAccess = "true"))
 	UTexture2D* Icon;
+
+	/** Rarity of this item. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item", Meta = (AllowPrivateAccess = "true"))
+	UItemRarity* Rarity;
 
 public:	
 	/** Sets default values. */
@@ -54,6 +61,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Item")
 	UTexture2D* GetItemIcon() const { return Icon; }
 
+	/** Returns the rarity of this item. */
+	UFUNCTION(BlueprintPure, Category = "Item")
+	UItemRarity* GetItemRarity() const { return Rarity; }
+
 	/** Returns all the attributes of this item that can be displayed in a card-type item info widget. */
 	UFUNCTION(BlueprintCallable, Category = "Item | Attribute")
 	TArray<FItemAttribute_Float> GetPrintableItemAttributes();
@@ -66,4 +77,5 @@ public:
 public:
 	void SetItemName(FText & ItemName) { this->Name = ItemName; }
 	void SetItemIcon(UTexture2D* ItemIcon) { this->Icon = ItemIcon; }
+	void SetItemRarity(UItemRarity* ItemRarity) { this->Rarity = ItemRarity; }
 };

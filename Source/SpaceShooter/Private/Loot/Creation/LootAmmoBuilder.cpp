@@ -5,6 +5,7 @@
 #include "Loot/Creation/AmmunitionBlueprint.h"
 #include "Loot/Items/Item.h"
 #include "Loot/Items/AmmunitionPile.h"
+#include "Loot/ItemRarity.h"
 
 #include "Engine/World.h"
 
@@ -25,6 +26,7 @@ AItem* ULootAmmoBuilder::Build(TSubclassOf<UItemBlueprint> ItemToBuildBlueprint,
 			if (SpawnedAmmoPile)
 			{
 				FText ItemName = AmmoBP->GetItemName();
+				UItemRarity* ItemRarity = NewObject<UItemRarity>(this, AmmoBP->GetAmmoRarity());
 				FItemAttribute_Float AmmoCountAttr;
 
 				AmmoBP->GetAmmoCountRandomized(AmmoCountAttr);
@@ -32,6 +34,7 @@ AItem* ULootAmmoBuilder::Build(TSubclassOf<UItemBlueprint> ItemToBuildBlueprint,
 				SpawnedAmmoPile->SetItemName(ItemName);
 				SpawnedAmmoPile->SetItemIcon(AmmoBP->GetItemIcon());
 				SpawnedAmmoPile->SetAmmoType(AmmoBP->GetAmmoType());
+				SpawnedAmmoPile->SetItemRarity(ItemRarity);
 				SpawnedAmmoPile->SetAmmoCountAttribute(AmmoCountAttr);
 			}
 		}
