@@ -8,6 +8,7 @@
 
 // Forward declarations.
 class ASpacecraftPawn;
+class UWeaponPool;
 class ULootItemBuilder;
 
 
@@ -22,13 +23,18 @@ class SPACESHOOTER_API ASpaceGameMode : public AGameModeBase
 	/** Contains every spacecraft currently spawned in the world. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Game Mode", Meta = (AllowPrivateAccess = "true"))
 	TArray<ASpacecraftPawn*> AllSpacecrafts;
-	
-	/**
-	 * Base class for loot item builders.
-	 * Does nothing when calling its Build() method, but GetLootBuilder() returns it if needed to avoid null reference issues.
-	 */
+
+	/** Type of weapon loot pool to create at map load. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Space Game Mode", Meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UWeaponPool> WeaponPoolClass;
+
+	/** Types of loot builders that will be spawned at game start. They will be accessible via this class. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Space Game Mode", Meta = (AllowPrivateAccess = "true"))
+	TSet<TSubclassOf<ULootItemBuilder>> LootItemBuilderTypes;
+
+	/** Instance of the global weapon rarities and parts pool. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Game Mode", Meta = (AllowPrivateAccess = "true"))
-	ULootItemBuilder* GenericItemBuilder;
+	UWeaponPool* WeaponPool;
 
 	/**
 	 * Map of item builders. Since the game mode reference is available from nearly anywhere,
@@ -36,10 +42,13 @@ class SPACESHOOTER_API ASpaceGameMode : public AGameModeBase
 	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Game Mode", Meta = (AllowPrivateAccess = "true"))
 	TMap<TSubclassOf<ULootItemBuilder>, ULootItemBuilder*> LootItemBuilders;
-
-	/** Types of loot builders that will be spawned at game start. They will be accessible via this class. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Space Game Mode", Meta = (AllowPrivateAccess = "true"))
-	TSet<TSubclassOf<ULootItemBuilder>> LootItemBuilderTypes;
+	
+	/**
+	 * Base class for loot item builders.
+	 * Does nothing when calling its Build() method, but GetLootBuilder() returns it if needed to avoid null reference issues.
+	 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Game Mode", Meta = (AllowPrivateAccess = "true"))
+	ULootItemBuilder* GenericItemBuilder;
 
 public:
 	/** Sets default values. */
@@ -56,13 +65,18 @@ public:
 private:
 	void FindAllSpacecraftsInWorld();
 
+	void CreateGlobalWeaponPool();
 	void CreateLootBuilders();
 
 	/**********************************
-				GETTERS
+				 GETTERS
 	**********************************/
 
 public:
+	/** Returns a pointer to the loot pool containing all weapon parts, organized by rarities and weapon types. */
+	UFUNCTION(BlueprintPure, Category = "Loot Chest")
+	UWeaponPool* GetGlobalWeaponPool() const { return WeaponPool; }
+
 	/** Given a type, returns the right loot item builder. */
 	UFUNCTION(BlueprintPure, Category = "Loot Chest")
 	ULootItemBuilder* GetLootBuilder(TSubclassOf<ULootItemBuilder> Type) const;

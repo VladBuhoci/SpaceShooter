@@ -38,6 +38,8 @@ public:
 	/** Called every frame. */
 	virtual void Tick(float DeltaTime) override;
 
+	virtual void ProvideAttributes(TArray<FItemAttribute_Float> & AttributesArrayToSupply) override;
+
 	/**
 	 * Takes ammo from the pile and returns that quantity or whatever is left inside.
 	 */
@@ -51,8 +53,6 @@ public:
 public:
 	/** Returns true if this ammo pile is no longer able to supply a spacecraft. */
 	bool IsEmpty() const { return GetAmmoAmmount() <= 0; }
-
-	virtual void ProvideAttributes(TArray<FItemAttribute_Float> & AttributesArrayToSupply) override;
 
 	/** Returns the type of weapon this ammo is used for. */
 	UFUNCTION(BlueprintPure, Category = "Ammunition Pile")

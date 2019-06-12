@@ -5,6 +5,7 @@
 #include "Controllers/SpacePlayerController.h"
 #include "UI/SpaceHUD.h"
 #include "Loot/Creation/LootItemBuilder.h"
+#include "Loot/Creation/WeaponPool.h"
 
 #include "Engine/World.h"
 
@@ -27,6 +28,7 @@ void ASpaceGameMode::BeginPlay()
 
 	FindAllSpacecraftsInWorld();
 
+	CreateGlobalWeaponPool();
 	CreateLootBuilders();
 }
 
@@ -65,6 +67,14 @@ void ASpaceGameMode::FindAllSpacecraftsInWorld()
 				AllSpacecrafts.Add(Cast<ASpacecraftPawn>(ShipActor));
 			}
 		}
+	}
+}
+
+void ASpaceGameMode::CreateGlobalWeaponPool()
+{
+	if (WeaponPoolClass)
+	{
+		WeaponPool = NewObject<UWeaponPool>(this, WeaponPoolClass);
 	}
 }
 

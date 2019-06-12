@@ -3,13 +3,11 @@
 #pragma once
 
 #include "Globals/ItemAttributes.h"
+#include "Loot/ItemRarity.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Item.generated.h"
-
-// Forward declarations.
-class UItemRarity;
 
 
 /**

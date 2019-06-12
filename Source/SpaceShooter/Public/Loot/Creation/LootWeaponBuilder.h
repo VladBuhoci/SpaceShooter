@@ -7,6 +7,14 @@
 #include "CoreMinimal.h"
 #include "LootWeaponBuilder.generated.h"
 
+// Forward declarations.
+class AWeapon;
+class UWeaponBlueprint;
+
+struct FWeaponBarrel;
+struct FWeaponBody;
+struct FWeaponGrip;
+
 
 /**
  * Weapon-type loot item builder.
@@ -18,4 +26,7 @@ class SPACESHOOTER_API ULootWeaponBuilder : public ULootItemBuilder
 	
 public:
 	virtual AItem* Build(TSubclassOf<UItemBlueprint> ItemToBuildBlueprint, const FTransform & SpawnedItemTransform) override;
+
+private:
+	void SetUpWeapon(AWeapon* Weapon, UWeaponBlueprint* WeaponBP, FWeaponBarrel & Barrel, FWeaponBody & Body, FWeaponGrip & Grip);
 };

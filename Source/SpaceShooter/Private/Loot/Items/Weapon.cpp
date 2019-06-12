@@ -59,7 +59,7 @@ void AWeapon::Tick(float DeltaTime)
 
 void AWeapon::FireWeapon(ASpacecraftPawn* ProjectileOwner, int32 & AmmoToUse)
 {
-	if (ProjectileClass && IsAllowedToFireWeapon() && AmmoPerShot <= AmmoToUse)
+	if (ProjectileClass && IsAllowedToFireWeapon() && HasEnoughAmmoForOneShot(AmmoToUse))
 	{
 		UWorld* World = GetWorld();
 
@@ -93,6 +93,13 @@ void AWeapon::FireWeapon(ASpacecraftPawn* ProjectileOwner, int32 & AmmoToUse)
 			}
 		}
 	}
+}
+
+void AWeapon::ProvideAttributes(TArray<FItemAttribute_Float> & AttributesArrayToSupply)
+{
+	AttributesArrayToSupply.Add(FItemAttribute_Float(FText::FromString("Damage"), Damage));
+	AttributesArrayToSupply.Add(FItemAttribute_Float(FText::FromString("Accuracy"), Accuracy));
+	AttributesArrayToSupply.Add(FItemAttribute_Float(FText::FromString("Fire Rate"), FireRate));
 }
 
 void AWeapon::SetVisibility(bool CurrentState)
@@ -264,7 +271,37 @@ void AWeapon::CoolDown(float DeltaTime)
 	}
 }
 
+bool AWeapon::HasEnoughAmmoForOneShot(const int32 & AmmoToUse) const
+{
+	return AmmoPerShot <= AmmoToUse;
+}
+
 void AWeapon::ConsumeAmmoForOneShot(int32 & AmmoToUse)
 {
 	AmmoToUse -= AmmoPerShot;
+}
+
+void AWeapon::SetBarrelMesh(UStaticMesh* Mesh)
+{
+	if (Mesh)
+	{
+		// TODO: set and snap to body
+	}
+}
+
+void AWeapon::SetBodyMesh(UStaticMesh* Mesh)
+{
+	if (Mesh)
+	{
+		MeshComponent->SetStaticMesh(Mesh);
+		// TODO: snap to grip
+	}
+}
+
+void AWeapon::SetGripMesh(UStaticMesh * Mesh)
+{
+	if (Mesh)
+	{
+		// TODO: set and snap to ship
+	}
 }

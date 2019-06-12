@@ -130,6 +130,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	virtual void FireWeapon(ASpacecraftPawn* ProjectileOwner, int32 & AmmoToUse);
 
+	virtual void ProvideAttributes(TArray<FItemAttribute_Float> & AttributesArrayToSupply) override;
+
 public:
 	void SetVisibility(bool CurrentState);
 
@@ -156,7 +158,7 @@ private:
 	void ExitOverheatedState();
 	void CoolDown(float DeltaTime);
 
-	bool HasEnoughAmmoForOneShot();
+	bool HasEnoughAmmoForOneShot(const int32 & AmmoToUse) const;
 	void ConsumeAmmoForOneShot(int32 & AmmoToUse);
 
 public:
@@ -184,4 +186,10 @@ public:
 
 public:
 	void SetType(EWeaponType WeaponType) { this->Type = WeaponType; }
+
+	void SetBarrelMesh(UStaticMesh* Mesh);
+	void SetBodyMesh(UStaticMesh* Mesh);
+	void SetGripMesh(UStaticMesh* Mesh);
+	
+	void SetProjectileClass(TSubclassOf<AProjectile> Clazz) { this->ProjectileClass = Clazz; }
 };
