@@ -10,6 +10,8 @@
 // Forward declarations.
 class AProjectile;
 
+class UMaterialInterface;
+
 
 /**
  * Base class of all spaceship weapons.
@@ -190,6 +192,9 @@ public:
 	void SetBarrelMesh(UStaticMesh* Mesh);
 	void SetBodyMesh(UStaticMesh* Mesh);
 	void SetGripMesh(UStaticMesh* Mesh);
+	void SetMaterial(UMaterialInterface* Mat);
 	
 	void SetProjectileClass(TSubclassOf<AProjectile> Clazz) { this->ProjectileClass = Clazz; }
+	void SetFiringEffect(UParticleSystem* Effect) { this->WeaponFiringParticleEffect = Effect; }
+	void SetFiringSound(USoundBase* Sound) { this->WeaponFiringSound = Sound; }
 };

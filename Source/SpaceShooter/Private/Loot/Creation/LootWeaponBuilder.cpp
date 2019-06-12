@@ -9,6 +9,12 @@
 #include "Loot/Items/Weapon.h"
 #include "GameModes/SpaceGameMode.h"
 
+#include "Materials/MaterialInterface.h"
+
+#include "Particles/ParticleSystem.h"
+
+#include "Sound/SoundBase.h"
+
 #include "Kismet/GameplayStatics.h"
 
 #include "Engine/World.h"
@@ -52,16 +58,19 @@ AItem* ULootWeaponBuilder::Build(TSubclassOf<UItemBlueprint> ItemToBuildBlueprin
 
 void ULootWeaponBuilder::SetUpWeapon(AWeapon* Weapon, UWeaponBlueprint* WeaponBP, FWeaponBarrel & Barrel, FWeaponBody & Body, FWeaponGrip & Grip)
 {
-	FText ItemName        = FText::Format(FText::FromString("{0} {1} {2}"), Grip.WeaponNamePrefix, Body.WeaponNamePrefix, Barrel.WeaponNameBase);
-	UTexture2D* Icon      = WeaponBP->GetItemIcon();
-	UItemRarity* Rarity   = NewObject<UItemRarity>(this, WeaponBP->GetRarity());
-	EWeaponType Type      = WeaponBP->GetType();
+	FText ItemName      = FText::Format(FText::FromString("{0} {1} {2}"), Grip.WeaponNamePrefix, Body.WeaponNamePrefix, Barrel.WeaponNameBase);
+	UTexture2D* Icon    = WeaponBP->GetItemIcon();
+	UItemRarity* Rarity = NewObject<UItemRarity>(this, WeaponBP->GetRarity());
+	EWeaponType Type    = WeaponBP->GetType();
 	// ...
 	UStaticMesh* BarrelMesh = Barrel.BarrelMesh;
 	UStaticMesh* BodyMesh   = Body.BodyMesh;
 	UStaticMesh* GripMesh   = Grip.GripMesh;
+	UMaterialInterface* MeshMaterial = Body.WeaponMaterial;
 	// ...
 	TSubclassOf<AProjectile> ProjectileClass = Barrel.ProjectileClass;
+	UParticleSystem* FiringEffect = Barrel.FiringEffect;
+	USoundBase* FiringSound = Barrel.FiringSound;
 	// ...
 
 	Weapon->SetItemName(ItemName);
@@ -72,7 +81,10 @@ void ULootWeaponBuilder::SetUpWeapon(AWeapon* Weapon, UWeaponBlueprint* WeaponBP
 	Weapon->SetBarrelMesh(BarrelMesh);
 	Weapon->SetBodyMesh(BodyMesh);
 	Weapon->SetGripMesh(GripMesh);
+	Weapon->SetMaterial(MeshMaterial);
 	// ...
 	Weapon->SetProjectileClass(ProjectileClass);
+	Weapon->SetFiringEffect(FiringEffect);
+	Weapon->SetFiringSound(FiringSound);
 	// ...
 }

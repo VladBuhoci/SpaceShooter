@@ -14,6 +14,8 @@ class AProjectile;
 
 class UStaticMesh;
 class UMaterialInterface;
+class UParticleSystem;
+class USoundBase;
 
 
 USTRUCT(BlueprintType)
@@ -29,6 +31,12 @@ struct SPACESHOOTER_API FWeaponBarrel
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Loot | Weapon Parts Pool | Barrels")
 	TSubclassOf<AProjectile> ProjectileClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Loot | Weapon Parts Pool | Barrels")
+	USoundBase* FiringSound;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Loot | Weapon Parts Pool | Barrels")
+	UParticleSystem* FiringEffect;
 };
 
 USTRUCT(BlueprintType)

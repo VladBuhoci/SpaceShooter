@@ -298,10 +298,19 @@ void AWeapon::SetBodyMesh(UStaticMesh* Mesh)
 	}
 }
 
-void AWeapon::SetGripMesh(UStaticMesh * Mesh)
+void AWeapon::SetGripMesh(UStaticMesh* Mesh)
 {
 	if (Mesh)
 	{
 		// TODO: set and snap to ship
+	}
+}
+
+void AWeapon::SetMaterial(UMaterialInterface* Mat)
+{
+	if (Mat)
+	{
+		// TODO: set the same material to all 3 meshes (barrel, body & grip).
+		MeshComponent->SetMaterial(0, Mat);
 	}
 }
