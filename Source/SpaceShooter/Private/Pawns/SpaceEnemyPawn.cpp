@@ -13,8 +13,6 @@
 
 #include "Runtime/Engine/Public/TimerManager.h"
 
-#include <../Plugins/Experimental/AlembicImporter/Source/ThirdParty/Alembic/openexr/IlmBase/Half/halfLimits.h>
-
 
 ASpaceEnemyPawn::ASpaceEnemyPawn()
 {

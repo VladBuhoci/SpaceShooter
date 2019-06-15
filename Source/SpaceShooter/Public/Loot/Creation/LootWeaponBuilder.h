@@ -26,7 +26,7 @@ class SPACESHOOTER_API ULootWeaponBuilder : public ULootItemBuilder
 	GENERATED_BODY()
 	
 public:
-	virtual AItem* Build(TSubclassOf<UItemBlueprint> ItemToBuildBlueprint, const FTransform & SpawnedItemTransform) override;
+	virtual AItem* Build(TSubclassOf<UItemBlueprint> ItemToBuildBlueprint, const FTransform & SpawnedItemTransform = FTransform::Identity) override;
 
 private:
 	void SetUpWeapon(AWeapon* Weapon, FWeaponAttributes & InitValues, UWeaponBlueprint* WeaponBP, FWeaponBarrel & Barrel, FWeaponBody & Body, FWeaponGrip & Grip);

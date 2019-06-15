@@ -4,6 +4,7 @@
 
 #include "Pawns/SpacecraftPawn.h"
 #include "Listeners/MousePointerListener.h"
+#include "Loot/Creation/WeaponBlueprint.h"
 
 #include "CoreMinimal.h"
 #include "SpaceEnemyPawn.generated.h"
@@ -188,7 +189,6 @@ private:
 	**********************************/
 
 public:
-
 	/** Activates primary weapons on the spacecraft. */
 	virtual void BeginFiringWeapon() override;
 

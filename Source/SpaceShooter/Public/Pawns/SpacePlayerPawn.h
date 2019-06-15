@@ -96,18 +96,10 @@ public:
 	/** Deactivates primary weapons on the spacecraft. */
 	virtual void EndFiringWeapon() override;
 
+
 	/**********************************
 		    INVENTORY INTERFACE
 	**********************************/
-	
-public:
-	int32 GetMaximumAmmoCapacity(EWeaponType WeaponTypeAmmo) const;
-	int32 GetRemainingAmmo(EWeaponType WeaponTypeAmmo) const;
-	int32 GetNeededAmmoAmount(EWeaponType WeaponTypeAmmo) const;
-
-	void SupplyAmmo(EWeaponType WeaponTypeAmmo, int32 AmmoAmount);
-	void SupplyWeapon(AWeapon* NewWeapon);
-
 private:
 	bool IsSpaceAvailableOnSpacecraft();
 	bool IsSpaceAvailableInInventory();

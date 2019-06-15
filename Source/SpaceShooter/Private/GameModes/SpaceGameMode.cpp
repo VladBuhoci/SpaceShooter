@@ -4,7 +4,7 @@
 #include "Pawns/SpacePlayerPawn.h"
 #include "Controllers/SpacePlayerController.h"
 #include "UI/SpaceHUD.h"
-#include "Loot/Creation/LootItemBuilder.h"
+#include "Loot/Creation/LootWeaponBuilder.h"
 #include "Loot/Creation/WeaponPool.h"
 
 #include "Engine/World.h"
@@ -26,22 +26,31 @@ void ASpaceGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
-	FindAllSpacecraftsInWorld();
-
 	CreateGlobalWeaponPool();
 	CreateLootBuilders();
+
+	FindAllSpacecraftsInWorld();
+	SupplyKnownSpacecraftsInWorld();
 }
 
-void ASpaceGameMode::NotifySpacecraftSpawned(ASpacecraftPawn * NewbornSpacecraft)
+void ASpaceGameMode::NotifySpacecraftSpawned(ASpacecraftPawn* NewbornSpacecraft)
 {
-	if (! AllSpacecrafts.Contains(NewbornSpacecraft))
+	if (!NewbornSpacecraft)
+		return;
+
+	if (!AllSpacecrafts.Contains(NewbornSpacecraft))
 	{
 		AllSpacecrafts.Add(NewbornSpacecraft);
+
+		SupplySpacecraftIfNeeded(NewbornSpacecraft);
 	}
 }
 
 void ASpaceGameMode::NotifySpacecraftDestroyed(ASpacecraftPawn* DestroyedSpacecraft)
 {
+	if (!DestroyedSpacecraft)
+		return;
+
 	if (AllSpacecrafts.Contains(DestroyedSpacecraft))
 	{
 		AllSpacecrafts.Remove(DestroyedSpacecraft);
@@ -65,6 +74,45 @@ void ASpaceGameMode::FindAllSpacecraftsInWorld()
 			for (AActor* ShipActor : ShipActors)
 			{
 				AllSpacecrafts.Add(Cast<ASpacecraftPawn>(ShipActor));
+			}
+		}
+	}
+}
+
+void ASpaceGameMode::SupplyKnownSpacecraftsInWorld()
+{
+	for (auto Spacecraft : AllSpacecrafts)
+	{
+		SupplySpacecraftIfNeeded(Spacecraft);
+	}
+}
+
+void ASpaceGameMode::SupplySpacecraftIfNeeded(ASpacecraftPawn* SpacecraftToSupply)
+{
+	if (!SpacecraftToSupply->HasAnyWeapons())
+	{
+		SupplySpacecraftWithStartingWeapons(SpacecraftToSupply, SpacecraftToSupply->GetStartingWeaponBlueprintTypes());
+
+		SpacecraftToSupply->EquipWeaponFromSlot_Random();
+	}
+}
+
+void ASpaceGameMode::SupplySpacecraftWithStartingWeapons(ASpacecraftPawn* SpacecraftToSupply, TArray<TSubclassOf<UItemBlueprint>> WeaponBlueprints)
+{
+	if (SpacecraftToSupply == nullptr || WeaponBlueprints.Num() == 0)
+		return;
+
+	UWorld* WorldPtr = GetWorld();
+
+	if (WorldPtr)
+	{
+		for (auto WeaponBP : WeaponBlueprints)
+		{
+			AWeapon* Weapon = Cast<AWeapon>(GetLootBuilder(ULootWeaponBuilder::StaticClass())->Build(WeaponBP));
+			
+			if (Weapon)
+			{
+				SpacecraftToSupply->SupplyWeapon(Weapon);
 			}
 		}
 	}

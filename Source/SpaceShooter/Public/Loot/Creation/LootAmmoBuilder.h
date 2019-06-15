@@ -17,5 +17,5 @@ class SPACESHOOTER_API ULootAmmoBuilder : public ULootItemBuilder
 	GENERATED_BODY()
 	
 public:
-	virtual AItem* Build(TSubclassOf<UItemBlueprint> ItemToBuildBlueprint, const FTransform & SpawnedItemTransform) override;
+	virtual AItem* Build(TSubclassOf<UItemBlueprint> ItemToBuildBlueprint, const FTransform & SpawnedItemTransform = FTransform::Identity) override;
 };

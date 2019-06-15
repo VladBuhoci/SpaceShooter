@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Globals/SpaceEnums.h"
+#include "Loot/Creation/WeaponBlueprint.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
@@ -20,6 +21,27 @@ class AProjectile;
 class AWeapon;
 
 
+/**
+ * Series of weapon blueprint type references, used to instantiate the weapons for a spacecraft.
+ */
+USTRUCT(BlueprintInternalUseOnly)
+struct FStartingWeapons
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spacecraft | Weapons")
+	TSubclassOf<UWeaponBlueprint> BP_1;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spacecraft | Weapons")
+	TSubclassOf<UWeaponBlueprint> BP_2;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spacecraft | Weapons")
+	TSubclassOf<UWeaponBlueprint> BP_3;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spacecraft | Weapons")
+	TSubclassOf<UWeaponBlueprint> BP_4;
+};
+
 USTRUCT(BlueprintType)
 struct FPreparedWeapons
 {
@@ -36,6 +58,8 @@ struct FPreparedWeapons
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Weapons")
 	AWeapon* Slot_4;
+
+	bool HasAnyWeapons() const { return Slot_1 || Slot_2 || Slot_3 || Slot_4; }
 };
 
 USTRUCT(BlueprintType)
@@ -201,10 +225,6 @@ protected:
 	// Weapons.
 	//////////////////////////////////////////////////////////////////////////
 
-	/** Weapon class. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Weapons")
-	TSubclassOf<AWeapon> WeaponClass;
-
 	/** Ready to use weapons, distributed on 4 slots. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Weapons")
 	FPreparedWeapons PreparedWeapons;
@@ -308,7 +328,9 @@ protected:
 	virtual void PreDestroy(bool & bShouldPlayDestroyEffects, bool & bShouldBeDestroyedForGood) {};
 
 	void PlayDestroyEffects();
-	void NotifyOwnDestruction();
+
+	void AnnounceOwnBirth();
+	void AnnounceOwnDestruction();
 
 private:
 	void CheckShieldStatus(float DeltaTime);
@@ -322,6 +344,11 @@ private:
 			 WEAPONS INTERFACE
 	**********************************/
 
+private:
+	/** Weapon blueprint classes in a compact package (used to create weapons the spacecraft will fire in fights). */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spacecraft | Weapons", Meta = (AllowPrivateAccess = "true"))
+	FStartingWeapons StartingWeapons;
+
 public:
 	/** Activates equipped weapon on the spacecraft. */
 	virtual void BeginFiringWeapon();
@@ -334,15 +361,16 @@ public:
 	void EquipWeaponFromSlot_3();
 	void EquipWeaponFromSlot_4();
 
-protected:
-	/**
-	 * Constructs and attaches the weapons to the spacecraft.
-	 * @param InitiallyEquippedWeaponIndex - valid values are between 1 and 4 inclusive.
-	 */
-	virtual void InitializeWeaponry(int32 InitiallyEquippedWeaponIndex = 1);
+	void EquipWeaponFromSlot(int32 SlotIndex);
 
+	void EquipWeaponFromSlot_FirstValidIndex();
+	void EquipWeaponFromSlot_Random();
+
+protected:
 	/** Destructs the weapons attached to the spacecraft. */
 	virtual void DestroyWeaponry();
+
+	AWeapon* GetWeaponOnPreparedSlot(int32 SlotIndex) const;
 
 	/**
 	 * Sets the given weapon on the chosen prepared weapon slot.
@@ -357,6 +385,12 @@ protected:
 	/** Returns the index of the first empty weapon slot found, or 0 if none is free. */
 	int32 GetFirstFreeWeaponSlotIndex();
 
+	/** Returns the index of the first occupied weapon slot found, or 0 if there are no weapons equipped. */
+	int32 GetFirstOccupiedWeaponSlotIndex();
+
+	/** Returns a random index of an occupied weapon slot, or 0 if there are no weapons equipped. */
+	int32 GetRandomOccupiedWeaponSlotIndex();
+
 private:
 	AWeapon* SetWeaponOnPreparedSlot_1(AWeapon* WeaponToAdd, FAttachmentTransformRules & AttachRules);
 	AWeapon* SetWeaponOnPreparedSlot_2(AWeapon* WeaponToAdd, FAttachmentTransformRules & AttachRules);
@@ -369,10 +403,22 @@ private:
 	/** Checks if any type of weapon should be fired at the moment. */
 	void CheckIfWeaponNeedsToBeFired();
 
-	AWeapon* ConstructWeapon(UWorld* World);
 	void DestructWeapon(AWeapon* WeaponToDestroy);
 	void EquipWeapon(AWeapon* WeaponToEquip);
 	void UnequipCurrentWeapon();
+
+
+	/**********************************
+			INVENTORY INTERFACE
+	**********************************/
+
+public:
+	int32 GetMaximumAmmoCapacity(EWeaponType WeaponTypeAmmo) const;
+	int32 GetRemainingAmmo(EWeaponType WeaponTypeAmmo) const;
+	int32 GetNeededAmmoAmount(EWeaponType WeaponTypeAmmo) const;
+
+	void SupplyAmmo(EWeaponType WeaponTypeAmmo, int32 AmmoAmount);
+	void SupplyWeapon(AWeapon* NewWeapon);
 
 
 	/**********************************
@@ -380,7 +426,9 @@ private:
 	**********************************/
 
 public:
-	UStaticMeshComponent*				GetSpacecraftMeshComponent() const { return SpacecraftMeshComponent; }
-	ESpacecraftFaction					GetFaction()                 const { return Faction; }
-	TMap<EWeaponType, FAmmunitionStock> GetAmmoPools()               const { return AmmoPools; }
+	UStaticMeshComponent*				GetSpacecraftMeshComponent()	  const { return SpacecraftMeshComponent; }
+	ESpacecraftFaction					GetFaction()					  const { return Faction; }
+	TMap<EWeaponType, FAmmunitionStock> GetAmmoPools()					  const { return AmmoPools; }
+	bool								HasAnyWeapons()					  const { return PreparedWeapons.HasAnyWeapons(); }
+	TArray<TSubclassOf<UItemBlueprint>> GetStartingWeaponBlueprintTypes() const;
 };

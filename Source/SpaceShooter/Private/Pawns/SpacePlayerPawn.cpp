@@ -173,43 +173,6 @@ void ASpacePlayerPawn::EndFiringWeapon()
 
 }
 
-int32 ASpacePlayerPawn::GetMaximumAmmoCapacity(EWeaponType WeaponTypeAmmo) const
-{
-	return AmmoPools[WeaponTypeAmmo].MaxAmmoQuantity;
-}
-
-int32 ASpacePlayerPawn::GetRemainingAmmo(EWeaponType WeaponTypeAmmo) const
-{
-	return AmmoPools[WeaponTypeAmmo].CurrentAmmoQuantity;
-}
-
-int32 ASpacePlayerPawn::GetNeededAmmoAmount(EWeaponType WeaponTypeAmmo) const
-{
-	return GetMaximumAmmoCapacity(WeaponTypeAmmo) - GetRemainingAmmo(WeaponTypeAmmo);
-}
-
-void ASpacePlayerPawn::SupplyAmmo(EWeaponType WeaponTypeAmmo, int32 AmmoAmount)
-{
-	int32 ActualAmmoAmount = FMath::Clamp(AmmoAmount, 0, AmmoPools[WeaponTypeAmmo].MaxAmmoQuantity - AmmoPools[WeaponTypeAmmo].CurrentAmmoQuantity);
-
-	AmmoPools[WeaponTypeAmmo].CurrentAmmoQuantity += ActualAmmoAmount;
-}
-
-void ASpacePlayerPawn::SupplyWeapon(AWeapon* NewWeapon)
-{
-	int32 FreeSlotIndex = GetFirstFreeWeaponSlotIndex();
-
-	if (FreeSlotIndex > 0)
-	{
-		SetWeaponOnPreparedSlot(NewWeapon, FreeSlotIndex);
-	}
-	else
-	{
-		// TODO: add in inventory if there's space available.
-		// SetWeaponInInventorySlot(NewWeapon, FreeInventorySlotIndex);
-	}
-}
-
 bool ASpacePlayerPawn::IsSpaceAvailableOnSpacecraft()
 {
 	return IsSpaceAvailableForAnotherWeapon() || IsSpaceAvailableInInventory();

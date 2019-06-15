@@ -10,6 +10,7 @@
 #include "ConstructorHelpers.h"
 
 #include "Engine/World.h"
+#include "Engine/StaticMesh.h"
 
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/FloatingPawnMovement.h"
@@ -112,11 +113,10 @@ ASpacecraftPawn::ASpacecraftPawn()
 void ASpacecraftPawn::BeginPlay()
 {
 	Super::BeginPlay();
+
+	AnnounceOwnBirth();
 	
 	InitializeAttributes();
-	InitializeWeaponry();
-
-	EquipWeaponFromSlot_1();
 }
 
 void ASpacecraftPawn::InitializeAttributes()
@@ -340,21 +340,6 @@ void ASpacecraftPawn::StopMovingSpacecraft()
 	FrontSideThrusterParticleEmitter->DeactivateSystem();
 }
 
-void ASpacecraftPawn::InitializeWeaponry(int32 InitiallyEquippedWeaponIndex)
-{
-	if (WeaponClass)
-	{
-		UWorld* World = GetWorld();
-		if (World)
-		{
-			PreparedWeapons.Slot_1 = ConstructWeapon(World);
-			/*PreparedWeapons.Slot_2 = ConstructWeapon(World);
-			PreparedWeapons.Slot_3 = ConstructWeapon(World);
-			PreparedWeapons.Slot_4 = ConstructWeapon(World);*/
-		}
-	}
-}
-
 void ASpacecraftPawn::DestroyWeaponry()
 {
 	DestructWeapon(PreparedWeapons.Slot_1);
@@ -411,7 +396,23 @@ AWeapon* ASpacecraftPawn::SetWeaponOnPreparedSlot_4(AWeapon* WeaponToAdd, FAttac
 	return PreviousWeaponSittingInSlot;
 }
 
-AWeapon* ASpacecraftPawn::SetWeaponOnPreparedSlot(AWeapon * WeaponToAdd, int32 SlotIndex)
+AWeapon* ASpacecraftPawn::GetWeaponOnPreparedSlot(int32 SlotIndex) const
+{
+	if (SlotIndex < 1 || SlotIndex > 4)
+		return nullptr;
+
+	switch (SlotIndex)
+	{
+	case 1: return PreparedWeapons.Slot_1;
+	case 2: return PreparedWeapons.Slot_2;
+	case 3: return PreparedWeapons.Slot_3;
+	case 4: return PreparedWeapons.Slot_4;
+
+	default: return nullptr;
+	}
+}
+
+AWeapon* ASpacecraftPawn::SetWeaponOnPreparedSlot(AWeapon* WeaponToAdd, int32 SlotIndex)
 {
 	if (SlotIndex < 1 || SlotIndex > 4)
 		return nullptr;
@@ -493,7 +494,7 @@ void ASpacecraftPawn::DestroySpacecraft()
 	}
 
 	// Notify SpaceGameMode so it can refresh its array of spacecrafts.
-	NotifyOwnDestruction();
+	AnnounceOwnDestruction();
 
 	if (bShouldBeDestroyedForGood)
 	{
@@ -518,13 +519,28 @@ void ASpacecraftPawn::PlayDestroyEffects()
 	}
 }
 
-void ASpacecraftPawn::NotifyOwnDestruction()
+void ASpacecraftPawn::AnnounceOwnBirth()
 {
 	UWorld* WorldPtr = GetWorld();
 
 	if (WorldPtr)
 	{
-		ASpaceGameMode* SpaceGameMode = Cast<ASpaceGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+		ASpaceGameMode* SpaceGameMode = Cast<ASpaceGameMode>(UGameplayStatics::GetGameMode(WorldPtr));
+
+		if (SpaceGameMode)
+		{
+			SpaceGameMode->NotifySpacecraftSpawned(this);
+		}
+	}
+}
+
+void ASpacecraftPawn::AnnounceOwnDestruction()
+{
+	UWorld* WorldPtr = GetWorld();
+
+	if (WorldPtr)
+	{
+		ASpaceGameMode* SpaceGameMode = Cast<ASpaceGameMode>(UGameplayStatics::GetGameMode(WorldPtr));
 
 		if (SpaceGameMode)
 		{
@@ -601,6 +617,36 @@ void ASpacecraftPawn::EquipWeaponFromSlot_4()
 	EquipWeapon(PreparedWeapons.Slot_4);
 }
 
+void ASpacecraftPawn::EquipWeaponFromSlot(int32 SlotIndex)
+{
+	if (SlotIndex < 1 || SlotIndex >= 4)
+		return;
+
+	switch (SlotIndex)
+	{
+	case 1: EquipWeaponFromSlot_1(); break;
+	case 2: EquipWeaponFromSlot_2(); break;
+	case 3: EquipWeaponFromSlot_3(); break;
+	case 4: EquipWeaponFromSlot_4(); break;
+
+	default: break;
+	}
+}
+
+void ASpacecraftPawn::EquipWeaponFromSlot_FirstValidIndex()
+{
+	int32 WeaponIndex = GetFirstOccupiedWeaponSlotIndex();
+	
+	EquipWeaponFromSlot(WeaponIndex);
+}
+
+void ASpacecraftPawn::EquipWeaponFromSlot_Random()
+{
+	int32 WeaponIndex = GetRandomOccupiedWeaponSlotIndex();
+
+	EquipWeaponFromSlot(WeaponIndex);
+}
+
 bool ASpacecraftPawn::IsSpaceAvailableForAnotherWeapon()
 {
 	return PreparedWeapons.Slot_1 == nullptr
@@ -618,6 +664,32 @@ int32 ASpacecraftPawn::GetFirstFreeWeaponSlotIndex()
 		PreparedWeapons.Slot_4 == nullptr ? 4 : 0;
 }
 
+int32 ASpacecraftPawn::GetFirstOccupiedWeaponSlotIndex()
+{
+	return
+		PreparedWeapons.Slot_1 != nullptr ? 1 :
+		PreparedWeapons.Slot_2 != nullptr ? 2 :
+		PreparedWeapons.Slot_3 != nullptr ? 3 :
+		PreparedWeapons.Slot_4 != nullptr ? 4 : 0;
+}
+
+int32 ASpacecraftPawn::GetRandomOccupiedWeaponSlotIndex()
+{
+	if (!HasAnyWeapons())
+		return 0;
+
+	TArray<int32> SlotIndices;
+
+	if (PreparedWeapons.Slot_1)	SlotIndices.Add(1);
+	if (PreparedWeapons.Slot_2)	SlotIndices.Add(2);
+	if (PreparedWeapons.Slot_3)	SlotIndices.Add(3);
+	if (PreparedWeapons.Slot_4)	SlotIndices.Add(4);
+
+	int32 RandIndex = FMath::RandRange(0, SlotIndices.Num() - 1);
+
+	return SlotIndices[RandIndex];
+}
+
 void ASpacecraftPawn::FireWeapon_Internal()
 {
 	if (EquippedWeapon)
@@ -632,21 +704,6 @@ void ASpacecraftPawn::CheckIfWeaponNeedsToBeFired()
 	{
 		FireWeapon_Internal();
 	}
-}
-
-AWeapon* ASpacecraftPawn::ConstructWeapon(UWorld* World)
-{
-	AWeapon* NewWeapon = World->SpawnActor<AWeapon>(WeaponClass);
-	
-	if (NewWeapon)
-	{
-		FAttachmentTransformRules AttachRules = FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true);
-
-		NewWeapon->AttachToComponent(SpacecraftMeshComponent, AttachRules, TEXT("Weapon_AttachPoint_DEV"));
-		NewWeapon->SetVisibility(false);
-	}
-
-	return NewWeapon;
 }
 
 void ASpacecraftPawn::DestructWeapon(AWeapon* WeaponToDestroy)
@@ -677,4 +734,53 @@ void ASpacecraftPawn::UnequipCurrentWeapon()
 		EquippedWeapon->SetVisibility(false);
 		EquippedWeapon = nullptr;
 	}
+}
+
+int32 ASpacecraftPawn::GetMaximumAmmoCapacity(EWeaponType WeaponTypeAmmo) const
+{
+	return AmmoPools[WeaponTypeAmmo].MaxAmmoQuantity;
+}
+
+int32 ASpacecraftPawn::GetRemainingAmmo(EWeaponType WeaponTypeAmmo) const
+{
+	return AmmoPools[WeaponTypeAmmo].CurrentAmmoQuantity;
+}
+
+int32 ASpacecraftPawn::GetNeededAmmoAmount(EWeaponType WeaponTypeAmmo) const
+{
+	return GetMaximumAmmoCapacity(WeaponTypeAmmo) - GetRemainingAmmo(WeaponTypeAmmo);
+}
+
+void ASpacecraftPawn::SupplyAmmo(EWeaponType WeaponTypeAmmo, int32 AmmoAmount)
+{
+	int32 ActualAmmoAmount = FMath::Clamp(AmmoAmount, 0, AmmoPools[WeaponTypeAmmo].MaxAmmoQuantity - AmmoPools[WeaponTypeAmmo].CurrentAmmoQuantity);
+
+	AmmoPools[WeaponTypeAmmo].CurrentAmmoQuantity += ActualAmmoAmount;
+}
+
+void ASpacecraftPawn::SupplyWeapon(AWeapon* NewWeapon)
+{
+	int32 FreeSlotIndex = GetFirstFreeWeaponSlotIndex();
+
+	if (FreeSlotIndex > 0)
+	{
+		SetWeaponOnPreparedSlot(NewWeapon, FreeSlotIndex);
+	}
+	else
+	{
+		// TODO: add in inventory if there's space available.
+		// SetWeaponInInventorySlot(NewWeapon, FreeInventorySlotIndex);
+	}
+}
+
+TArray<TSubclassOf<UItemBlueprint>> ASpacecraftPawn::GetStartingWeaponBlueprintTypes() const
+{
+	TArray<TSubclassOf<UItemBlueprint>> BPTypes;
+
+	if (StartingWeapons.BP_1) BPTypes.Add(StartingWeapons.BP_1);
+	if (StartingWeapons.BP_2) BPTypes.Add(StartingWeapons.BP_2);
+	if (StartingWeapons.BP_3) BPTypes.Add(StartingWeapons.BP_3);
+	if (StartingWeapons.BP_4) BPTypes.Add(StartingWeapons.BP_4);
+
+	return BPTypes;
 }

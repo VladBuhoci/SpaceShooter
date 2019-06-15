@@ -62,19 +62,19 @@ AItem* ULootWeaponBuilder::Build(TSubclassOf<UItemBlueprint> ItemToBuildBlueprin
 
 void ULootWeaponBuilder::SetUpWeapon(AWeapon* Weapon, FWeaponAttributes & InitValues, UWeaponBlueprint* WeaponBP, FWeaponBarrel & Barrel, FWeaponBody & Body, FWeaponGrip & Grip)
 {
-	FText ItemName      = FText::Format(FText::FromString("{0} {1} {2}"), Grip.WeaponNamePrefix, Body.WeaponNamePrefix, Barrel.WeaponNameBase);
-	UTexture2D* Icon    = WeaponBP->GetItemIcon();
-	UItemRarity* Rarity = NewObject<UItemRarity>(this, WeaponBP->GetRarity());
-	EWeaponType Type    = WeaponBP->GetType();
+	FText        ItemName = FText::Format(FText::FromString("{0} {1} {2}"), Grip.WeaponNamePrefix, Body.WeaponNamePrefix, Barrel.WeaponNameBase);
+	UTexture2D*  Icon     = WeaponBP->GetItemIcon();
+	UItemRarity* Rarity   = NewObject<UItemRarity>(this, WeaponBP->GetRarity());
+	EWeaponType  Type     = WeaponBP->GetType();
 	// ...
-	UStaticMesh* BarrelMesh = Barrel.BarrelMesh;
-	UStaticMesh* BodyMesh   = Body.BodyMesh;
-	UStaticMesh* GripMesh   = Grip.GripMesh;
+	UStaticMesh*        BarrelMesh   = Barrel.BarrelMesh;
+	UStaticMesh*        BodyMesh     = Body.BodyMesh;
+	UStaticMesh*        GripMesh     = Grip.GripMesh;
 	UMaterialInterface* MeshMaterial = Body.WeaponMaterial;
 	// ...
 	TSubclassOf<AProjectile> ProjectileClass = Barrel.ProjectileClass;
-	UParticleSystem* FiringEffect = Barrel.FiringEffect;
-	USoundBase* FiringSound = Barrel.FiringSound;
+	UParticleSystem*         FiringEffect    = Barrel.FiringEffect;
+	USoundBase*              FiringSound     = Barrel.FiringSound;
 	// ...
 	// TODO: map of key-value modifiers.
 	// TODO: "mutate" the InitValues struct variable using the map of modifiers.

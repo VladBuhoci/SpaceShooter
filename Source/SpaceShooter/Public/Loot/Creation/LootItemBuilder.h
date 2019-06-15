@@ -25,5 +25,5 @@ public:
 	/** Sets defaults values. */
 	ULootItemBuilder();
 
-	virtual AItem* Build(TSubclassOf<UItemBlueprint> ItemToBuildBlueprint, const FTransform & SpawnedItemTransform);
+	virtual AItem* Build(TSubclassOf<UItemBlueprint> ItemToBuildBlueprint, const FTransform & SpawnedItemTransform = FTransform::Identity);
 };

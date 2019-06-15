@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "Loot/Creation/WeaponBlueprint.h"
+
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "SpaceGameMode.generated.h"
@@ -64,6 +66,10 @@ public:
 
 private:
 	void FindAllSpacecraftsInWorld();
+	void SupplyKnownSpacecraftsInWorld();
+
+	void SupplySpacecraftIfNeeded(ASpacecraftPawn* SpacecraftToSupply);
+	void SupplySpacecraftWithStartingWeapons(ASpacecraftPawn* SpacecraftToSupply, TArray<TSubclassOf<UItemBlueprint>> WeaponBlueprints);
 
 	void CreateGlobalWeaponPool();
 	void CreateLootBuilders();
