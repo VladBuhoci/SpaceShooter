@@ -18,6 +18,16 @@ bool UWeaponPool::GetWeaponParts(TSubclassOf<UItemRarity> Rarity, EWeaponType Ty
 	return Pool->GetWeaponParts(Barrel, Body, Grip);
 }
 
+bool UWeaponPool::GetWeaponTemplate(EWeaponType Type, FWeaponAttributes & ValuesTemplate)
+{
+	if (WeaponTypeTemplates.Num() == 0 || !WeaponTypeTemplates.Contains(Type))
+		return false;
+
+	ValuesTemplate = WeaponTypeTemplates[Type];
+
+	return true;
+}
+
 UWeaponPartsPool* UWeaponPool::GetPartsPool(TSubclassOf<UItemRarity> Rarity, EWeaponType Type) const
 {
 	if (Pools.Num() == 0 || !Pools.Contains(Rarity))

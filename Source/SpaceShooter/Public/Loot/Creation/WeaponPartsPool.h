@@ -37,6 +37,10 @@ struct SPACESHOOTER_API FWeaponBarrel
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Loot | Weapon Parts Pool | Barrels")
 	UParticleSystem* FiringEffect;
+
+	/** Pairs of weapon attributes and the values that will modify them in the final weapon. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Loot | Weapon Pool")
+	TMap<EWeaponAttribute, float> AttributeModifierMap;
 };
 
 USTRUCT(BlueprintType)
@@ -52,6 +56,10 @@ struct SPACESHOOTER_API FWeaponBody
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Loot | Weapon Parts Pool | Bodies")
 	UMaterialInterface* WeaponMaterial;
+
+	/** Pairs of weapon attributes and the values that will modify them in the final weapon. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Loot | Weapon Pool")
+	TMap<EWeaponAttribute, float> AttributeModifierMap;
 };
 
 USTRUCT(BlueprintType)
@@ -64,6 +72,10 @@ struct SPACESHOOTER_API FWeaponGrip
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Loot | Weapon Parts Pool | Grips")
 	UStaticMesh* GripMesh;
+
+	/** Pairs of weapon attributes and the values that will modify them in the final weapon. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Loot | Weapon Pool")
+	TMap<EWeaponAttribute, float> AttributeModifierMap;
 };
 
 /**

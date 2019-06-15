@@ -47,7 +47,11 @@ AItem* ULootWeaponBuilder::Build(TSubclassOf<UItemBlueprint> ItemToBuildBlueprin
 
 				if (SpawnedWeapon)
 				{
-					SetUpWeapon(SpawnedWeapon, WeaponBP, Barrel, Body, Grip);
+					FWeaponAttributes AttrValues;
+
+					SpaceGameMode->GetGlobalWeaponPool()->GetWeaponTemplate(WeaponBP->GetType(), AttrValues);
+
+					SetUpWeapon(SpawnedWeapon, AttrValues, WeaponBP, Barrel, Body, Grip);
 				}
 			}
 		}
@@ -56,7 +60,7 @@ AItem* ULootWeaponBuilder::Build(TSubclassOf<UItemBlueprint> ItemToBuildBlueprin
 	return SpawnedWeapon;
 }
 
-void ULootWeaponBuilder::SetUpWeapon(AWeapon* Weapon, UWeaponBlueprint* WeaponBP, FWeaponBarrel & Barrel, FWeaponBody & Body, FWeaponGrip & Grip)
+void ULootWeaponBuilder::SetUpWeapon(AWeapon* Weapon, FWeaponAttributes & InitValues, UWeaponBlueprint* WeaponBP, FWeaponBarrel & Barrel, FWeaponBody & Body, FWeaponGrip & Grip)
 {
 	FText ItemName      = FText::Format(FText::FromString("{0} {1} {2}"), Grip.WeaponNamePrefix, Body.WeaponNamePrefix, Barrel.WeaponNameBase);
 	UTexture2D* Icon    = WeaponBP->GetItemIcon();
@@ -72,6 +76,8 @@ void ULootWeaponBuilder::SetUpWeapon(AWeapon* Weapon, UWeaponBlueprint* WeaponBP
 	UParticleSystem* FiringEffect = Barrel.FiringEffect;
 	USoundBase* FiringSound = Barrel.FiringSound;
 	// ...
+	// TODO: map of key-value modifiers.
+	// TODO: "mutate" the InitValues struct variable using the map of modifiers.
 
 	Weapon->SetItemName(ItemName);
 	Weapon->SetItemIcon(Icon);
@@ -87,4 +93,5 @@ void ULootWeaponBuilder::SetUpWeapon(AWeapon* Weapon, UWeaponBlueprint* WeaponBP
 	Weapon->SetFiringEffect(FiringEffect);
 	Weapon->SetFiringSound(FiringSound);
 	// ...
+	Weapon->SetNumericAttributes(InitValues);
 }

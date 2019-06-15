@@ -13,16 +13,16 @@ UENUM(BlueprintType)
 enum class ESpacecraftFaction : uint8
 {
 	/** Not belonging to any side. */
-	Unspecified = 0,
+	Unspecified,
 
 	/** The human race. */
-	Human       = 1,
+	Human,
 
 	/** The clone race. */
-	Clone       = 2,
+	Clone,
 
 	/** Do not use this directly. Introduced for C++ only. */
-	Both        = Human | Clone
+	Both = Human | Clone
 };
 
 /**
@@ -44,4 +44,26 @@ enum class EWeaponType : uint8
 
 	/** Missile firing weapon. */
 	Launcher
+};
+
+/**
+ * Weapon attributes, as enumerated constants, paired with modifying values as percentages/units in the weapon
+ *	building process can (and will) influence the final result - the weapon built using random parts from the global pool.
+ */
+UENUM(BlueprintType)
+enum class EWeaponAttribute : uint8
+{
+	Unknown,
+
+	Damage,
+	ProjectilesPerShot,
+	SpreadAngle,
+	Accuracy,
+	AccuracyRecoveryRate,
+	AccuracyRecoveryDelay,
+	FireRate,
+	Recoil,
+	HeatProducedPerShot,
+	CoolingRate,
+	AmmoPerShot
 };

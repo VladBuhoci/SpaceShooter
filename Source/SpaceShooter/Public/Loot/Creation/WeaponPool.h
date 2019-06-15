@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Globals/SpaceEnums.h"
+#include "Loot/Items/Weapon.h"
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
@@ -49,12 +50,21 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Loot | Weapon Pool")
 	TMap<TSubclassOf<UItemRarity>, FWeaponRarityPool> Pools;
 
+	/**
+	 * Map of maps that associate attributes with initial values(N Damage for example), for every weapon category.
+	 * Acts like some kind of base template (or foundation) for each type of weapon.
+	 */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Loot | Weapon Pool")
+	TMap<EWeaponType, FWeaponAttributes> WeaponTypeTemplates;
+
 public:
 	/**
 	 * Provides a random barrel, body and grip from a pool, given a weapon rarity and type.
 	 * @returns true if all 3 parts were found, false otherwise.
 	 */
 	bool GetWeaponParts(TSubclassOf<UItemRarity> Rarity, EWeaponType Type, FWeaponBarrel & Barrel, FWeaponBody & Body, FWeaponGrip & Grip) const;
+
+	bool GetWeaponTemplate(EWeaponType Type, FWeaponAttributes & ValuesTemplate);
 
 private:
 	UWeaponPartsPool* GetPartsPool(TSubclassOf<UItemRarity> Rarity, EWeaponType Type) const;

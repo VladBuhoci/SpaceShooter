@@ -11,6 +11,7 @@
 class AWeapon;
 class UWeaponBlueprint;
 
+struct FWeaponAttributes;
 struct FWeaponBarrel;
 struct FWeaponBody;
 struct FWeaponGrip;
@@ -28,5 +29,5 @@ public:
 	virtual AItem* Build(TSubclassOf<UItemBlueprint> ItemToBuildBlueprint, const FTransform & SpawnedItemTransform) override;
 
 private:
-	void SetUpWeapon(AWeapon* Weapon, UWeaponBlueprint* WeaponBP, FWeaponBarrel & Barrel, FWeaponBody & Body, FWeaponGrip & Grip);
+	void SetUpWeapon(AWeapon* Weapon, FWeaponAttributes & InitValues, UWeaponBlueprint* WeaponBP, FWeaponBarrel & Barrel, FWeaponBody & Body, FWeaponGrip & Grip);
 };

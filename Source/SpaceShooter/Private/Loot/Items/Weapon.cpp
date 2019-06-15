@@ -17,24 +17,26 @@
 /** Sets default values. */
 AWeapon::AWeapon()
 {
-	Name                     = FText::FromString("Unnamed Weapon");
-	MeshComponent            = CreateDefaultSubobject<UStaticMeshComponent>("Mesh Component");
-	Type                     = EWeaponType::Unknown;
-	Damage                   = 23.0f;
-	ProjectilesPerShot       = 1;
-	SpreadAngle              = 12.5f;
-	Accuracy                 = 85.0f;
-	AccuracyRecoveryRate     = 21.3f;
-	AccuracyRecoveryDelay    = 0.8f;
-	bIsAccuracyBeingRestored = false;
-	FireRate                 = 3.5f;
-	Recoil                   = 4.0f;
-	TimePassedSinceLastShot  = 0.0f;
-	CurrentHeat              = 0.0f;
-	HeatProducedPerShot      = 14.0f;
-	CoolingRate              = 23.6f;
-	bIsOverheated            = false;
-	AmmoPerShot              = 1;
+	Name                                   = FText::FromString("Unnamed Weapon");
+	MeshComponent                          = CreateDefaultSubobject<UStaticMeshComponent>("Mesh Component");
+	Type                                   = EWeaponType::Unknown;
+
+	WeaponAttributes.Damage                = 23;
+	WeaponAttributes.ProjectilesPerShot    = 1;
+	WeaponAttributes.SpreadAngle           = 12.5f;
+	WeaponAttributes.Accuracy              = 85.0f;
+	WeaponAttributes.AccuracyRecoveryRate  = 21.3f;
+	WeaponAttributes.AccuracyRecoveryDelay = 0.8f;
+	WeaponAttributes.FireRate              = 3.5f;
+	WeaponAttributes.Recoil                = 4.0f;
+	WeaponAttributes.HeatProducedPerShot   = 14.0f;
+	WeaponAttributes.CoolingRate           = 23.6f;
+	WeaponAttributes.AmmoPerShot           = 1;
+
+	bIsAccuracyBeingRestored               = false;
+	TimePassedSinceLastShot                = 0.0f;
+	CurrentHeat                            = 0.0f;
+	bIsOverheated                          = false;
 }
 
 /** Called when the game starts or when spawned. */
@@ -42,7 +44,7 @@ void AWeapon::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	CurrentAccuracy = Accuracy;
+	CurrentAccuracy = WeaponAttributes.Accuracy;
 }
 
 /** Called every frame. */
@@ -70,13 +72,14 @@ void AWeapon::FireWeapon(ASpacecraftPawn* ProjectileOwner, int32 & AmmoToUse)
 			FRotator ProjectileRotation = GetActorRotation();
 
 			// Set up the spawn parameters for the projectile that'll be fired.
-			float InitialRotationDeviation = (-SpreadAngle) + (SpreadAngle / ProjectilesPerShot);
-			float SpreadAnglePerProjectile = SpreadAngle * 2 / ProjectilesPerShot;		// Formula used: Cone aperture's angle / ProjectilesPerShot. [aperture angle = spread angle * 2]
+			float InitialRotationDeviation = (-WeaponAttributes.SpreadAngle) + (WeaponAttributes.SpreadAngle / WeaponAttributes.ProjectilesPerShot);
+			// Formula used: Cone aperture's angle / ProjectilesPerShot. [aperture angle = spread angle * 2]
+			float SpreadAnglePerProjectile = WeaponAttributes.SpreadAngle * 2 / WeaponAttributes.ProjectilesPerShot;
 			float InaccuracyFactorMax      = ComputeInaccuracyFactor(SpreadAnglePerProjectile);
 
 			bool bProjectilesFired = false;
 
-			for (int32 i = 0; i < ProjectilesPerShot; i++)
+			for (int32 i = 0; i < WeaponAttributes.ProjectilesPerShot; i++)
 			{
 				if (SpawnProjectile(World, ProjectileLocation, ProjectileRotation, ProjectileOwner, InitialRotationDeviation, -InaccuracyFactorMax, InaccuracyFactorMax))
 				{
@@ -97,9 +100,9 @@ void AWeapon::FireWeapon(ASpacecraftPawn* ProjectileOwner, int32 & AmmoToUse)
 
 void AWeapon::ProvideAttributes(TArray<FItemAttribute_Float> & AttributesArrayToSupply)
 {
-	AttributesArrayToSupply.Add(FItemAttribute_Float(FText::FromString("Damage"), Damage));
-	AttributesArrayToSupply.Add(FItemAttribute_Float(FText::FromString("Accuracy"), Accuracy));
-	AttributesArrayToSupply.Add(FItemAttribute_Float(FText::FromString("Fire Rate"), FireRate));
+	AttributesArrayToSupply.Add(FItemAttribute_Float(FText::FromString("Damage"), WeaponAttributes.Damage));
+	AttributesArrayToSupply.Add(FItemAttribute_Float(FText::FromString("Accuracy"), WeaponAttributes.Accuracy));
+	AttributesArrayToSupply.Add(FItemAttribute_Float(FText::FromString("Fire Rate"), WeaponAttributes.FireRate));
 }
 
 void AWeapon::SetVisibility(bool CurrentState)
@@ -132,7 +135,7 @@ AProjectile* AWeapon::SpawnProjectile(UWorld* World, FVector & ProjectileLocatio
 	if (SpawnedProjectile)
 	{
 		SpawnedProjectile->SetProjectileOwner(ProjectileOwner);
-		SpawnedProjectile->SetDamage(Damage);
+		SpawnedProjectile->SetDamage(WeaponAttributes.Damage);
 	}
 
 	return SpawnedProjectile;
@@ -161,7 +164,7 @@ void AWeapon::ResetTimeSinceLastWeaponUsage()
 
 bool AWeapon::IsAllowedToFireWeapon()
 {
-	return !IsOverheated() && TimePassedSinceLastShot >= 1.0f / FireRate;
+	return !IsOverheated() && TimePassedSinceLastShot >= 1.0f / WeaponAttributes.FireRate;
 }
 
 // TODO: perhaps we can add some recoil effects too? (camera shake, ship knock back etc.)
@@ -189,7 +192,7 @@ void AWeapon::PlayWeaponFiringEffects()
 
 void AWeapon::ApplyRecoil()
 {
-	CurrentAccuracy -= Recoil;
+	CurrentAccuracy -= WeaponAttributes.Recoil;
 	CurrentAccuracy = FMath::Clamp(CurrentAccuracy, 0.0f, 100.0f);
 }
 
@@ -203,7 +206,8 @@ void AWeapon::CheckAccuracyStatus(float DeltaTime)
 
 void AWeapon::ScheduleAccuracyRecoveryProcess()
 {
-	GetWorldTimerManager().SetTimer(CountToBeginAccuracyRecoveryTimer, this, &AWeapon::BeginAccuracyRecoveryProcess, AccuracyRecoveryDelay);
+	GetWorldTimerManager().SetTimer(CountToBeginAccuracyRecoveryTimer, this, &AWeapon::BeginAccuracyRecoveryProcess,
+		WeaponAttributes.AccuracyRecoveryDelay);
 }
 
 void AWeapon::BeginAccuracyRecoveryProcess()
@@ -222,10 +226,10 @@ void AWeapon::StopAccuracyRecoveryProcess()
 
 void AWeapon::RecoverAccuracy(float DeltaTime)
 {
-	CurrentAccuracy = FMath::FInterpConstantTo(CurrentAccuracy, Accuracy, DeltaTime, AccuracyRecoveryRate);
+	CurrentAccuracy = FMath::FInterpConstantTo(CurrentAccuracy, WeaponAttributes.Accuracy, DeltaTime, WeaponAttributes.AccuracyRecoveryRate);
 
 	// If current accuracy is equal to the initial value, stop the recovery process.
-	if (CurrentAccuracy == Accuracy)
+	if (CurrentAccuracy == WeaponAttributes.Accuracy)
 	{
 		StopAccuracyRecoveryProcess();
 	}
@@ -241,7 +245,7 @@ void AWeapon::CheckHeatState(float DeltaTime)
 
 void AWeapon::ProduceHeat()
 {
-	CurrentHeat += HeatProducedPerShot;
+	CurrentHeat += WeaponAttributes.HeatProducedPerShot;
 	CurrentHeat = FMath::Clamp(CurrentHeat, 0.0f, 100.0f);
 
 	if (CurrentHeat == 100.0f && !IsOverheated())
@@ -262,7 +266,7 @@ void AWeapon::ExitOverheatedState()
 
 void AWeapon::CoolDown(float DeltaTime)
 {
-	CurrentHeat = FMath::FInterpConstantTo(CurrentHeat, 0.0f, DeltaTime, CoolingRate);
+	CurrentHeat = FMath::FInterpConstantTo(CurrentHeat, 0.0f, DeltaTime, WeaponAttributes.CoolingRate);
 
 	// If CurrentHeat is equal to 0, stop the cooling process.
 	if (CurrentHeat == 0.0f && IsOverheated())
@@ -273,12 +277,12 @@ void AWeapon::CoolDown(float DeltaTime)
 
 bool AWeapon::HasEnoughAmmoForOneShot(const int32 & AmmoToUse) const
 {
-	return AmmoPerShot <= AmmoToUse;
+	return WeaponAttributes.AmmoPerShot <= AmmoToUse;
 }
 
 void AWeapon::ConsumeAmmoForOneShot(int32 & AmmoToUse)
 {
-	AmmoToUse -= AmmoPerShot;
+	AmmoToUse -= WeaponAttributes.AmmoPerShot;
 }
 
 void AWeapon::SetBarrelMesh(UStaticMesh* Mesh)

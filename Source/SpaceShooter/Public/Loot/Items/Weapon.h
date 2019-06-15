@@ -14,33 +14,20 @@ class UMaterialInterface;
 
 
 /**
- * Base class of all spaceship weapons.
+ * Contains every public weapon attribute.
  */
-UCLASS()
-class SPACESHOOTER_API AWeapon : public AItem
+USTRUCT(BlueprintType)
+struct FWeaponAttributes
 {
-	GENERATED_BODY()
-	
-private:
-	/** Mesh component of this weapon. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
-	UStaticMeshComponent* MeshComponent;
-
-	/** Type of this weapon. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
-	EWeaponType Type;
-
-	/** Class of the projectile to spawn when shooting. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<AProjectile> ProjectileClass;
+	GENERATED_USTRUCT_BODY()
 
 	/** Amount of damage one projectile can cause. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
-	float Damage;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	int32 Damage;
 
 	/** Determines the amount of projectiles spawned per shot. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
-	int32 ProjectilesPerShot;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	int32 ProjectilesPerShot = 1;
 
 	/**
 	 * Determines the triangular area in which projectiles can be fired.
@@ -48,24 +35,79 @@ private:
 	 * The spread angle is the angle between the center of the cone and any of its edges.
 	 * It is half the angle of the cone's aperture, thus the aperture's angle will be SpreadAngle * 2.
 	 */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true", ClampMin = "5", UIMin = "5", ClampMax = "45", UIMax = "45"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (ClampMin = "5", UIMin = "5", ClampMax = "45", UIMax = "45"))
 	float SpreadAngle;
-	
+
 	/** Affects the precision of the projectiles fired by this weapon: higher value = higher chance to hit. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true", ClampMin = "0", UIMin = "0", ClampMax = "100", UIMax = "100"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (ClampMin = "0", UIMin = "0", ClampMax = "100", UIMax = "100"))
 	float Accuracy;
 
-	/** This is the actual accuracy used when firing the weapon. For details, see: Accuracy. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
-	float CurrentAccuracy;
-
 	/** Amount of accuracy units to recover per second. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 	float AccuracyRecoveryRate;
 
 	/** Time (in seconds) to pass before the accuracy begins to return to its base value. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 	float AccuracyRecoveryDelay;
+
+	/** Amount of projectiles to shoot per second. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	float FireRate;
+
+	/** Recoil is applied to the current accuracy whenever this weapon shoots something, making it less precise. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	float Recoil;
+
+	/** Amount of heat produced every single time the weapon is used. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	float HeatProducedPerShot;
+
+	/** Heat points "cooled down" (removed) per second. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	float CoolingRate;
+
+	/** Ammunition units consumed per shot. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	int32 AmmoPerShot = 1;
+};
+
+/**
+ * Base class of all spaceship weapons.
+ */
+UCLASS()
+class SPACESHOOTER_API AWeapon : public AItem
+{
+	GENERATED_BODY()
+	
+protected:
+	/** Mesh component of this weapon. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
+	UStaticMeshComponent* MeshComponent;
+
+	/** Type of this weapon. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	EWeaponType Type;
+
+	/** Class of the projectile to spawn when shooting. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	TSubclassOf<AProjectile> ProjectileClass;
+
+	/** Particle system which is spawned whenever this weapon shoots projectiles. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	UParticleSystem* WeaponFiringParticleEffect;
+
+	/** Sound played whenever this weapon shoots projectiles. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	USoundBase* WeaponFiringSound;
+
+	/** Weapon public numeric attributes. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	FWeaponAttributes WeaponAttributes;
+
+private:
+	/** This is the actual accuracy used when firing the weapon. For details, see: Accuracy. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
+	float CurrentAccuracy;
 
 	/** True if Accuracy is currently returning to its initial value. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
@@ -74,25 +116,9 @@ private:
 	/** Used to control the timer which triggers the process of restoring accuracy to its initial value. */
 	FTimerHandle CountToBeginAccuracyRecoveryTimer;
 
-	/** Amount of projectiles to shoot per second. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
-	float FireRate;
-
-	/** Recoil is applied to the current accuracy whenever this weapon shoots something, making it less precise. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
-	float Recoil;
-
 	/** Amount of time which has passed since the last moment the weapon has been fired, in seconds. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
 	float TimePassedSinceLastShot;
-
-	/** Particle system which is spawned whenever this weapon shoots projectiles. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
-	UParticleSystem* WeaponFiringParticleEffect;
-
-	/** Sound played whenever this weapon shoots projectiles. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
-	USoundBase* WeaponFiringSound;
 
 	/**
 	 * A value between 0% and 100% that once reaches its peak, it enters an overheated state
@@ -101,21 +127,9 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
 	float CurrentHeat;
 
-	/** Amount of heat produced every single time the weapon is used. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
-	float HeatProducedPerShot;
-
-	/** Heat points "cooled down" (removed) per second. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
-	float CoolingRate;
-
 	/** If true, the weapon can't be fired until CurrentHeat reaches 0%. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
 	bool bIsOverheated;
-
-	/** Ammunition units consumed per shot. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
-	int32 AmmoPerShot;
 
 public:
 	/** Sets default values for this actor's properties. */
@@ -197,4 +211,6 @@ public:
 	void SetProjectileClass(TSubclassOf<AProjectile> Clazz) { this->ProjectileClass = Clazz; }
 	void SetFiringEffect(UParticleSystem* Effect) { this->WeaponFiringParticleEffect = Effect; }
 	void SetFiringSound(USoundBase* Sound) { this->WeaponFiringSound = Sound; }
+
+	void SetNumericAttributes(FWeaponAttributes & Attributes) { this->WeaponAttributes = Attributes; }
 };
