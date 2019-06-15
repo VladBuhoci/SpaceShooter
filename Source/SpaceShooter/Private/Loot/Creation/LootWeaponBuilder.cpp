@@ -20,6 +20,19 @@
 #include "Engine/World.h"
 
 
+#define WEAPON_ATTRIBUTE_MODIFIER_MAP_HELPER_PERCENTAGE_VALUE(AttribStruct, Map, Attrib) \
+	if (Map.Contains(EWeaponAttribute::Attrib)) \
+	{ \
+		AttribStruct.Attrib += AttribStruct.Attrib * Map[EWeaponAttribute::Attrib] / 100.0f; \
+	}
+
+#define WEAPON_ATTRIBUTE_MODIFIER_MAP_HELPER_UNIT_VALUE(AttribStruct, Map, Attrib) \
+	if (Map.Contains(EWeaponAttribute::Attrib)) \
+	{ \
+		AttribStruct.Attrib += Map[EWeaponAttribute::Attrib]; \
+	}
+
+
 AItem* ULootWeaponBuilder::Build(TSubclassOf<UItemBlueprint> ItemToBuildBlueprint, const FTransform & SpawnedItemTransform)
 {
 	if (!ItemToBuildBlueprint)
@@ -62,7 +75,7 @@ AItem* ULootWeaponBuilder::Build(TSubclassOf<UItemBlueprint> ItemToBuildBlueprin
 
 void ULootWeaponBuilder::SetUpWeapon(AWeapon* Weapon, FWeaponAttributes & InitValues, UWeaponBlueprint* WeaponBP, FWeaponBarrel & Barrel, FWeaponBody & Body, FWeaponGrip & Grip)
 {
-	FText        ItemName = FText::Format(FText::FromString("{0} {1} {2}"), Grip.WeaponNamePrefix, Body.WeaponNamePrefix, Barrel.WeaponNameBase);
+	FText        ItemName = FText::Format(FText::FromString("{0}-{1} {2}"), Grip.WeaponNamePrefix, Body.WeaponNamePrefix, Barrel.WeaponNameBase);
 	UTexture2D*  Icon     = WeaponBP->GetItemIcon();
 	UItemRarity* Rarity   = NewObject<UItemRarity>(this, WeaponBP->GetRarity());
 	EWeaponType  Type     = WeaponBP->GetType();
@@ -76,8 +89,9 @@ void ULootWeaponBuilder::SetUpWeapon(AWeapon* Weapon, FWeaponAttributes & InitVa
 	UParticleSystem*         FiringEffect    = Barrel.FiringEffect;
 	USoundBase*              FiringSound     = Barrel.FiringSound;
 	// ...
-	// TODO: map of key-value modifiers.
-	// TODO: "mutate" the InitValues struct variable using the map of modifiers.
+	TMap<EWeaponAttribute, float> AttributeModifierMap = GetCombinedAttributeModifierMap(Barrel, Body, Grip);
+	
+	ModifyWeaponAttributesWithModifierMap(InitValues, AttributeModifierMap);
 
 	Weapon->SetItemName(ItemName);
 	Weapon->SetItemIcon(Icon);
@@ -94,4 +108,48 @@ void ULootWeaponBuilder::SetUpWeapon(AWeapon* Weapon, FWeaponAttributes & InitVa
 	Weapon->SetFiringSound(FiringSound);
 	// ...
 	Weapon->SetNumericAttributes(InitValues);
+}
+
+TMap<EWeaponAttribute, float> ULootWeaponBuilder::GetCombinedAttributeModifierMap(FWeaponBarrel & Barrel, FWeaponBody & Body, FWeaponGrip & Grip)
+{
+	TMap<EWeaponAttribute, float> FinalMap = Barrel.AttributeModifierMap;
+
+	CombineTwoModifierMaps(FinalMap, Body.AttributeModifierMap);
+	CombineTwoModifierMaps(FinalMap, Grip.AttributeModifierMap);
+
+	return FinalMap;
+}
+
+void ULootWeaponBuilder::CombineTwoModifierMaps(TMap<EWeaponAttribute, float> & Map1, TMap<EWeaponAttribute, float> & Map2)
+{
+	TArray<EWeaponAttribute> Keys;
+	
+	Map2.GetKeys(Keys);
+
+	for (EWeaponAttribute ModifierKey : Keys)
+	{
+		if (Map1.Contains(ModifierKey))
+		{
+			Map1.Add(ModifierKey, Map1[ModifierKey] + Map2[ModifierKey]);
+		}
+		else
+		{
+			Map1.Add(ModifierKey, Map2[ModifierKey]);
+		}
+	}
+}
+
+void ULootWeaponBuilder::ModifyWeaponAttributesWithModifierMap(FWeaponAttributes & Attributes, TMap<EWeaponAttribute, float> & Modifiers)
+{
+	WEAPON_ATTRIBUTE_MODIFIER_MAP_HELPER_PERCENTAGE_VALUE(Attributes, Modifiers, Damage)
+	WEAPON_ATTRIBUTE_MODIFIER_MAP_HELPER_UNIT_VALUE(Attributes, Modifiers, ProjectilesPerShot)
+	WEAPON_ATTRIBUTE_MODIFIER_MAP_HELPER_PERCENTAGE_VALUE(Attributes, Modifiers, SpreadAngle)
+	WEAPON_ATTRIBUTE_MODIFIER_MAP_HELPER_PERCENTAGE_VALUE(Attributes, Modifiers, Accuracy)
+	WEAPON_ATTRIBUTE_MODIFIER_MAP_HELPER_PERCENTAGE_VALUE(Attributes, Modifiers, AccuracyRecoveryRate)
+	WEAPON_ATTRIBUTE_MODIFIER_MAP_HELPER_PERCENTAGE_VALUE(Attributes, Modifiers, AccuracyRecoveryDelay)
+	WEAPON_ATTRIBUTE_MODIFIER_MAP_HELPER_PERCENTAGE_VALUE(Attributes, Modifiers, FireRate)
+	WEAPON_ATTRIBUTE_MODIFIER_MAP_HELPER_PERCENTAGE_VALUE(Attributes, Modifiers, Recoil)
+	WEAPON_ATTRIBUTE_MODIFIER_MAP_HELPER_PERCENTAGE_VALUE(Attributes, Modifiers, HeatProducedPerShot)
+	WEAPON_ATTRIBUTE_MODIFIER_MAP_HELPER_PERCENTAGE_VALUE(Attributes, Modifiers, CoolingRate)
+	WEAPON_ATTRIBUTE_MODIFIER_MAP_HELPER_UNIT_VALUE(Attributes, Modifiers, AmmoPerShot)
 }

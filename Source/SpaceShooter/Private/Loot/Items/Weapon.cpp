@@ -103,6 +103,17 @@ void AWeapon::ProvideAttributes(TArray<FItemAttribute_Float> & AttributesArrayTo
 	AttributesArrayToSupply.Add(FItemAttribute_Float(FText::FromString("Damage"), WeaponAttributes.Damage));
 	AttributesArrayToSupply.Add(FItemAttribute_Float(FText::FromString("Accuracy"), WeaponAttributes.Accuracy));
 	AttributesArrayToSupply.Add(FItemAttribute_Float(FText::FromString("Fire Rate"), WeaponAttributes.FireRate));
+
+	// TODO: combine this with damage as such: Damage x ProjectilesPerShot (we need an ItemAttribute_Text type).
+	if (WeaponAttributes.ProjectilesPerShot > 1)
+	{
+		AttributesArrayToSupply.Add(FItemAttribute_Float(FText::FromString("Projectiles Per Shot"), WeaponAttributes.ProjectilesPerShot));
+	}
+
+	if (WeaponAttributes.AmmoPerShot > 1)
+	{
+		AttributesArrayToSupply.Add(FItemAttribute_Float(FText::FromString("Ammo Per Shot"), WeaponAttributes.AmmoPerShot));
+	}
 }
 
 void AWeapon::SetVisibility(bool CurrentState)
@@ -317,4 +328,13 @@ void AWeapon::SetMaterial(UMaterialInterface* Mat)
 		// TODO: set the same material to all 3 meshes (barrel, body & grip).
 		MeshComponent->SetMaterial(0, Mat);
 	}
+}
+
+void AWeapon::SetNumericAttributes(FWeaponAttributes & Attributes)
+{
+	WeaponAttributes = Attributes;
+
+	// Sanity checks.
+
+	WeaponAttributes.Accuracy = FMath::Clamp(WeaponAttributes.Accuracy, 0.0f, 100.0f);
 }

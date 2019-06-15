@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Globals/SpaceEnums.h"
 #include "Loot/Creation/LootItemBuilder.h"
 
 #include "CoreMinimal.h"
@@ -30,4 +31,10 @@ public:
 
 private:
 	void SetUpWeapon(AWeapon* Weapon, FWeaponAttributes & InitValues, UWeaponBlueprint* WeaponBP, FWeaponBarrel & Barrel, FWeaponBody & Body, FWeaponGrip & Grip);
+	
+	TMap<EWeaponAttribute, float> GetCombinedAttributeModifierMap(FWeaponBarrel & Barrel, FWeaponBody & Body, FWeaponGrip & Grip);
+
+	void CombineTwoModifierMaps(TMap<EWeaponAttribute, float> & Map1, TMap<EWeaponAttribute, float> & Map2);
+
+	void ModifyWeaponAttributesWithModifierMap(FWeaponAttributes & Attributes, TMap<EWeaponAttribute, float> & Modifiers);
 };

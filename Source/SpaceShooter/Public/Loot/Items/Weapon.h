@@ -212,5 +212,5 @@ public:
 	void SetFiringEffect(UParticleSystem* Effect) { this->WeaponFiringParticleEffect = Effect; }
 	void SetFiringSound(USoundBase* Sound) { this->WeaponFiringSound = Sound; }
 
-	void SetNumericAttributes(FWeaponAttributes & Attributes) { this->WeaponAttributes = Attributes; }
+	void SetNumericAttributes(FWeaponAttributes & Attributes);
 };
