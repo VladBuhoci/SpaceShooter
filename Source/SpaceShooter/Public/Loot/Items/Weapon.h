@@ -4,6 +4,8 @@
 
 #include "Loot/Items/Item.h"
 
+#include "Globals/SpaceStructs.h"
+
 #include "CoreMinimal.h"
 #include "Weapon.generated.h"
 
@@ -144,7 +146,7 @@ protected:
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
-	virtual void FireWeapon(ASpacecraftPawn* ProjectileOwner, int32 & AmmoToUse);
+	virtual void FireWeapon(ASpacecraftPawn* ProjectileOwner, FAmmunitionStock & AmmoStockToUse);
 
 	virtual void ProvideAttributes(TArray<FItemAttribute_Float> & AttributesArrayToSupply) override;
 
@@ -156,7 +158,7 @@ private:
 	AProjectile* SpawnProjectile(UWorld* World, FVector & ProjectileLocation, FRotator & ProjectileRotationBase,
 		ASpacecraftPawn* ProjectileOwner, float InitialRotationDeviation, float InaccuracyFactorMin, float InaccuracyFactorMax);
 	
-	void DoPostFiringTasks(int32 & AmmoToUse);
+	void DoPostFiringTasks(FAmmunitionStock & AmmoStockToUse);
 	void ResetTimeSinceLastWeaponUsage();
 	bool IsAllowedToFireWeapon();
 	void PlayWeaponFiringEffects();
@@ -174,8 +176,8 @@ private:
 	void ExitOverheatedState();
 	void CoolDown(float DeltaTime);
 
-	bool HasEnoughAmmoForOneShot(const int32 & AmmoToUse) const;
-	void ConsumeAmmoForOneShot(int32 & AmmoToUse);
+	bool HasEnoughAmmoForOneShot(const FAmmunitionStock & AmmoStockToUse) const;
+	void ConsumeAmmoForOneShot(FAmmunitionStock & AmmoStockToUse);
 
 public:
 	/** Returns the current percentage of total heat produced. */

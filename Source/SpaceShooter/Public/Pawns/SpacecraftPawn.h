@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Globals/SpaceEnums.h"
+#include "Globals/SpaceStructs.h"
 #include "Loot/Creation/WeaponBlueprint.h"
 
 #include "CoreMinimal.h"
@@ -60,22 +61,6 @@ struct FPreparedWeapons
 	AWeapon* Slot_4;
 
 	bool HasAnyWeapons() const { return Slot_1 || Slot_2 || Slot_3 || Slot_4; }
-};
-
-USTRUCT(BlueprintType)
-struct FAmmunitionStock
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spacecraft | Weapons")
-	int32 CurrentAmmoQuantity;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spacecraft | Weapons")
-	int32 MaxAmmoQuantity;
-
-	FAmmunitionStock()				                   : CurrentAmmoQuantity(0)          , MaxAmmoQuantity(0)           {};
-	FAmmunitionStock(int32 CurrMaxAmmo)                : CurrentAmmoQuantity(CurrMaxAmmo), MaxAmmoQuantity(CurrMaxAmmo) {};
-	FAmmunitionStock(int32 CurrentAmmo, int32 MaxAmmo) : CurrentAmmoQuantity(CurrentAmmo), MaxAmmoQuantity(MaxAmmo)     {};
 };
 
 /**
@@ -417,6 +402,8 @@ public:
 	int32 GetRemainingAmmo(EWeaponType WeaponTypeAmmo) const;
 	int32 GetNeededAmmoAmount(EWeaponType WeaponTypeAmmo) const;
 
+	bool HasAmmoStockForWeaponType(EWeaponType Type) const;
+	
 	void SupplyAmmo(EWeaponType WeaponTypeAmmo, int32 AmmoAmount);
 	void SupplyWeapon(AWeapon* NewWeapon);
 

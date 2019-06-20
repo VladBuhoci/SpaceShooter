@@ -59,9 +59,9 @@ void AWeapon::Tick(float DeltaTime)
 	CheckHeatState(DeltaTime);
 }
 
-void AWeapon::FireWeapon(ASpacecraftPawn* ProjectileOwner, int32 & AmmoToUse)
+void AWeapon::FireWeapon(ASpacecraftPawn* ProjectileOwner, FAmmunitionStock & AmmoStockToUse)
 {
-	if (ProjectileClass && IsAllowedToFireWeapon() && HasEnoughAmmoForOneShot(AmmoToUse))
+	if (ProjectileClass && IsAllowedToFireWeapon() && HasEnoughAmmoForOneShot(AmmoStockToUse))
 	{
 		UWorld* World = GetWorld();
 
@@ -92,7 +92,7 @@ void AWeapon::FireWeapon(ASpacecraftPawn* ProjectileOwner, int32 & AmmoToUse)
 
 			if (bProjectilesFired)
 			{
-				DoPostFiringTasks(AmmoToUse);
+				DoPostFiringTasks(AmmoStockToUse);
 			}
 		}
 	}
@@ -152,14 +152,14 @@ AProjectile* AWeapon::SpawnProjectile(UWorld* World, FVector & ProjectileLocatio
 	return SpawnedProjectile;
 }
 
-void AWeapon::DoPostFiringTasks(int32 & AmmoToUse)
+void AWeapon::DoPostFiringTasks(FAmmunitionStock & AmmoStockToUse)
 {
 	StopAccuracyRecoveryProcess();
 
 	PlayWeaponFiringEffects();
 	ApplyRecoil();
 	ProduceHeat();
-	ConsumeAmmoForOneShot(AmmoToUse);
+	ConsumeAmmoForOneShot(AmmoStockToUse);
 
 	// Reset the counter for time which had passed between shots.
 	ResetTimeSinceLastWeaponUsage();
@@ -286,14 +286,14 @@ void AWeapon::CoolDown(float DeltaTime)
 	}
 }
 
-bool AWeapon::HasEnoughAmmoForOneShot(const int32 & AmmoToUse) const
+bool AWeapon::HasEnoughAmmoForOneShot(const FAmmunitionStock & AmmoStockToUse) const
 {
-	return WeaponAttributes.AmmoPerShot <= AmmoToUse;
+	return AmmoStockToUse.bEndlessAmmo || WeaponAttributes.AmmoPerShot <= AmmoStockToUse.CurrentAmmoQuantity;
 }
 
-void AWeapon::ConsumeAmmoForOneShot(int32 & AmmoToUse)
+void AWeapon::ConsumeAmmoForOneShot(FAmmunitionStock & AmmoStockToUse)
 {
-	AmmoToUse -= WeaponAttributes.AmmoPerShot;
+	AmmoStockToUse.CurrentAmmoQuantity -= WeaponAttributes.AmmoPerShot;
 }
 
 void AWeapon::SetBarrelMesh(UStaticMesh* Mesh)

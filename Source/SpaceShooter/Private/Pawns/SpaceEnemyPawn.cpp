@@ -58,6 +58,12 @@ ASpaceEnemyPawn::ASpaceEnemyPawn()
 	SurvivabilitySummaryWidgetComponent->SetDrawSize(FVector2D(150.0f, 50.0f));		// Size of the rectangular surface the widget is drawn on.
 	SurvivabilitySummaryWidgetComponent->SetPivot(FVector2D(0.5f, 2.5f));			// Offset from origin of this actor's local space.
 	SurvivabilitySummaryWidgetComponent->SetVisibility(false);
+
+	// Ammunition stocks:
+	AmmoPools.Add(EWeaponType::Blaster , FAmmunitionStock(true));
+	AmmoPools.Add(EWeaponType::Cannon  , FAmmunitionStock(true));
+	AmmoPools.Add(EWeaponType::Volley  , FAmmunitionStock(true));
+	AmmoPools.Add(EWeaponType::Launcher, FAmmunitionStock(true));
 }
 
 void ASpaceEnemyPawn::BeginPlay()

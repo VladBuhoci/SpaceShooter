@@ -124,11 +124,6 @@ void ASpacecraftPawn::InitializeAttributes()
 	MoveForwardSpeed    = MoveForwardMaxSpeed;
 	CurrentHitPoints    = MaxHitPoints;
 	CurrentShieldPoints = MaxShieldPoints;
-
-	AmmoPools.Add(EWeaponType::Blaster , FAmmunitionStock(128));
-	AmmoPools.Add(EWeaponType::Cannon  , FAmmunitionStock(256));
-	AmmoPools.Add(EWeaponType::Volley  , FAmmunitionStock(64));
-	AmmoPools.Add(EWeaponType::Launcher, FAmmunitionStock(32));
 }
 
 /** Called every frame. */
@@ -692,9 +687,9 @@ int32 ASpacecraftPawn::GetRandomOccupiedWeaponSlotIndex()
 
 void ASpacecraftPawn::FireWeapon_Internal()
 {
-	if (EquippedWeapon)
+	if (EquippedWeapon && HasAmmoStockForWeaponType(EquippedWeapon->GetType()))
 	{
-		EquippedWeapon->FireWeapon(this, AmmoPools[EquippedWeapon->GetType()].CurrentAmmoQuantity);
+		EquippedWeapon->FireWeapon(this, AmmoPools[EquippedWeapon->GetType()]);
 	}
 }
 
@@ -749,6 +744,11 @@ int32 ASpacecraftPawn::GetRemainingAmmo(EWeaponType WeaponTypeAmmo) const
 int32 ASpacecraftPawn::GetNeededAmmoAmount(EWeaponType WeaponTypeAmmo) const
 {
 	return GetMaximumAmmoCapacity(WeaponTypeAmmo) - GetRemainingAmmo(WeaponTypeAmmo);
+}
+
+bool ASpacecraftPawn::HasAmmoStockForWeaponType(EWeaponType Type) const
+{
+	return AmmoPools.Contains(Type);
 }
 
 void ASpacecraftPawn::SupplyAmmo(EWeaponType WeaponTypeAmmo, int32 AmmoAmount)

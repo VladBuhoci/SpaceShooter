@@ -73,6 +73,12 @@ ASpacePlayerPawn::ASpacePlayerPawn()
 	CameraComponent->SetupAttachment(SpringArmComponent, SpringArmComponent->SocketName);
 	CameraComponent->bUsePawnControlRotation     = false;					// Do not rotate the camera along with the player.
 	// ~ end of CameraComponent setup.
+
+	// Ammunition stocks:
+	AmmoPools.Add(EWeaponType::Blaster , FAmmunitionStock(128, 256));
+	AmmoPools.Add(EWeaponType::Cannon  , FAmmunitionStock(0, 512));
+	AmmoPools.Add(EWeaponType::Volley  , FAmmunitionStock(0, 128));
+	AmmoPools.Add(EWeaponType::Launcher, FAmmunitionStock(0, 32));
 }
 
 /** Called when the game starts or when spawned. */
