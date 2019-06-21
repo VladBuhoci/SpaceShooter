@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Globals/SpaceEnums.h"
 #include "Listeners/MousePointerListener.h"
 
 #include "CoreMinimal.h"
@@ -104,7 +105,7 @@ class SPACESHOOTER_API ALootChest : public AActor, public IMousePointerListener
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Loot Chest", Meta = (AllowPrivateAccess = "true"))
 	UWidgetComponent* ChestOverviewWidgetComponent;
 
-	/** Array of the item boxes inside this treasure chest. */
+	/** Array of the item boxes inside this loot chest. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Loot Chest", Meta = (AllowPrivateAccess = "true"))
 	TArray<AItemBox*> ContainedItemBoxes;
 
@@ -168,11 +169,13 @@ protected:
 
 public:
 	void Interact(ILootItemReceiver* ReceivingPawn);
+	void PickUpItemsOfTypes(ILootItemReceiver* ReceivingPawn, TArray<TSubclassOf<AItemBox>> ItemBoxTypes);
+	void PickUpItemsOfTypes_Internal(ILootItemReceiver* ReceivingPawn, TArray<TSubclassOf<AItemBox>> ItemBoxTypes);
 	void HighlightPreviousItemBoxInsideChest();
 	void HighlightNextItemBoxInsideChest();
 
 protected:
-	/** Called just before the chest is getting opened. Good for setting things up such as the Treasure Chest Overview widget. */
+	/** Called just before the chest is getting opened. Good for setting things up such as the Loot Chest Overview widget. */
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Loot Chest")
 	void OnChestPreOpen();
 	
@@ -199,11 +202,23 @@ private:
 	void BeginChestInspection();
 	void EndChestInspection();
 
+	void PopulateAndOpenChest();
+
 	void GenerateItemsAndItemBoxes();
 	void OpenChest();
-	void GrabHighlightedItemBoxFromChest(ILootItemReceiver* ReceivingPawn);
+	
+	void GrabItemBoxFromChest(ILootItemReceiver* ReceivingPawn, int32 ChosenItemBoxIndex);
+	void GrabItemBoxesFromChest(ILootItemReceiver* ReceivingPawn, TArray<int32> ChosenItemBoxIndices);
 
-	bool AreItemsLeft() const;
+	/**
+	 * Do NOT call this directly.
+	 * Instead, use GrabItemBoxFromChest() or GrabItemBoxesFromChest().
+	 */
+	void GrabItemBoxFromChest_Internal(UObject* Receiver, int32 ChosenItemBoxIndex, EItemTakingAction & ItemTakingAction);
+
+	bool HasAnyItemBoxesLeft() const;
+
+	float GetOpenAnimationLength() const;
 
 
 	/**********************************

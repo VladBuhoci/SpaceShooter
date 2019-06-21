@@ -11,21 +11,6 @@
 class AItem;
 
 
-/**
- * Describes what happens when a spacecraft interacts with a loot chest attempting to grab the highlighted item inside.
- */
-UENUM(BlueprintType)
-enum class EItemTakingAction : uint8
-{
-	None,
-
-	/** For things such as ammo piles/money (or other groups), which can be taken entirely or just a few units at a time. */
-	PartiallyTaken,
-
-	/** When the item has been taken and it should be erased from where it was found (loot chests). */
-	FullyTaken
-};
-
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
 class ULootItemReceiver : public UInterface

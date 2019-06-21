@@ -24,14 +24,14 @@ ALootChest::ALootChest()
 	PointLightComponent               = CreateDefaultSubobject<UPointLightComponent             >("Point Light Component");
 	XYPlanePhysicsConstraintComponent = CreateDefaultSubobject<UXYOnlyPhysicsConstraintComponent>("XY Plane Physics Constraint Component");
 	InfoWidgetComponent               = CreateDefaultSubobject<UWidgetComponent                 >("Info Widget Component");
-	ChestOverviewWidgetComponent      = CreateDefaultSubobject<UWidgetComponent                 >("Treasure Chest Overview Widget Component");
+	ChestOverviewWidgetComponent      = CreateDefaultSubobject<UWidgetComponent                 >("Loot Chest Overview Widget Component");
 
 	ChestName                  = FText::FromString("Unnamed Chest");
 	CurrentState               = ELootChestState::Closed;
-	LightIntensityLow          = 100.0f;
+	LightIntensityLow          = 10.0f;
 	LightIntensityNormal       = 1000.0f;
-	LightIntensityHigh         = 5000.0f;
-	LightIntensitySwapSpeed    = 10000.0f;
+	LightIntensityHigh         = 10000.0f;
+	LightIntensitySwapSpeed    = 35000.0f;
 	LightIntensitySwapInterval = 1.0f;
 	TimeBeforePhysicsOff       = 10.0f;
 	bCurrentlyPointedAt        = false;
@@ -42,9 +42,12 @@ ALootChest::ALootChest()
 
 	BeginPhysicsSimulation();
 
+	ChestMeshComponent->bGenerateOverlapEvents = true;
+
 	PointLightComponent->SetupAttachment(RootComponent);
 	PointLightComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 100.0f));
 	PointLightComponent->SetAttenuationRadius(150.0f);
+	PointLightComponent->bUseInverseSquaredFalloff = false;
 
 	XYPlanePhysicsConstraintComponent->SetupAttachment(RootComponent);
 	XYPlanePhysicsConstraintComponent->SetActorConstrainedComponent(RootComponent);
@@ -164,23 +167,81 @@ void ALootChest::Interact(ILootItemReceiver* ReceivingPawn)
 		//		either enable the widget responsible with displaying all item boxes in the
 		//		chest or grab the currently selected box's item from the aforementioned widget.
 
-		if (!bCurrentlyBeingInspected && AreItemsLeft())
+		if (!bCurrentlyBeingInspected && HasAnyItemBoxesLeft())
 		{
 			BeginChestInspection();
 		}
 		else
 		{
-			GrabHighlightedItemBoxFromChest(ReceivingPawn);
+			GrabItemBoxFromChest(ReceivingPawn, CurrentlySelectedItemBoxIndex);
 		}
 	}
 	else if (CurrentState == ELootChestState::Closed)
 	{
-		GenerateItemsAndItemBoxes();
+		PopulateAndOpenChest();
+	}
+}
 
-		// The blueprint implementation will send the array data to the Treasure Chest Overview widget.
-		OnChestPreOpen();
-		
-		OpenChest();
+void ALootChest::PickUpItemsOfTypes(ILootItemReceiver* ReceivingPawn, TArray<TSubclassOf<AItemBox>> ItemBoxTypes)
+{
+	float TimeToWaitBeforeChestIsOpened = 0.0f;
+
+	// In this case, we do not care if the chest is being inspected at the moment or not, only if it is opened.
+	// This is because the method will most likely be called by an auto-picking method on the ReceivingPawn's side.
+
+	if (CurrentState == ELootChestState::Closed)
+	{
+		PopulateAndOpenChest();
+
+		// Add a delay to the waiting time, just in case there's an overhead somewhere.
+		TimeToWaitBeforeChestIsOpened = GetOpenAnimationLength() + 0.2f;
+	}
+
+	if (TimeToWaitBeforeChestIsOpened > 0.0f)
+	{
+		FTimerHandle PickUpItemsTimerHandle;
+
+		GetWorldTimerManager().SetTimer(PickUpItemsTimerHandle, [this, ReceivingPawn, ItemBoxTypes]() {
+			PickUpItemsOfTypes_Internal(ReceivingPawn, ItemBoxTypes);
+		}, TimeToWaitBeforeChestIsOpened, false);
+	}
+	else
+	{
+		PickUpItemsOfTypes_Internal(ReceivingPawn, ItemBoxTypes);
+	}
+}
+
+void ALootChest::PickUpItemsOfTypes_Internal(ILootItemReceiver* ReceivingPawn, TArray<TSubclassOf<AItemBox>> ItemBoxTypes)
+{
+	if (CurrentState == ELootChestState::Opened && HasAnyItemBoxesLeft())
+	{
+		// Acquire the index of every item that has one of the given types.
+		TArray<int32> ItemBoxIndices;
+
+		for (int32 i = 0; i < ContainedItemBoxes.Num(); i++)
+		{
+			bool bIsOfChosenType = false;
+
+			for (UClass* Clazz : ItemBoxTypes)
+			{
+				if (ContainedItemBoxes[i]->GetClass()->IsChildOf(Clazz))
+				{
+					bIsOfChosenType = true;
+					break;
+				}
+			}
+
+			if (bIsOfChosenType)
+			{
+				ItemBoxIndices.Add(i);
+			}
+		}
+
+		// If we found any valid item box indices, begin picking them up.
+		if (ItemBoxIndices.Num() > 0)
+		{
+			GrabItemBoxesFromChest(ReceivingPawn, ItemBoxIndices);
+		}
 	}
 }
 
@@ -189,7 +250,7 @@ void ALootChest::HighlightPreviousItemBoxInsideChest()
 	if (CurrentState == ELootChestState::Closed && !bCurrentlyBeingInspected)
 		return;
 
-	if (AreItemsLeft() && CurrentlySelectedItemBoxIndex > 0)
+	if (HasAnyItemBoxesLeft() && CurrentlySelectedItemBoxIndex > 0)
 	{
 		CurrentlySelectedItemBoxIndex -= 1;
 
@@ -202,7 +263,7 @@ void ALootChest::HighlightNextItemBoxInsideChest()
 	if (CurrentState == ELootChestState::Closed && !bCurrentlyBeingInspected)
 		return;
 
-	if (AreItemsLeft() && CurrentlySelectedItemBoxIndex < ContainedItemBoxes.Num() - 1)
+	if (HasAnyItemBoxesLeft() && CurrentlySelectedItemBoxIndex < ContainedItemBoxes.Num() - 1)
 	{
 		CurrentlySelectedItemBoxIndex += 1;
 
@@ -212,29 +273,43 @@ void ALootChest::HighlightNextItemBoxInsideChest()
 
 void ALootChest::PresentChestIdentity()
 {
-	InfoWidgetComponent->SetVisibility(true);
+	if (InfoWidgetComponent)
+		InfoWidgetComponent->SetVisibility(true);
 }
 
 void ALootChest::HideChestIdentity()
 {
-	InfoWidgetComponent->SetVisibility(false);
+	if (InfoWidgetComponent)
+		InfoWidgetComponent->SetVisibility(false);
 }
 
 void ALootChest::BeginChestInspection()
 {
 	bCurrentlyBeingInspected = true;
 
-	ChestOverviewWidgetComponent->SetVisibility(true);
+	if (ChestOverviewWidgetComponent)
+		ChestOverviewWidgetComponent->SetVisibility(true);
 }
 
 void ALootChest::EndChestInspection()
 {
 	bCurrentlyBeingInspected = false;
 
-	ChestOverviewWidgetComponent->SetVisibility(false);
+	if (ChestOverviewWidgetComponent)
+		ChestOverviewWidgetComponent->SetVisibility(false);
 
 	// Go back to zero to be prepared for the next time when inspection is activated.
 	CurrentlySelectedItemBoxIndex = 0;
+}
+
+void ALootChest::PopulateAndOpenChest()
+{
+	GenerateItemsAndItemBoxes();
+
+	// The blueprint implementation will send the array data to the Loot Chest Overview widget.
+	OnChestPreOpen();
+
+	OpenChest();
 }
 
 void ALootChest::GenerateItemsAndItemBoxes()
@@ -260,7 +335,7 @@ void ALootChest::OpenChest()
 	{
 		ChestMeshComponent->PlayAnimation(OpenAnimation, false);
 
-		float AnimationLength = OpenAnimation->SequenceLength / OpenAnimation->RateScale;
+		float AnimationLength = GetOpenAnimationLength();
 
 		// Wait for the animation to play until the end before changing the state to "Opened".
 
@@ -281,7 +356,7 @@ void ALootChest::OpenChest()
 			}
 
 			// If there are no items generated in this chest, close the inspection widget and change the light intensity.
-			if (!AreItemsLeft())
+			if (!HasAnyItemBoxesLeft())
 			{
 				EndChestInspection();
 				SetLightIntensityLevel(LightIntensityLow);
@@ -290,62 +365,100 @@ void ALootChest::OpenChest()
 	}
 }
 
-void ALootChest::GrabHighlightedItemBoxFromChest(ILootItemReceiver* ReceivingPawn)
+void ALootChest::GrabItemBoxFromChest(ILootItemReceiver* ReceivingPawn, int32 ChosenItemBoxIndex)
 {
-	AItemBox* GrabbedItemBox = NULL;
+	TArray<int32> SingleIndexArray;
+	
+	SingleIndexArray.Add(ChosenItemBoxIndex);
+
+	GrabItemBoxesFromChest(ReceivingPawn, SingleIndexArray);
+}
+
+void ALootChest::GrabItemBoxesFromChest(ILootItemReceiver* ReceivingPawn, TArray<int32> ChosenItemBoxIndices)
+{
 	UObject* Receiver = Cast<UObject>(ReceivingPawn);
 
-	if (Receiver && AreItemsLeft())
+	if (Receiver && HasAnyItemBoxesLeft())
 	{
-		int32 PreviousHighlightedItemIndex = CurrentlySelectedItemBoxIndex;
+		bool bSomethingWasTakenFromChest = false;
+		int32 IndexReducingFactor = 0;
 
-		// Get a reference to the item box of interest.
-		GrabbedItemBox = ContainedItemBoxes[PreviousHighlightedItemIndex];
-
-		if (GrabbedItemBox)
+		for (int32 ChosenItemBoxIndex : ChosenItemBoxIndices)
 		{
 			EItemTakingAction ItemTakeAction = EItemTakingAction::None;
 
-			// Provide the actual item to the receiver.
-			ILootItemReceiver::Execute_Supply(Receiver, GrabbedItemBox->GetContainedItem(), ItemTakeAction);
+			GrabItemBoxFromChest_Internal(Receiver, ChosenItemBoxIndex - IndexReducingFactor, ItemTakeAction);
 
-			// The blueprint implementation of this method will communicate with the Treasure Chest Overview widget
-			//		to maintain synchronization between the chest and the HUD.
-			OnGrabHighlightedItemBoxFromChest(PreviousHighlightedItemIndex, ItemTakeAction == EItemTakingAction::FullyTaken);
-
+			// Increment the reducing factor value that will affect those indices left in the ChosenItemBoxIndices
+			//	array, since removing any item box from the loot chest will decrement the indices of all the
+			//	remaining item boxes, rendering the indices in this ChosenItemBoxIndices array incorrect.
 			if (ItemTakeAction == EItemTakingAction::FullyTaken)
 			{
-				// Remove the item box from the chest's array.
-				ContainedItemBoxes.Remove(GrabbedItemBox);
-
-				// Calculate the index for the next highlighted item box because there must always be a highlighted box...
-				if (CurrentlySelectedItemBoxIndex >= ContainedItemBoxes.Num())
-				{
-					// ... but only change the index if its current value is not in the array's bounds anymore.
-					CurrentlySelectedItemBoxIndex = ContainedItemBoxes.Num() - 1;
-				}
-
-				GrabbedItemBox->Destroy();
+				IndexReducingFactor++;
 			}
 
-			// Trigger some visual effect whenever something is taken from the chest.
+			// Remember if anything has ever been taken from the chest during this single method call.
 			if (ItemTakeAction == EItemTakingAction::FullyTaken || ItemTakeAction == EItemTakingAction::PartiallyTaken)
 			{
-				if (!AreItemsLeft())
-				{
-					EndChestInspection();
-					SetLightIntensityLevel(LightIntensityHigh, LightIntensityLow);
-				}
-				else
-				{
-					SetLightIntensityLevel(LightIntensityHigh, LightIntensityNormal);
-				}
+				bSomethingWasTakenFromChest = true;
+			}
+		}
+
+		// Trigger some visual effect whenever something is taken from the chest.
+		if (bSomethingWasTakenFromChest)
+		{
+			if (!HasAnyItemBoxesLeft())
+			{
+				EndChestInspection();
+				SetLightIntensityLevel(LightIntensityHigh, LightIntensityLow);
+			}
+			else
+			{
+				SetLightIntensityLevel(LightIntensityHigh, LightIntensityNormal);
 			}
 		}
 	}
 }
 
-bool ALootChest::AreItemsLeft() const
+void ALootChest::GrabItemBoxFromChest_Internal(UObject* Receiver, int32 ChosenItemBoxIndex, EItemTakingAction & ItemTakingAction)
+{
+	int32 PreviousHighlightedItemIndex = ChosenItemBoxIndex;
+
+	// Get a reference to the item box of interest.
+	AItemBox* GrabbedItemBox = ContainedItemBoxes[PreviousHighlightedItemIndex];
+
+	if (GrabbedItemBox)
+	{
+		// Provide the actual item to the receiver.
+		ILootItemReceiver::Execute_Supply(Receiver, GrabbedItemBox->GetContainedItem(), ItemTakingAction);
+
+		if (ItemTakingAction == EItemTakingAction::FullyTaken)
+		{
+			// Remove the item box from the chest's array.
+			ContainedItemBoxes.Remove(GrabbedItemBox);
+
+			// Calculate the index for the next highlighted item box because there must always be a highlighted box...
+			if (CurrentlySelectedItemBoxIndex >= ContainedItemBoxes.Num())
+			{
+				// ... but only change the index if its current value is not within the array's bounds anymore.
+				CurrentlySelectedItemBoxIndex = ContainedItemBoxes.Num() - 1;
+			}
+
+			GrabbedItemBox->Destroy();
+		}
+
+		// The blueprint implementation of this method will communicate with the Loot Chest Overview widget
+		//		to maintain synchronization between the chest and the HUD.
+		OnGrabHighlightedItemBoxFromChest(PreviousHighlightedItemIndex, ItemTakingAction == EItemTakingAction::FullyTaken);
+	}
+}
+
+bool ALootChest::HasAnyItemBoxesLeft() const
 {
 	return ContainedItemBoxes.Num() > 0;
+}
+
+float ALootChest::GetOpenAnimationLength() const
+{
+	return OpenAnimation ? OpenAnimation->SequenceLength / OpenAnimation->RateScale : 0.0f;
 }
