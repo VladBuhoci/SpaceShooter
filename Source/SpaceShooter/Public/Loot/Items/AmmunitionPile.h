@@ -38,7 +38,7 @@ public:
 	/** Called every frame. */
 	virtual void Tick(float DeltaTime) override;
 
-	virtual void ProvideAttributes(TArray<FItemAttribute_Float> & AttributesArrayToSupply) override;
+	virtual void ProvideAttributes(TArray<FItemAttribute_Text> & AttributesArrayToSupply) override;
 
 	/**
 	 * Takes ammo from the pile and returns that quantity or whatever is left inside.

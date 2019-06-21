@@ -26,16 +26,16 @@ ALootChest::ALootChest()
 	InfoWidgetComponent               = CreateDefaultSubobject<UWidgetComponent                 >("Info Widget Component");
 	ChestOverviewWidgetComponent      = CreateDefaultSubobject<UWidgetComponent                 >("Loot Chest Overview Widget Component");
 
-	ChestName                  = FText::FromString("Unnamed Chest");
-	CurrentState               = ELootChestState::Closed;
-	LightIntensityLow          = 10.0f;
-	LightIntensityNormal       = 1000.0f;
-	LightIntensityHigh         = 10000.0f;
-	LightIntensitySwapSpeed    = 35000.0f;
-	LightIntensitySwapInterval = 1.0f;
-	TimeBeforePhysicsOff       = 10.0f;
-	bCurrentlyPointedAt        = false;
-	bCurrentlyBeingInspected   = false;
+	ChestName                     = FText::FromString("Unnamed Chest");
+	CurrentState                  = ELootChestState::Closed;
+	LightIntensityLow             = 10.0f;
+	LightIntensityNormal          = 1000.0f;
+	LightIntensityHigh            = 10000.0f;
+	LightIntensitySwapSpeed       = 35000.0f;
+	LightIntensitySwapInterval    = 1.0f;
+	TimeBeforePhysicsOff          = 10.0f;
+	bCurrentlyPointedAt           = false;
+	bCurrentlyBeingInspected      = false;
 	CurrentlySelectedItemBoxIndex = 0;
 
 	RootComponent = ChestMeshComponent;

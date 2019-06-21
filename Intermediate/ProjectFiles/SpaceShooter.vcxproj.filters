@@ -331,5 +331,18 @@
     <ClInclude Include="..\..\Source\SpaceShooter\Public\Globals\SpaceStructs.h">
       <Filter>Source\SpaceShooter\Public\Globals</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Globals\SpaceUtilsLibrary.h">
+      <Filter>Source\SpaceShooter\Public\Globals</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source\SpaceShooter\Private\Globals">
+      <UniqueIdentifier>{dbe36bf8-457f-4197-81b3-81e4f09ca597}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Globals\SpaceUtilsLibrary.cpp">
+      <Filter>Source\SpaceShooter\Private\Globals</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

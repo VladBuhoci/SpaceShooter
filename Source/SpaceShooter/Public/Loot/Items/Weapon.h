@@ -11,6 +11,7 @@
 
 // Forward declarations.
 class AProjectile;
+class UWeaponPool;
 
 class UMaterialInterface;
 
@@ -133,6 +134,8 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
 	bool bIsOverheated;
 
+	UWeaponPool* GlobalWeaponPool;
+
 public:
 	/** Sets default values for this actor's properties. */
 	AWeapon();
@@ -148,7 +151,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	virtual void FireWeapon(ASpacecraftPawn* ProjectileOwner, FAmmunitionStock & AmmoStockToUse);
 
-	virtual void ProvideAttributes(TArray<FItemAttribute_Float> & AttributesArrayToSupply) override;
+	virtual void ProvideAttributes(TArray<FItemAttribute_Text> & AttributesArrayToSupply) override;
 
 public:
 	void SetVisibility(bool CurrentState);

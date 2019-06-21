@@ -61,3 +61,16 @@ UWeaponPartsPool* UWeaponPool::GetPartsPool(TSubclassOf<UItemRarity> Rarity, EWe
 
 	return WeaponPartsPoolInstance;
 }
+
+FItemAttributeDescription UWeaponPool::GetPredefinedAttributeDescription(EWeaponAttribute Attr)
+{
+	FItemAttributeDescription Descr;
+
+	if (PredefinedAttributeDescriptions.Contains(Attr))
+	{
+		Descr.Name = PredefinedAttributeDescriptions[Attr].Name;
+		Descr.Icon = PredefinedAttributeDescriptions[Attr].Icon;
+	}
+
+	return Descr;
+}

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Globals/SpaceEnums.h"
+#include "Globals/SpaceStructs.h"
 #include "Loot/Items/Weapon.h"
 
 #include "CoreMinimal.h"
@@ -57,6 +58,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Loot | Weapon Pool")
 	TMap<EWeaponType, FWeaponAttributes> WeaponTypeTemplates;
 
+	/** Attribute descriptions act as predefined templates that can be reused when configuring weapon attributes. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Loot | Weapon Pool")
+	TMap<EWeaponAttribute, FItemAttributeDescription> PredefinedAttributeDescriptions;
+
 public:
 	/**
 	 * Provides a random barrel, body and grip from a pool, given a weapon rarity and type.
@@ -68,4 +73,12 @@ public:
 
 private:
 	UWeaponPartsPool* GetPartsPool(TSubclassOf<UItemRarity> Rarity, EWeaponType Type) const;
+
+
+	/**********************************
+				 GETTERS
+	**********************************/
+
+public:
+	FItemAttributeDescription GetPredefinedAttributeDescription(EWeaponAttribute Attr);
 };

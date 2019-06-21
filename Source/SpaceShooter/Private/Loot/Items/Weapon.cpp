@@ -1,9 +1,12 @@
 // This application is the final year project (2018-2019) of a Computer Science student (me - Vlad Buhoci).
 
 #include "Loot/Items/Weapon.h"
+#include "Loot/Creation/WeaponPool.h"
 #include "Projectiles/Projectile.h"
 #include "Pawns/SpacecraftPawn.h"
 #include "Globals/SpaceEnums.h"
+#include "Globals/SpaceStructs.h"
+#include "GameModes/SpaceGameMode.h"
 
 #include "Components/StaticMeshComponent.h"
 
@@ -45,6 +48,16 @@ void AWeapon::BeginPlay()
 	Super::BeginPlay();
 	
 	CurrentAccuracy = WeaponAttributes.Accuracy;
+
+	UWorld* WorldPtr = GetWorld();
+	if (WorldPtr)
+	{
+		ASpaceGameMode* SpaceGameMode = Cast<ASpaceGameMode>(UGameplayStatics::GetGameMode(WorldPtr));
+		if (SpaceGameMode)
+		{
+			GlobalWeaponPool = SpaceGameMode->GetGlobalWeaponPool();
+		}
+	}
 }
 
 /** Called every frame. */
@@ -98,22 +111,37 @@ void AWeapon::FireWeapon(ASpacecraftPawn* ProjectileOwner, FAmmunitionStock & Am
 	}
 }
 
-void AWeapon::ProvideAttributes(TArray<FItemAttribute_Float> & AttributesArrayToSupply)
+void AWeapon::ProvideAttributes(TArray<FItemAttribute_Text> & AttributesArrayToSupply)
 {
-	AttributesArrayToSupply.Add(FItemAttribute_Float(FText::FromString("Damage"), WeaponAttributes.Damage));
-	AttributesArrayToSupply.Add(FItemAttribute_Float(FText::FromString("Accuracy"), WeaponAttributes.Accuracy));
-	AttributesArrayToSupply.Add(FItemAttribute_Float(FText::FromString("Fire Rate"), WeaponAttributes.FireRate));
+	if (!GlobalWeaponPool)
+		return;
 
-	// TODO: combine this with damage as such: Damage x ProjectilesPerShot (we need an ItemAttribute_Text type).
+#define DescrOf(Attr) GlobalWeaponPool->GetPredefinedAttributeDescription(EWeaponAttribute::Attr)
+
+	DECL_AND_DEF_ITEM_TEXT_ATTR_FROM_INT32_VAR(DamageAsText  , DescrOf(Damage)             , WeaponAttributes.Damage  )
+	DECL_AND_DEF_ITEM_TEXT_ATTR_FROM_FLOAT_VAR(AccuracyAsText, DescrOf(Accuracy)           , WeaponAttributes.Accuracy)
+	DECL_AND_DEF_ITEM_TEXT_ATTR_FROM_FLOAT_VAR(FireRateAsText, DescrOf(FireRate)           , WeaponAttributes.FireRate)
+	DECL_AND_DEF_ITEM_TEXT_ATTR_FROM_FLOAT_VAR(HeatAsText    , DescrOf(HeatProducedPerShot), WeaponAttributes.HeatProducedPerShot)
+
+	// Combine this with damage as such: ProjectilesPerShot X Damage.
 	if (WeaponAttributes.ProjectilesPerShot > 1)
 	{
-		AttributesArrayToSupply.Add(FItemAttribute_Float(FText::FromString("Projectiles Per Shot"), WeaponAttributes.ProjectilesPerShot));
+		DamageAsText.Value = FText::FromString(FString::FromInt(WeaponAttributes.ProjectilesPerShot) + "x" + DamageAsText.Value.ToString());
 	}
 
+	AttributesArrayToSupply.Add(DamageAsText);
+	AttributesArrayToSupply.Add(AccuracyAsText);
+	AttributesArrayToSupply.Add(FireRateAsText);
+	AttributesArrayToSupply.Add(HeatAsText);
+	
 	if (WeaponAttributes.AmmoPerShot > 1)
 	{
-		AttributesArrayToSupply.Add(FItemAttribute_Float(FText::FromString("Ammo Per Shot"), WeaponAttributes.AmmoPerShot));
+		DECL_AND_DEF_ITEM_TEXT_ATTR_FROM_INT32_VAR(AmmoPerShotAsText, DescrOf(AmmoPerShot), WeaponAttributes.AmmoPerShot)
+
+		AttributesArrayToSupply.Add(AmmoPerShotAsText);
 	}
+
+#undef DescrOf
 }
 
 void AWeapon::SetVisibility(bool CurrentState)

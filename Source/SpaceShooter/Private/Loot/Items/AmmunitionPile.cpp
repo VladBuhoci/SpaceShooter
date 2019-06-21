@@ -22,9 +22,11 @@ void AAmmunitionPile::Tick(float DeltaTime)
 
 }
 
-void AAmmunitionPile::ProvideAttributes(TArray<FItemAttribute_Float> & AttributesArrayToSupply)
+void AAmmunitionPile::ProvideAttributes(TArray<FItemAttribute_Text> & AttributesArrayToSupply)
 {
-	AttributesArrayToSupply.Add(CurrentAmmoUnitsCount);
+	DECL_AND_DEF_ITEM_TEXT_ATTR_FROM_ITEM_INT_ATTR(CurrentAmmoAsText, CurrentAmmoUnitsCount)
+
+	AttributesArrayToSupply.Add(CurrentAmmoAsText);
 }
 
 void AAmmunitionPile::SetAmmoCountAttribute(FItemAttribute_Float & AmmoAttr)

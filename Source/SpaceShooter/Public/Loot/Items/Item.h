@@ -39,7 +39,7 @@ protected:
 	/** Called when the game starts or when spawned. */
 	virtual void BeginPlay() override;
 
-	virtual void ProvideAttributes(TArray<FItemAttribute_Float> & AttributesArrayToSupply) {}
+	virtual void ProvideAttributes(TArray<FItemAttribute_Text> & AttributesArrayToSupply) {}
 
 public:	
 	/** Called every frame. */
@@ -65,7 +65,7 @@ public:
 
 	/** Returns all the attributes of this item that can be displayed in a card-type item info widget. */
 	UFUNCTION(BlueprintCallable, Category = "Item | Attribute")
-	TArray<FItemAttribute_Float> GetPrintableItemAttributes();
+	TArray<FItemAttribute_Text> GetPrintableItemAttributes();
 
 
 	/**********************************

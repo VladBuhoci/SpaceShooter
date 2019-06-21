@@ -5,6 +5,9 @@
 #include "CoreMinimal.h"
 #include "SpaceStructs.generated.h"
 
+// Forward declarations.
+class UTexture2D;
+
 
 /**
  * Describes the ammo stock for one particular weapon type.
@@ -27,4 +30,23 @@ struct FAmmunitionStock
 	FAmmunitionStock(bool bInfiniteAmmo)			   : bEndlessAmmo(bInfiniteAmmo)								{};
 	FAmmunitionStock(int32 CurrMaxAmmo)                : FAmmunitionStock(CurrMaxAmmo, CurrMaxAmmo)					{};
 	FAmmunitionStock(int32 CurrentAmmo, int32 MaxAmmo) : CurrentAmmoQuantity(CurrentAmmo), MaxAmmoQuantity(MaxAmmo)	{};
+};
+
+/**
+ * Used as templates to easily configure common attributes (like Damage, Accuracy etc.) once only.
+ */
+USTRUCT(BlueprintType)
+struct FItemAttributeDescription
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item | Attribute")
+	UTexture2D* Icon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item | Attribute")
+	FText Name;
+
+	FItemAttributeDescription()
+		: Icon(nullptr), Name(FText::FromString("-"))
+	{}
 };
