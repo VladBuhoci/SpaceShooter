@@ -9,10 +9,11 @@
 #include "LootChest.generated.h"
 
 // Forward declarations.
-class ILootItemReceiver;
 class UWidgetComponent;
 class UAnimSequence;
+class UPointLightComponent;
 
+class ILootItemReceiver;
 class UXYOnlyPhysicsConstraintComponent;
 class AItem;
 class AItemBox;
@@ -44,6 +45,10 @@ class SPACESHOOTER_API ALootChest : public AActor, public IMousePointerListener
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Loot Chest", Meta = (AllowPrivateAccess = "true"))
 	USkeletalMeshComponent* ChestMeshComponent;
 
+	/** Point light source. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Loot Chest", Meta = (AllowPrivateAccess = "true"))
+	UPointLightComponent* PointLightComponent;
+
 	/** Physical constraint component for this loot chest. Primarily used to keep it in the XY plane. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Loot Chest", Meta = (AllowPrivateAccess = "true"))
 	UXYOnlyPhysicsConstraintComponent* XYPlanePhysicsConstraintComponent;
@@ -63,6 +68,33 @@ class SPACESHOOTER_API ALootChest : public AActor, public IMousePointerListener
 	/** Animation asset played when this chest is being opened. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Loot Chest", Meta = (AllowPrivateAccess = "true"))
 	UAnimSequence* OpenAnimation;
+
+	/** Intensity of the light for when the chest is empty. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Loot Chest", Meta = (AllowPrivateAccess = "true"))
+	float LightIntensityLow;
+
+	/** Intensity of the light for most of the time. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Loot Chest", Meta = (AllowPrivateAccess = "true"))
+	float LightIntensityNormal;
+
+	/** Intensity of the light for moments such as when the chest is spawned or when something is taken from it. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Loot Chest", Meta = (AllowPrivateAccess = "true"))
+	float LightIntensityHigh;
+
+	/** Intensity value that the point light will soon have. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Loot Chest", Meta = (AllowPrivateAccess = "true"))
+	float LightIntensityCurrentTargetValue;
+
+	/** Higher values will make the transition from one light intensity level to the other take less time. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Loot Chest", Meta = (AllowPrivateAccess = "true"))
+	float LightIntensitySwapSpeed;
+
+	/** Time (in seconds) it takes to change the targeted light intensity value. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Loot Chest", Meta = (AllowPrivateAccess = "true"))
+	float LightIntensitySwapInterval;
+
+	/** Keeps track of the timer that triggers a change in the light intensity's value. */
+	FTimerHandle LightIntensityTimerHandle;
 
 	/** Time to pass (in seconds) before physics simulations are turned off for this chest. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Loot Chest", Meta = (AllowPrivateAccess = "true"))
@@ -93,6 +125,11 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 private:
+	void HandleLightIntensity(float DeltaTime);
+	
+	void SetLightIntensityLevel(float NewIntensityTargetValue);
+	void SetLightIntensityLevel(float NewTemporaryIntensityTargetValue, float FuturePermanentIntensityTargetValue);
+
 	void BeginPhysicsSimulation();
 	void EndPhysicsSimulation();
 

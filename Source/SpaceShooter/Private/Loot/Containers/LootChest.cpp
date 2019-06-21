@@ -7,6 +7,7 @@
 #include "Components/XYOnlyPhysicsConstraintComponent.h"
 
 #include "Components/SkeletalMeshComponent.h"
+#include "Components/PointLightComponent.h"
 #include "Components/WidgetComponent.h"
 
 #include "Animation/AnimSequence.h"
@@ -20,12 +21,18 @@ ALootChest::ALootChest()
 	PrimaryActorTick.bCanEverTick = true;
 
 	ChestMeshComponent                = CreateDefaultSubobject<USkeletalMeshComponent           >("Chest Mesh Component");
+	PointLightComponent               = CreateDefaultSubobject<UPointLightComponent             >("Point Light Component");
 	XYPlanePhysicsConstraintComponent = CreateDefaultSubobject<UXYOnlyPhysicsConstraintComponent>("XY Plane Physics Constraint Component");
 	InfoWidgetComponent               = CreateDefaultSubobject<UWidgetComponent                 >("Info Widget Component");
 	ChestOverviewWidgetComponent      = CreateDefaultSubobject<UWidgetComponent                 >("Treasure Chest Overview Widget Component");
 
 	ChestName                  = FText::FromString("Unnamed Chest");
 	CurrentState               = ELootChestState::Closed;
+	LightIntensityLow          = 100.0f;
+	LightIntensityNormal       = 1000.0f;
+	LightIntensityHigh         = 5000.0f;
+	LightIntensitySwapSpeed    = 10000.0f;
+	LightIntensitySwapInterval = 1.0f;
 	TimeBeforePhysicsOff       = 10.0f;
 	bCurrentlyPointedAt        = false;
 	bCurrentlyBeingInspected   = false;
@@ -34,6 +41,10 @@ ALootChest::ALootChest()
 	RootComponent = ChestMeshComponent;
 
 	BeginPhysicsSimulation();
+
+	PointLightComponent->SetupAttachment(RootComponent);
+	PointLightComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 100.0f));
+	PointLightComponent->SetAttenuationRadius(150.0f);
 
 	XYPlanePhysicsConstraintComponent->SetupAttachment(RootComponent);
 	XYPlanePhysicsConstraintComponent->SetActorConstrainedComponent(RootComponent);
@@ -56,6 +67,8 @@ ALootChest::ALootChest()
 void ALootChest::BeginPlay()
 {
 	Super::BeginPlay();
+
+	LightIntensityCurrentTargetValue = LightIntensityNormal;
 	
 	// After a while, we want to stop simulating physics.
 	FTimerHandle NoMorePhysicsSimulationTimerHandler;
@@ -63,12 +76,49 @@ void ALootChest::BeginPlay()
 	GetWorldTimerManager().SetTimer(NoMorePhysicsSimulationTimerHandler, [this]() {
 		EndPhysicsSimulation();
 	}, TimeBeforePhysicsOff, false);
+
+	// Visual effect for this loot chest's birth: high light intensity level to make it shine more than the others.
+	SetLightIntensityLevel(LightIntensityHigh, LightIntensityNormal);
 }
 
 void ALootChest::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	HandleLightIntensity(DeltaTime);
+}
+
+void ALootChest::HandleLightIntensity(float DeltaTime)
+{
+	if (FMath::IsNearlyEqual(PointLightComponent->Intensity, LightIntensityCurrentTargetValue, 0.0f))
+		return;
+
+	float NewIntensityLevel = FMath::FInterpConstantTo(PointLightComponent->Intensity, LightIntensityCurrentTargetValue,
+		DeltaTime, LightIntensitySwapSpeed);
+
+	PointLightComponent->SetIntensity(NewIntensityLevel);
+}
+
+void ALootChest::SetLightIntensityLevel(float NewIntensityTargetValue)
+{
+	GetWorldTimerManager().ClearTimer(LightIntensityTimerHandle);
+
+	LightIntensityCurrentTargetValue = NewIntensityTargetValue;
+}
+
+void ALootChest::SetLightIntensityLevel(float NewTemporaryIntensityTargetValue, float FuturePermanentIntensityTargetValue)
+{
+	GetWorldTimerManager().ClearTimer(LightIntensityTimerHandle);
+
+	// Force-set the intensity level to the previous value so the interpolation will have a visual impact after this.
+	// Useful when the intensity is in a transitory state (between Normal and High).
+	PointLightComponent->SetIntensity(FuturePermanentIntensityTargetValue);
+
+	LightIntensityCurrentTargetValue = NewTemporaryIntensityTargetValue;
+
+	GetWorldTimerManager().SetTimer(LightIntensityTimerHandle, [this, FuturePermanentIntensityTargetValue]() {
+		LightIntensityCurrentTargetValue = FuturePermanentIntensityTargetValue;
+	}, LightIntensitySwapInterval, false);
 }
 
 void ALootChest::BeginPhysicsSimulation()
@@ -114,7 +164,7 @@ void ALootChest::Interact(ILootItemReceiver* ReceivingPawn)
 		//		either enable the widget responsible with displaying all item boxes in the
 		//		chest or grab the currently selected box's item from the aforementioned widget.
 
-		if (!bCurrentlyBeingInspected)
+		if (!bCurrentlyBeingInspected && AreItemsLeft())
 		{
 			BeginChestInspection();
 		}
@@ -189,9 +239,12 @@ void ALootChest::EndChestInspection()
 
 void ALootChest::GenerateItemsAndItemBoxes()
 {
-	UItemPoolListDefinition* ItemPoolListDef = NewObject<UItemPoolListDefinition>(this, LootDefinitionClass);
+	if (LootDefinitionClass)
+	{
+		UItemPoolListDefinition* ItemPoolListDef = NewObject<UItemPoolListDefinition>(this, LootDefinitionClass);
 
-	ContainedItemBoxes = ItemPoolListDef->GetRandomItemsWrappedInBoxes();
+		ContainedItemBoxes = ItemPoolListDef->GetRandomItemsWrappedInBoxes();
+	}
 }
 
 void ALootChest::OpenChest()
@@ -226,6 +279,13 @@ void ALootChest::OpenChest()
 				//		the item info widget after opening this chest.
 				BeginChestInspection();
 			}
+
+			// If there are no items generated in this chest, close the inspection widget and change the light intensity.
+			if (!AreItemsLeft())
+			{
+				EndChestInspection();
+				SetLightIntensityLevel(LightIntensityLow);
+			}
 		}, AnimationLength, false);
 	}
 }
@@ -244,12 +304,16 @@ void ALootChest::GrabHighlightedItemBoxFromChest(ILootItemReceiver* ReceivingPaw
 
 		if (GrabbedItemBox)
 		{
-			bool bItemTaken = false;
+			EItemTakingAction ItemTakeAction = EItemTakingAction::None;
 
 			// Provide the actual item to the receiver.
-			ILootItemReceiver::Execute_Supply(Receiver, GrabbedItemBox->GetContainedItem(), bItemTaken);
+			ILootItemReceiver::Execute_Supply(Receiver, GrabbedItemBox->GetContainedItem(), ItemTakeAction);
 
-			if (bItemTaken)
+			// The blueprint implementation of this method will communicate with the Treasure Chest Overview widget
+			//		to maintain synchronization between the chest and the HUD.
+			OnGrabHighlightedItemBoxFromChest(PreviousHighlightedItemIndex, ItemTakeAction == EItemTakingAction::FullyTaken);
+
+			if (ItemTakeAction == EItemTakingAction::FullyTaken)
 			{
 				// Remove the item box from the chest's array.
 				ContainedItemBoxes.Remove(GrabbedItemBox);
@@ -260,15 +324,22 @@ void ALootChest::GrabHighlightedItemBoxFromChest(ILootItemReceiver* ReceivingPaw
 					// ... but only change the index if its current value is not in the array's bounds anymore.
 					CurrentlySelectedItemBoxIndex = ContainedItemBoxes.Num() - 1;
 				}
+
+				GrabbedItemBox->Destroy();
 			}
 
-			// The blueprint implementation of this method will communicate with the Treasure Chest Overview widget
-			//		to maintain synchronization between the chest and the HUD.
-			OnGrabHighlightedItemBoxFromChest(PreviousHighlightedItemIndex, bItemTaken);
-
-			if (bItemTaken)
+			// Trigger some visual effect whenever something is taken from the chest.
+			if (ItemTakeAction == EItemTakingAction::FullyTaken || ItemTakeAction == EItemTakingAction::PartiallyTaken)
 			{
-				GrabbedItemBox->Destroy();
+				if (!AreItemsLeft())
+				{
+					EndChestInspection();
+					SetLightIntensityLevel(LightIntensityHigh, LightIntensityLow);
+				}
+				else
+				{
+					SetLightIntensityLevel(LightIntensityHigh, LightIntensityNormal);
+				}
 			}
 		}
 	}

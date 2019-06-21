@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Runtime/CoreUObject/Public/UObject/Interface.h"
 #include "MousePointerListener.generated.h"
 
 

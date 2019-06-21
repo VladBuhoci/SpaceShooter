@@ -404,7 +404,7 @@ public:
 
 	bool HasAmmoStockForWeaponType(EWeaponType Type) const;
 	
-	void SupplyAmmo(EWeaponType WeaponTypeAmmo, int32 AmmoAmount);
+	void SupplyAmmo(EWeaponType WeaponTypeAmmo, int32 AmmoAmountToAdd, int32 & AmmoAdded);
 	void SupplyWeapon(AWeapon* NewWeapon);
 
 

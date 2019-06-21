@@ -109,8 +109,8 @@ private:
 	 */
 public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Spacecraft | Loot Item Receiver Interface")
-	void Supply(AItem* ItemToProvide, bool & bItemTaken);
-	virtual void Supply_Implementation(AItem* ItemToProvide, bool & bItemTaken) override;
+	void Supply(AItem* ItemToProvide, EItemTakingAction & ItemTakeAction);
+	virtual void Supply_Implementation(AItem* ItemToProvide, EItemTakingAction & ItemTakeAction) override;
 
 
 	/**********************************

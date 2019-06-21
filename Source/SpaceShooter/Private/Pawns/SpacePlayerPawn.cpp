@@ -74,6 +74,8 @@ ASpacePlayerPawn::ASpacePlayerPawn()
 	CameraComponent->bUsePawnControlRotation     = false;					// Do not rotate the camera along with the player.
 	// ~ end of CameraComponent setup.
 
+	//////////////////////////////////////////////////////////////////////////
+
 	// Ammunition stocks:
 	AmmoPools.Add(EWeaponType::Blaster , FAmmunitionStock(128, 256));
 	AmmoPools.Add(EWeaponType::Cannon  , FAmmunitionStock(0, 512));
@@ -190,7 +192,7 @@ bool ASpacePlayerPawn::IsSpaceAvailableInInventory()
 	return false;
 }
 
-void ASpacePlayerPawn::Supply_Implementation(AItem* ItemToProvide, bool & bItemTaken)
+void ASpacePlayerPawn::Supply_Implementation(AItem* ItemToProvide, EItemTakingAction & ItemTakeAction)
 {
 	if (ItemToProvide == nullptr)
 		return;
@@ -202,10 +204,13 @@ void ASpacePlayerPawn::Supply_Implementation(AItem* ItemToProvide, bool & bItemT
 
 		int32 AmmoAmountNeeded = GetNeededAmmoAmount(AmmoPile->GetAmmoType());
 		int32 AmmoAmountFound = AmmoPile->TakeAmmo(AmmoAmountNeeded);
+		int32 AmmoAmountAdded;
 
-		SupplyAmmo(AmmoPile->GetAmmoType(), AmmoAmountFound);
+		SupplyAmmo(AmmoPile->GetAmmoType(), AmmoAmountFound, AmmoAmountAdded);
 
-		bItemTaken = AmmoPile->IsEmpty();
+		ItemTakeAction = 
+			AmmoPile->IsEmpty() ? EItemTakingAction::FullyTaken     :
+			AmmoAmountAdded > 0 ? EItemTakingAction::PartiallyTaken : EItemTakingAction::None;
 	}
 	else if (AWeapon* Weapon = Cast<AWeapon>(ItemToProvide))
 	{
@@ -218,7 +223,7 @@ void ASpacePlayerPawn::Supply_Implementation(AItem* ItemToProvide, bool & bItemT
 			SupplyWeapon(Weapon);
 		}
 
-		bItemTaken = bHasRoomForNewWeapon;
+		ItemTakeAction = bHasRoomForNewWeapon ? EItemTakingAction::FullyTaken : EItemTakingAction::None;
 	}
 }
 

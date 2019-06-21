@@ -751,11 +751,13 @@ bool ASpacecraftPawn::HasAmmoStockForWeaponType(EWeaponType Type) const
 	return AmmoPools.Contains(Type);
 }
 
-void ASpacecraftPawn::SupplyAmmo(EWeaponType WeaponTypeAmmo, int32 AmmoAmount)
+void ASpacecraftPawn::SupplyAmmo(EWeaponType WeaponTypeAmmo, int32 AmmoAmountToAdd, int32 & AmmoAdded)
 {
-	int32 ActualAmmoAmount = FMath::Clamp(AmmoAmount, 0, AmmoPools[WeaponTypeAmmo].MaxAmmoQuantity - AmmoPools[WeaponTypeAmmo].CurrentAmmoQuantity);
+	int32 ActualAmmoAmount = FMath::Clamp(AmmoAmountToAdd, 0, AmmoPools[WeaponTypeAmmo].MaxAmmoQuantity - AmmoPools[WeaponTypeAmmo].CurrentAmmoQuantity);
 
 	AmmoPools[WeaponTypeAmmo].CurrentAmmoQuantity += ActualAmmoAmount;
+
+	AmmoAdded = ActualAmmoAmount;
 }
 
 void ASpacecraftPawn::SupplyWeapon(AWeapon* NewWeapon)
