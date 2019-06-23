@@ -50,3 +50,15 @@ struct FItemAttributeDescription
 		: Icon(nullptr), Name(FText::FromString("-"))
 	{}
 };
+
+/**
+ * Contains the usual game stats (total kills, shots fired, shots hit (defining player's average accuracy) etc.)
+ */
+USTRUCT(BlueprintType)
+struct FLevelOverallStats
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space HUD")
+	int32 TotalKills;
+};

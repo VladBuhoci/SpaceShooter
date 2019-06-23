@@ -1,7 +1,6 @@
 // This application is the final year project (2018-2019) of a Computer Science student (me - Vlad Buhoci).
 
 #include "Pawns/SpaceEnemyPawn.h"
-#include "Pawns/SpacePlayerPawn.h"
 #include "Controllers/SpaceEnemyController.h"
 #include "Loot/Containers/LootChest.h"
 
@@ -31,8 +30,8 @@ ASpaceEnemyPawn::ASpaceEnemyPawn()
 	MaxShieldPoints                     = 100.0f;
 	ShieldRechargeRate                  = 5.0f;
 	ShieldRechargeDelay                 = 2.5f;
-	Name                                = FText::FromString("Unnamed Enemy");
-	Faction                             = ESpacecraftFaction::Clone;
+	Name                                = FText::FromString("Unnamed NPC");
+	Faction                             = ESpacecraftFaction::Unspecified;
 	bAlwaysAggressive                   = false;
 	DetectionAreaRadius                 = 1700.0f;
 	CloseQuartersAreaRadius             = 700.0f;
@@ -84,10 +83,11 @@ void ASpaceEnemyPawn::ExecuteOnObjectEnterDetectionArea_Implementation(UPrimitiv
 {
 	if (OtherActor != NULL && OtherActor != this)
 	{
-		ASpacePlayerPawn* NewTarget = Cast<ASpacePlayerPawn>(OtherActor);
+		ASpacecraftPawn* NewTarget = Cast<ASpacecraftPawn>(OtherActor);
 
 		// Acquire a target only if there isn't one at the moment.
-		if (NewTarget && Target == NULL)
+		// Target must be part of a different faction to be considered an enemy for this NPC pawn.
+		if (NewTarget && NewTarget->GetFaction() !=  this->GetFaction() && Target == NULL)
 		{
 			OnNewEnemyFound(NewTarget);
 		}
@@ -98,10 +98,10 @@ void ASpaceEnemyPawn::ExecuteOnObjectExitDetectionArea_Implementation(UPrimitive
 {
 	if (OtherActor != NULL && OtherActor != this)
 	{
-		ASpacePlayerPawn* Player = Cast<ASpacePlayerPawn>(OtherActor);
+		ASpacecraftPawn* LostTarget = Cast<ASpacecraftPawn>(OtherActor);
 
 		// Stop hunting only if the target spacecraft has gone out of the detection area.
-		if (Player && Target == Player)
+		if (LostTarget && Target == LostTarget)
 		{
 			if (!bAlwaysAggressive)		// aggressive spacecrafts should not stop chasing their target.
 			{
@@ -115,10 +115,10 @@ void ASpaceEnemyPawn::ExecuteOnObjectEnterCloseQuartersArea_Implementation(UPrim
 {
 	if (OtherActor != NULL && OtherActor != this)
 	{
-		ASpacePlayerPawn* Player = Cast<ASpacePlayerPawn>(OtherActor);
+		ASpacecraftPawn* ClosingTarget = Cast<ASpacecraftPawn>(OtherActor);
 
 		// Make sure this spacecraft keeps attacking the same target.
-		if (Player && Target == Player)
+		if (ClosingTarget && Target == ClosingTarget)
 		{
 			OnEnemyEnterCombatArea();
 		}
@@ -129,10 +129,10 @@ void ASpaceEnemyPawn::ExecuteOnObjectExitCloseQuartersArea_Implementation(UPrimi
 {
 	if (OtherActor != NULL && OtherActor != this)
 	{
-		ASpacePlayerPawn* Player = Cast<ASpacePlayerPawn>(OtherActor);
+		ASpacecraftPawn* FleeingTarget = Cast<ASpacecraftPawn>(OtherActor);
 
 		// Make sure this spacecraft keeps attacking the same target.
-		if (Player && Target == Player)
+		if (FleeingTarget && Target == FleeingTarget)
 		{
 			OnEnemyExitCombatArea();
 		}

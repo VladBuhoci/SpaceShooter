@@ -189,10 +189,10 @@ private:
 	**********************************/
 
 public:
-	/** Activates primary weapons on the spacecraft. */
+	/** Activates equipped weapon on the spacecraft. */
 	virtual void BeginFiringWeapon() override;
 
-	/** Deactivates primary weapons on the spacecraft. */
+	/** Deactivates equipped weapon on the spacecraft. */
 	virtual void EndFiringWeapon() override;
 
 

@@ -97,10 +97,6 @@ class SPACESHOOTER_API ALootChest : public AActor, public IMousePointerListener
 	/** Keeps track of the timer that triggers a change in the light intensity's value. */
 	FTimerHandle LightIntensityTimerHandle;
 
-	/** Time to pass (in seconds) before physics simulations are turned off for this chest. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Loot Chest", Meta = (AllowPrivateAccess = "true"))
-	float TimeBeforePhysicsOff;
-
 	/** Widget component presenting the item boxes (more like items) of this chest in a simple overview-like widget. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Loot Chest", Meta = (AllowPrivateAccess = "true"))
 	UWidgetComponent* ChestOverviewWidgetComponent;

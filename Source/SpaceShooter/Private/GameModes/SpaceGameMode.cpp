@@ -33,6 +33,16 @@ void ASpaceGameMode::BeginPlay()
 	SupplyKnownSpacecraftsInWorld();
 }
 
+void ASpaceGameMode::OnSectorCleared()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Sector cleared from enemies!"));
+}
+
+void ASpaceGameMode::OnPlayerDestroyed()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Player spacecraft has been destroyed!"));
+}
+
 void ASpaceGameMode::NotifySpacecraftSpawned(ASpacecraftPawn* NewbornSpacecraft)
 {
 	if (!NewbornSpacecraft)
@@ -51,9 +61,21 @@ void ASpaceGameMode::NotifySpacecraftDestroyed(ASpacecraftPawn* DestroyedSpacecr
 	if (!DestroyedSpacecraft)
 		return;
 
+
 	if (AllSpacecrafts.Contains(DestroyedSpacecraft))
 	{
 		AllSpacecrafts.Remove(DestroyedSpacecraft);
+
+		// Check if it's the player's spacecraft that got blown up.
+		if (DestroyedSpacecraft->GetClass()->IsChildOf(ASpacePlayerPawn::StaticClass()))
+		{
+			OnPlayerDestroyed();
+		}
+		// Else check if there are any enemies left around (note that the player is also included in the array).
+		else if (AllSpacecrafts.Num() == 1)
+		{
+			OnSectorCleared();
+		}
 	}
 }
 

@@ -121,8 +121,7 @@ protected:
 	**********************************/
 
 public:
-	void NotifyController(ESpaceControllerNotification Notification);
-	void NotifyController(ESpaceControllerNotification Notification, ASpacecraftPawn* OtherPawn);
+	void NotifyController(ESpaceControllerNotification Notification, ASpacecraftPawn* OtherPawn = nullptr);
 
 
 	/**********************************

@@ -64,7 +64,8 @@ void ASpacePlayerController::SetupInputComponent()
 	InputComponent->BindAction("Next Item In Loot Chest", IE_Pressed, this, &ASpacePlayerController::HighlightNextItemBoxInsideChest);
 
 	InputComponent->BindAction("Toggle Inventory", IE_Pressed, this, &ASpacePlayerController::ToggleHUDInventory);
-	InputComponent->BindAction("Toggle In-game Pause Menu", IE_Pressed, this, &ASpacePlayerController::ToggleInGamePauseMenu);
+	InputComponent->BindAction("Toggle In-game Pause Menu", IE_Pressed, this, &ASpacePlayerController::ToggleInGamePauseMenu)
+		.bExecuteWhenPaused = true;
 }
 
 void ASpacePlayerController::HandleTargetIconOnScreen()
@@ -229,13 +230,21 @@ void ASpacePlayerController::OnPlayerRespawned()
 
 void ASpacePlayerController::Interact()
 {
+	// If we're currently pointing at an object...
 	if (CurrentMouseListeningActorPointedAt != nullptr)
 	{
+		// ... and if it is a chest, interact with it.
 		ALootChest* FoundLootChest = Cast<ALootChest>(CurrentMouseListeningActorPointedAt);
 		if (FoundLootChest)
 		{
 			FoundLootChest->Interact(PossessedSpacePawn);
 		}
+	}
+	// Else, consider this interaction as an attempt to quickly collect items from nearby loot chests,
+	//	like a vacuum cleaner.
+	else
+	{
+		PossessedSpacePawn->SearchAndCollectNearbySupplies();
 	}
 }
 
@@ -281,7 +290,7 @@ void ASpacePlayerController::EndFiringWeapon()
 
 void ASpacePlayerController::ToggleHUDInventory()
 {
-	if (OwnedHUD)
+	if (PossessedSpacePawn && PossessedSpacePawn->IsNotDestroyed() && OwnedHUD)
 	{
 		OwnedHUD->ToggleInventoryInterface();
 	}
@@ -289,7 +298,7 @@ void ASpacePlayerController::ToggleHUDInventory()
 
 void ASpacePlayerController::ToggleInGamePauseMenu()
 {
-	if (OwnedHUD)
+	if (PossessedSpacePawn && PossessedSpacePawn->IsNotDestroyed() && OwnedHUD)
 	{
 		OwnedHUD->ToggleInGamePauseMenuInterface();
 	}

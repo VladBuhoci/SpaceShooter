@@ -122,11 +122,6 @@ void ASpaceEnemyController::EndFiringWeapon()
 	}
 }
 
-void ASpaceEnemyController::NotifyController(ESpaceControllerNotification Notification)
-{
-	NotifyController(Notification, nullptr);
-}
-
 void ASpaceEnemyController::NotifyController(ESpaceControllerNotification Notification, ASpacecraftPawn* OtherPawn)
 {
 	switch (Notification)

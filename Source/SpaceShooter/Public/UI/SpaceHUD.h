@@ -44,13 +44,20 @@ class SPACESHOOTER_API ASpaceHUD : public AHUD
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space HUD", Meta = (AllowPrivateAccess = "true"))
 	bool bCanDrawCrosshair;
 
-	/** Type of inventory widget to spawn and add on screen when requested. */
+	/** Type of inventory widget to spawn and add it on screen when requested. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Space HUD", Meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UUserWidget> InventoryWidgetType;
 
-	/** Type of in-game menu widget to spawn and add on screen when requested. */
+	/** Type of in-game menu widget to spawn and add it on screen when requested. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Space HUD", Meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UUserWidget> InGamePauseMenuWidgetType;
+
+	/** 
+	 * Type of in-game overall statistics menu widget to spawn when completing a level or when destroyed
+	 *	and add it on screen when requested.
+	 */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Space HUD", Meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UUserWidget> LevelEndStatsMenuWidgetType;
 
 	/** Pointer to the inventory widget object. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space HUD", Meta = (AllowPrivateAccess = "true"))
@@ -59,6 +66,12 @@ class SPACESHOOTER_API ASpaceHUD : public AHUD
 	/** Pointer to the in-game menu widget object. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space HUD", Meta = (AllowPrivateAccess = "true"))
 	UUserWidget* InGamePauseMenuWidget;
+
+	/** Pointer to the in-game overall statistics menu widget object. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space HUD", Meta = (AllowPrivateAccess = "true"))
+	UUserWidget* LevelEndStatsMenuWidget;
+
+	bool bShowingLevelEndStatsWidget;
 
 public:
 	ASpaceHUD();
@@ -82,8 +95,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Space HUD")
 	void ToggleInGamePauseMenuInterface();
 
+	UFUNCTION(BlueprintCallable, Category = "Space HUD")
+	void ToggleLevelEndStatsMenuInterface();
+
 	// ~ end of public interface.
 
 private:
 	void CreateAndAddWidgets();
+	void ToggleCursorVisibility(bool bInputUIOnly);
 };

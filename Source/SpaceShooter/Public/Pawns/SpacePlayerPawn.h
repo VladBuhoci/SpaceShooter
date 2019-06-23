@@ -50,24 +50,14 @@ private:
 
 	/*
 	 * Used to detect whenever a loot chest gets close enough to the spacecraft so it can be auto-interacted with.
-	 * For now, only ammo piles will be auto-picked up from the chest and only if the whole pile can be grabbed.
+	 * For now, only ammo piles will be auto-picked up from the chest.
 	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Components", Meta = (AllowPrivateAccess = "true"))
-	USphereComponent* LootChestAutoInteractArea;
+	USphereComponent* LootChestQuickInteractArea;
 
-	/** Types of item boxes that will be grabbed from nearby loot chests during automatic check-ups and interactions. */
+	/** Types of item boxes that will be grabbed from nearby loot chests (inside quick-interactions area). */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Loot", Meta = (AllowPrivateAccess = "true"))
 	TArray<TSubclassOf<AItemBox>> TypesToPickUp;
-
-	/** Time between automatic check ups for loot chests in this spacecraft's auto-interact detection area */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Loot", Meta = (AllowPrivateAccess = "true"))
-	float LootChestAutoInteractInterval;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Loot", Meta = (AllowPrivateAccess = "true"))
-	bool bLootChestAutoInteractionInProgress;
-
-	/** Keeps track of the timer that periodically triggers a check-up for nearby loot chests. */
-	FTimerHandle LootChestAutoInteractTimerHandle;
 
 public:
 	/** Sets default values. */
@@ -85,16 +75,17 @@ protected:
 			   LOOT INTERFACE
 	**********************************/
 
-protected:
+public:
+	/** Searches for and picks up items from nearby loot chests. */
+	void SearchAndCollectNearbySupplies();
 
+protected:
 	/** Called when a loot chest enters this player spacecraft's detection (auto-pickup) area. */
 	UFUNCTION(BlueprintNativeEvent, Category = "Spacecraft | Loot")
 	void OnLootChestEnterAutoInteractArea               (UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 	void OnLootChestEnterAutoInteractArea_Implementation(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 
 private:
-	void ScheduleNearbyLootChestsCheckUp();
-	void UnscheduleNearbyLootChestsCheckUp();
 	void NearbyLootChestsCheckUp();
 	void LookForNearbyLootChestsForAutomaticPickUp(TArray<ALootChest*> & NearbyChests);
 	void PickUpItemsFromLootChest(ALootChest* ChestToLoot);
@@ -134,10 +125,10 @@ protected:
 	**********************************/
 
 public:
-	/** Activates primary weapons on the spacecraft. */
+	/** Activates equipped weapon on the spacecraft. */
 	virtual void BeginFiringWeapon() override;
 
-	/** Deactivates primary weapons on the spacecraft. */
+	/** Deactivates equipped weapon on the spacecraft. */
 	virtual void EndFiringWeapon() override;
 
 

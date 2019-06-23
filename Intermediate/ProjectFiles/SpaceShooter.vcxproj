@@ -261,8 +261,10 @@
     <None Include="..\..\Config\DefaultGame.ini" />
     <None Include="..\..\Config\DefaultInput.ini" />
     <None Include="..\..\Source\SpaceShooter\SpaceShooter.Build.cs" />
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\GameModes\CampaignGameMode.cpp" />
     <ClCompile Include="..\..\Source\SpaceShooter\Private\Globals\SpaceUtilsLibrary.cpp" />
     <ClCompile Include="..\..\Source\SpaceShooter\SpaceShooter.cpp" />
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\GameModes\CampaignGameMode.h" />
     <ClInclude Include="..\..\Source\SpaceShooter\Public\Globals\SpaceStructs.h" />
     <ClInclude Include="..\..\Source\SpaceShooter\Public\Globals\SpaceUtilsLibrary.h" />
     <ClInclude Include="..\..\Source\SpaceShooter\SpaceShooter.h" />

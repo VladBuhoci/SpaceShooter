@@ -36,9 +36,9 @@ ASpacePlayerPawn::ASpacePlayerPawn()
 	CentralSceneComponent                      = CreateDefaultSubobject<USceneComponent    >("Central Player Scene Component");
 	CameraComponent                            = CreateDefaultSubobject<UCameraComponent   >("Camera Component");
 	SpringArmComponent                         = CreateDefaultSubobject<USpringArmComponent>("Spring Arm Component");
-	LootChestAutoInteractArea                  = CreateDefaultSubobject<USphereComponent   >("Loot Chest Auto Interact Area");
+	LootChestQuickInteractArea                  = CreateDefaultSubobject<USphereComponent   >("Loot Chest Auto Interact Area");
 	
-	MoveForwardMaxTurboSpeed                   = 2000.0f;
+	MoveForwardMaxTurboSpeed                   = 2400.0f;
 	MoveForwardMaxSpeed                        = 1200.0f;
 	MoveBackwardSpeed                          = 900.0f;
 	MaxHitPoints                               = 100.0f;
@@ -46,7 +46,6 @@ ASpacePlayerPawn::ASpacePlayerPawn()
 	ShieldRechargeRate                         = 10.0f;
 	ShieldRechargeDelay                        = 1.25f;
 	SpacecraftTurnSpeed                        = 10.0f;
-	LootChestAutoInteractInterval              = 3.0f;
 	SpringArmLength_SpeedFactor                = 0.25f;	// 25% of the spacecraft's velocity is used as base value for the spring arm's length.
 	SpringArmLength_NormalFlightModeMultiplier = 1.0f;
 	SpringArmLength_TurboFlightModeMultiplier  = 1.5f;
@@ -78,9 +77,9 @@ ASpacePlayerPawn::ASpacePlayerPawn()
 	// ~ end of CameraComponent setup.
 
 	// LootChestDetectionArea setup:
-	LootChestAutoInteractArea->SetupAttachment(CentralSceneComponent);
-	LootChestAutoInteractArea->SetSphereRadius(570.0f);
-	LootChestAutoInteractArea->OnComponentBeginOverlap.AddDynamic(this, &ASpacePlayerPawn::OnLootChestEnterAutoInteractArea);
+	LootChestQuickInteractArea->SetupAttachment(CentralSceneComponent);
+	LootChestQuickInteractArea->SetSphereRadius(570.0f);
+	LootChestQuickInteractArea->OnComponentBeginOverlap.AddDynamic(this, &ASpacePlayerPawn::OnLootChestEnterAutoInteractArea);
 	// ~ end of LootChestDetectionArea setup.
 
 	//////////////////////////////////////////////////////////////////////////
@@ -97,7 +96,6 @@ void ASpacePlayerPawn::BeginPlay()
 {
 	Super::BeginPlay();
 
-	ScheduleNearbyLootChestsCheckUp();
 }
 
 /** Called every frame. */
@@ -112,6 +110,11 @@ void ASpacePlayerPawn::Tick(float DeltaTime)
 	CheckCameraOffset(DeltaTime);
 }
 
+void ASpacePlayerPawn::SearchAndCollectNearbySupplies()
+{
+	NearbyLootChestsCheckUp();
+}
+
 void ASpacePlayerPawn::OnLootChestEnterAutoInteractArea_Implementation(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
 	if (OtherActor != NULL && OtherActor != this)
@@ -120,36 +123,13 @@ void ASpacePlayerPawn::OnLootChestEnterAutoInteractArea_Implementation(UPrimitiv
 
 		if (FoundChest)
 		{
-			// Interrupt automatic chest searching and looting.
-			UnscheduleNearbyLootChestsCheckUp();
-
 			PickUpItemsFromLootChest(FoundChest);
-
-			// Resume automatic chest searching and looting.
-			ScheduleNearbyLootChestsCheckUp();
 		}
 	}
 }
 
-void ASpacePlayerPawn::ScheduleNearbyLootChestsCheckUp()
-{
-	if (bLootChestAutoInteractionInProgress)
-		return;
-
-	GetWorldTimerManager().SetTimer(LootChestAutoInteractTimerHandle, [this]() {
-		NearbyLootChestsCheckUp();
-	}, LootChestAutoInteractInterval, true);
-}
-
-void ASpacePlayerPawn::UnscheduleNearbyLootChestsCheckUp()
-{
-	GetWorldTimerManager().ClearTimer(LootChestAutoInteractTimerHandle);
-}
-
 void ASpacePlayerPawn::NearbyLootChestsCheckUp()
 {
-	bLootChestAutoInteractionInProgress = true;
-
 	TArray<ALootChest*> FoundChests;
 
 	LookForNearbyLootChestsForAutomaticPickUp(FoundChests);
@@ -157,8 +137,6 @@ void ASpacePlayerPawn::NearbyLootChestsCheckUp()
 	if (FoundChests.Num() > 0)
 		for (auto Chest : FoundChests)
 			PickUpItemsFromLootChest(Chest);
-
-	bLootChestAutoInteractionInProgress = false;
 }
 
 void ASpacePlayerPawn::LookForNearbyLootChestsForAutomaticPickUp(TArray<ALootChest*> & NearbyChests)
@@ -172,7 +150,7 @@ void ASpacePlayerPawn::LookForNearbyLootChestsForAutomaticPickUp(TArray<ALootChe
 
 	CurrentlyInspectedActor = SpacePlayerController->GetCurrentMouseListeningActorPointedAt();
 
-	LootChestAutoInteractArea->GetOverlappingActors(OverlappingActors, ALootChest::StaticClass());
+	LootChestQuickInteractArea->GetOverlappingActors(OverlappingActors, ALootChest::StaticClass());
 
 	for (AActor* OverlappingActor : OverlappingActors)
 	{
@@ -212,7 +190,6 @@ void ASpacePlayerPawn::OnDamageTaken(ASpacecraftPawn* DamageCauser)
 
 }
 
-// TODO: W.I.P.
 void ASpacePlayerPawn::PreDestroy(bool & bShouldPlayDestroyEffects, bool & bShouldBeDestroyed)
 {
 	UWorld* World = GetWorld();
@@ -234,15 +211,6 @@ void ASpacePlayerPawn::PreDestroy(bool & bShouldPlayDestroyEffects, bool & bShou
 			UGameplayStatics::SetGlobalTimeDilation(World, 1.0f);
 			UGameplayStatics::SetGlobalPitchModulation(World, 1.0f, 1.0f);
 		}, 1.0f, false);
-
-		GetWorldTimerManager().SetTimer(DisableSlowmotionTimerHandle, [this]() {
-			ASpaceHUD* SpaceHUD = Cast<ASpaceHUD>(Cast<ASpacePlayerController>(GetController())->GetHUD());
-
-			if (SpaceHUD)
-			{
-				SpaceHUD->ToggleInGamePauseMenuInterface();
-			}
-		}, 1.5f, false);
 	}
 
 	// Make the player's ship invisible.

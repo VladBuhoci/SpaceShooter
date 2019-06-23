@@ -228,15 +228,15 @@ protected:
 
 
 	//////////////////////////////////////////////////////////////////////////
-	// Miscellaneous.
+	// Identity.
 	//////////////////////////////////////////////////////////////////////////
 
 	/** The name of this spacecraft. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spacecraft | Misc")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spacecraft | Identity")
 	FText Name;
 
 	/** The "side" this spacecraft belongs to. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Misc")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spacecraft | Identity")
 	ESpacecraftFaction Faction;
 
 public:

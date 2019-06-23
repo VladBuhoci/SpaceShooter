@@ -60,6 +60,11 @@ protected:
 	/** Called when the game starts or when spawned. */
 	virtual void BeginPlay() override;
 
+	/** Called when all enemies in the current level have been wiped out. */
+	virtual void OnSectorCleared();
+	/** Called when the player's spacecraft has been destroyed. */
+	virtual void OnPlayerDestroyed();
+
 public:
 	void NotifySpacecraftSpawned(ASpacecraftPawn* NewbornSpacecraft);
 	void NotifySpacecraftDestroyed(ASpacecraftPawn* DestroyedSpacecraft);

@@ -61,54 +61,61 @@ void ASpaceHUD::UpdateCrosshairIconPosition(float newPosX, float newPosY)
 
 void ASpaceHUD::ToggleInventoryInterface()
 {
-	if (InventoryWidget)
+	if (InventoryWidget && !bShowingLevelEndStatsWidget)
 	{
-		ESlateVisibility NewState = InventoryWidget->GetVisibility() == ESlateVisibility::Visible
+		ESlateVisibility NewVisibilityState = InventoryWidget->GetVisibility() == ESlateVisibility::Visible
 			? ESlateVisibility::Collapsed
 			: ESlateVisibility::Visible;
 
-		InventoryWidget->SetVisibility(NewState);
+		InventoryWidget->SetVisibility(NewVisibilityState);
 	}
 }
 
 void ASpaceHUD::ToggleInGamePauseMenuInterface()
 {
-	if (InGamePauseMenuWidget && SpacePlayerController)
+	if (InGamePauseMenuWidget && SpacePlayerController && !bShowingLevelEndStatsWidget)
 	{
-		ESlateVisibility NewState = InGamePauseMenuWidget->GetVisibility() == ESlateVisibility::Visible
+		ESlateVisibility NewVisiblityState = InGamePauseMenuWidget->GetVisibility() == ESlateVisibility::Visible
 			? ESlateVisibility::Collapsed
 			: ESlateVisibility::Visible;
 
-		bool NewBooleanState = ! UGameplayStatics::IsGamePaused(GetWorld());
-		FInputModeDataBase* InputMode;
-		FInputModeUIOnly InputUIOnly;
-		FInputModeGameOnly InputGameOnly;
+		InGamePauseMenuWidget->SetVisibility(NewVisiblityState);
 
-		if (NewBooleanState)
-			InputMode = &InputUIOnly;
-		else
-			InputMode = &InputGameOnly;
-
-		InGamePauseMenuWidget->SetVisibility(NewState);
-
-		// Also start/stop time and show/hide cursor.
-
-		UGameplayStatics::SetGamePaused(GetWorld(), NewBooleanState);
+		bool bGamePaused = ! UGameplayStatics::IsGamePaused(GetWorld());
 		
-		SpacePlayerController->bShowMouseCursor = NewBooleanState;
-		SpacePlayerController->bEnableClickEvents = NewBooleanState;
-		SpacePlayerController->SetInputMode(*InputMode);
-		SetCanDrawCrosshairIcon(! NewBooleanState);
+		ToggleCursorVisibility(bGamePaused);
+
+		// Also start/stop time.
+		UGameplayStatics::SetGamePaused(GetWorld(), bGamePaused);
+	}
+}
+
+void ASpaceHUD::ToggleLevelEndStatsMenuInterface()
+{
+	if (LevelEndStatsMenuWidget && !bShowingLevelEndStatsWidget)
+	{
+		bShowingLevelEndStatsWidget = true;
+
+		ESlateVisibility NewVisiblityState = LevelEndStatsMenuWidget->GetVisibility() == ESlateVisibility::Visible
+			? ESlateVisibility::Collapsed
+			: ESlateVisibility::Visible;
+
+		LevelEndStatsMenuWidget->SetVisibility(NewVisiblityState);
+
+		ToggleCursorVisibility(true);
 	}
 }
 
 void ASpaceHUD::CreateAndAddWidgets()
 {
+	if (!SpacePlayerController)
+		return;
+
 	UWorld* WorldPtr = GetWorld();
 
 	if (WorldPtr)
 	{
-		if (InGamePauseMenuWidgetType && SpacePlayerController)
+		if (InventoryWidgetType)
 		{
 			InventoryWidget = CreateWidget<UUserWidget>(SpacePlayerController, InventoryWidgetType);
 			if (InventoryWidget)
@@ -118,14 +125,52 @@ void ASpaceHUD::CreateAndAddWidgets()
 			}
 		}
 
-		if (InGamePauseMenuWidgetType && SpacePlayerController)
+		if (InGamePauseMenuWidgetType)
 		{
 			InGamePauseMenuWidget = CreateWidget<UUserWidget>(SpacePlayerController, InGamePauseMenuWidgetType);
 			if (InGamePauseMenuWidget)
 			{
-				InGamePauseMenuWidget->AddToViewport(100);
+				InGamePauseMenuWidget->AddToViewport(101);
 				InGamePauseMenuWidget->SetVisibility(ESlateVisibility::Collapsed);
 			}
 		}
+
+		if (LevelEndStatsMenuWidgetType)
+		{
+			LevelEndStatsMenuWidget = CreateWidget<UUserWidget>(SpacePlayerController, LevelEndStatsMenuWidgetType);
+			if (LevelEndStatsMenuWidget)
+			{
+				LevelEndStatsMenuWidget->AddToViewport(102);
+				LevelEndStatsMenuWidget->SetVisibility(ESlateVisibility::Collapsed);
+			}
+		}
 	}
+}
+
+void ASpaceHUD::ToggleCursorVisibility(bool bInputGameAndUI)
+{
+	if (!SpacePlayerController)
+		return;
+
+	UGameViewportClient* GameViewport = GetWorld()->GetGameViewport();
+	if (GameViewport)
+	{
+		if (bInputGameAndUI)
+		{
+			SpacePlayerController->SetInputMode(FInputModeGameAndUI());
+
+			GameViewport->SetHideCursorDuringCapture(false);
+		}
+		else
+		{
+			SpacePlayerController->SetInputMode(FInputModeGameOnly());
+
+			GameViewport->SetMouseLockMode(EMouseLockMode::DoNotLock);
+		}
+	}
+	
+	SpacePlayerController->bShowMouseCursor   = bInputGameAndUI;
+	SpacePlayerController->bEnableClickEvents = bInputGameAndUI;
+	
+	SetCanDrawCrosshairIcon(!bInputGameAndUI);
 }

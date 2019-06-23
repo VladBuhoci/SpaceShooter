@@ -33,7 +33,6 @@ ALootChest::ALootChest()
 	LightIntensityHigh            = 10000.0f;
 	LightIntensitySwapSpeed       = 35000.0f;
 	LightIntensitySwapInterval    = 1.0f;
-	TimeBeforePhysicsOff          = 10.0f;
 	bCurrentlyPointedAt           = false;
 	bCurrentlyBeingInspected      = false;
 	CurrentlySelectedItemBoxIndex = 0;
@@ -73,13 +72,6 @@ void ALootChest::BeginPlay()
 
 	LightIntensityCurrentTargetValue = LightIntensityNormal;
 	
-	// After a while, we want to stop simulating physics.
-	FTimerHandle NoMorePhysicsSimulationTimerHandler;
-
-	GetWorldTimerManager().SetTimer(NoMorePhysicsSimulationTimerHandler, [this]() {
-		EndPhysicsSimulation();
-	}, TimeBeforePhysicsOff, false);
-
 	// Visual effect for this loot chest's birth: high light intensity level to make it shine more than the others.
 	SetLightIntensityLevel(LightIntensityHigh, LightIntensityNormal);
 }
@@ -126,15 +118,19 @@ void ALootChest::SetLightIntensityLevel(float NewTemporaryIntensityTargetValue, 
 
 void ALootChest::BeginPhysicsSimulation()
 {
-	ChestMeshComponent->SetSimulatePhysics(true);
-	ChestMeshComponent->SetEnableGravity(false);
-	ChestMeshComponent->SetCollisionProfileName("PhysicsActor");	// Use the PhysicsActor profile for collision setup
-																	//		(collision channels and responses).
+	if (ChestMeshComponent)
+	{
+		ChestMeshComponent->SetSimulatePhysics(true);
+		ChestMeshComponent->SetEnableGravity(false);
+		ChestMeshComponent->SetCollisionProfileName("PhysicsActor");	// Use the PhysicsActor profile for collision setup
+																		//		(collision channels and responses).
+	}
 }
 
 void ALootChest::EndPhysicsSimulation()
 {
-	ChestMeshComponent->SetSimulatePhysics(false);
+	if (ChestMeshComponent)
+		ChestMeshComponent->SetSimulatePhysics(false);
 }
 
 void ALootChest::OnMouseEnter_Implementation()
