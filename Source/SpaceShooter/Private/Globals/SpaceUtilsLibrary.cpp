@@ -1,6 +1,9 @@
 // This application is the final year project (2018-2019) of a Computer Science student (me - Vlad Buhoci).
 
 #include "SpaceUtilsLibrary.h"
+#include "SpacePlayerPawn.h"
+
+#include "Kismet/GameplayStatics.h"
 
 
 FText USpaceUtilsLibrary::GetFloatAsText(float Number, int32 Precision, bool IncludeLeadingZero)
@@ -21,4 +24,11 @@ FText USpaceUtilsLibrary::GetFloatAsText(float Number, int32 Precision, bool Inc
 	NumberFormat.MaximumFractionalDigits = Precision;
 
 	return FText::AsNumber(Number, & NumberFormat); 
+}
+
+bool USpaceUtilsLibrary::IsPlayerAlive(const UObject* WorldContextObject)
+{
+	ASpacePlayerPawn* SpacePlayerPawn = Cast<ASpacePlayerPawn>(UGameplayStatics::GetPlayerPawn(WorldContextObject, 0));
+
+	return SpacePlayerPawn ? SpacePlayerPawn->IsNotDestroyed() : false;
 }

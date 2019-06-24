@@ -47,7 +47,6 @@ void ASpaceHUD::DrawHUD()
 	{
 		if (CrosshairParams.Icon)
 		{
-			// TODO: Is there any way to determine the width and height programmatically?
 			DrawMaterialSimple(CrosshairParams.Icon, CrosshairParams.PosX - 16, CrosshairParams.PosY - 16, 32, 32);
 		}
 	}
@@ -63,9 +62,7 @@ void ASpaceHUD::ToggleInventoryInterface()
 {
 	if (InventoryWidget && !bShowingLevelEndStatsWidget)
 	{
-		ESlateVisibility NewVisibilityState = InventoryWidget->GetVisibility() == ESlateVisibility::Visible
-			? ESlateVisibility::Collapsed
-			: ESlateVisibility::Visible;
+		ESlateVisibility NewVisibilityState = GetWidgetOppositeVisibilityState(InventoryWidget);
 
 		InventoryWidget->SetVisibility(NewVisibilityState);
 	}
@@ -75,9 +72,7 @@ void ASpaceHUD::ToggleInGamePauseMenuInterface()
 {
 	if (InGamePauseMenuWidget && SpacePlayerController && !bShowingLevelEndStatsWidget)
 	{
-		ESlateVisibility NewVisiblityState = InGamePauseMenuWidget->GetVisibility() == ESlateVisibility::Visible
-			? ESlateVisibility::Collapsed
-			: ESlateVisibility::Visible;
+		ESlateVisibility NewVisiblityState = GetWidgetOppositeVisibilityState(InGamePauseMenuWidget);
 
 		InGamePauseMenuWidget->SetVisibility(NewVisiblityState);
 
@@ -90,19 +85,28 @@ void ASpaceHUD::ToggleInGamePauseMenuInterface()
 	}
 }
 
-void ASpaceHUD::ToggleLevelEndStatsMenuInterface()
+void ASpaceHUD::ToggleGameEndStatsMenuInterface()
 {
-	if (LevelEndStatsMenuWidget && !bShowingLevelEndStatsWidget)
+	if (GameEndStatsMenuWidget)
+	{
+		ToggleLevelEndStatsMenuInterface(GameEndStatsMenuWidget);
+	}
+}
+
+void ASpaceHUD::ToggleLevelEndStatsMenuInterface(UUserWidget* LevelEndStatsWidget)
+{
+	if (!bShowingLevelEndStatsWidget)
 	{
 		bShowingLevelEndStatsWidget = true;
 
-		ESlateVisibility NewVisiblityState = LevelEndStatsMenuWidget->GetVisibility() == ESlateVisibility::Visible
-			? ESlateVisibility::Collapsed
-			: ESlateVisibility::Visible;
+		ESlateVisibility NewVisiblityState = GetWidgetOppositeVisibilityState(LevelEndStatsWidget);
 
-		LevelEndStatsMenuWidget->SetVisibility(NewVisiblityState);
+		LevelEndStatsWidget->SetVisibility(NewVisiblityState);
 
 		ToggleCursorVisibility(true);
+
+		// Also stop time.
+		UGameplayStatics::SetGamePaused(GetWorld(), true);
 	}
 }
 
@@ -111,40 +115,54 @@ void ASpaceHUD::CreateAndAddWidgets()
 	if (!SpacePlayerController)
 		return;
 
-	UWorld* WorldPtr = GetWorld();
-
-	if (WorldPtr)
+	if (AllInOneGameHUDWidgetType)
 	{
-		if (InventoryWidgetType)
+		AllInOneGameHUDWidget = CreateWidget<UUserWidget>(SpacePlayerController, AllInOneGameHUDWidgetType);
+		if (AllInOneGameHUDWidget)
 		{
-			InventoryWidget = CreateWidget<UUserWidget>(SpacePlayerController, InventoryWidgetType);
-			if (InventoryWidget)
-			{
-				InventoryWidget->AddToViewport(100);
-				InventoryWidget->SetVisibility(ESlateVisibility::Collapsed);
-			}
-		}
+			AllInOneGameHUDWidget->AddToViewport();
+			AllInOneGameHUDWidget->SetVisibility(ESlateVisibility::Visible);
 
-		if (InGamePauseMenuWidgetType)
-		{
-			InGamePauseMenuWidget = CreateWidget<UUserWidget>(SpacePlayerController, InGamePauseMenuWidgetType);
-			if (InGamePauseMenuWidget)
-			{
-				InGamePauseMenuWidget->AddToViewport(101);
-				InGamePauseMenuWidget->SetVisibility(ESlateVisibility::Collapsed);
-			}
-		}
-
-		if (LevelEndStatsMenuWidgetType)
-		{
-			LevelEndStatsMenuWidget = CreateWidget<UUserWidget>(SpacePlayerController, LevelEndStatsMenuWidgetType);
-			if (LevelEndStatsMenuWidget)
-			{
-				LevelEndStatsMenuWidget->AddToViewport(102);
-				LevelEndStatsMenuWidget->SetVisibility(ESlateVisibility::Collapsed);
-			}
+			SpacePlayerController->SetInputMode(FInputModeGameOnly());
 		}
 	}
+
+	if (InventoryWidgetType)
+	{
+		InventoryWidget = CreateWidget<UUserWidget>(SpacePlayerController, InventoryWidgetType);
+		if (InventoryWidget)
+		{
+			InventoryWidget->AddToViewport(100);
+			InventoryWidget->SetVisibility(ESlateVisibility::Collapsed);
+		}
+	}
+
+	if (InGamePauseMenuWidgetType)
+	{
+		InGamePauseMenuWidget = CreateWidget<UUserWidget>(SpacePlayerController, InGamePauseMenuWidgetType);
+		if (InGamePauseMenuWidget)
+		{
+			InGamePauseMenuWidget->AddToViewport(101);
+			InGamePauseMenuWidget->SetVisibility(ESlateVisibility::Collapsed);
+		}
+	}
+
+	if (GameEndStatsMenuWidgetType)
+	{
+		GameEndStatsMenuWidget = CreateWidget<UUserWidget>(SpacePlayerController, GameEndStatsMenuWidgetType);
+		if (GameEndStatsMenuWidget)
+		{
+			GameEndStatsMenuWidget->AddToViewport(102);
+			GameEndStatsMenuWidget->SetVisibility(ESlateVisibility::Collapsed);
+		}
+	}
+}
+
+ESlateVisibility ASpaceHUD::GetWidgetOppositeVisibilityState(UUserWidget* Widget) const
+{
+	return Widget->GetVisibility() == ESlateVisibility::Visible
+		? ESlateVisibility::Collapsed
+		: ESlateVisibility::Visible;
 }
 
 void ASpaceHUD::ToggleCursorVisibility(bool bInputGameAndUI)

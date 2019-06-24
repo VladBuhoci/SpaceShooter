@@ -1,7 +1,9 @@
 // This application is the final year project (2018-2019) of a Computer Science student (me - Vlad Buhoci).
 
 #include "GameModes/CampaignGameMode.h"
-#include "UI/SpaceHUD.h"
+#include "Globals/SpaceGameInstance.h"
+#include "Pawns/SpacePlayerPawn.h"
+#include "UI/CampaignHUD.h"
 
 #include "Runtime/Engine/Public/TimerManager.h"
 
@@ -12,61 +14,101 @@
 
 ACampaignGameMode::ACampaignGameMode()
 {
-	GameOverHUDToggleWait = 1.5f;
+	LevelEndStatsHUDToggleWait = 1.5f;
 }
 
 void ACampaignGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
+	UWorld* WorldPtr = GetWorld();
+	if (WorldPtr)
+	{
+		CampaignHUD = Cast<ACampaignHUD>(UGameplayStatics::GetPlayerController(WorldPtr, 0)->GetHUD());
+	}
+}
+
+void ACampaignGameMode::OnEnemySpacecraftSpawned(ASpacecraftPawn* NewbornSpacecraft)
+{
+	// TODO
+}
+
+void ACampaignGameMode::OnEnemySpacecraftDestroyed(ASpacecraftPawn* DestroyedSpacecraft)
+{
+	EnemiesKilledCount = FMath::Clamp(EnemiesKilledCount + 1, 0, EnemiesToKillTotal);
+
+	CheckIfChapterIsDone();
 }
 
 void ACampaignGameMode::OnSectorCleared()
 {
 	Super::OnSectorCleared();
 
-	OnCampaignCompleted();
+	CheckIfChapterIsDone();
 }
 
 void ACampaignGameMode::OnPlayerDestroyed()
 {
 	Super::OnPlayerDestroyed();
 
-	// Present a basic menu widget (with options like "Restart", "Back to Main Menu" etc.) to the end user.
+	// TODO: anything else to do here?
 
-	UWorld* WorldPtr = GetWorld();
-	if (WorldPtr)
-	{
-		FTimerHandle ToggleGameOverHUDTimerHandle;
+	OnChapterCompleted();
+}
 
-		GetWorldTimerManager().SetTimer(ToggleGameOverHUDTimerHandle, [WorldPtr]() {
-			ASpaceHUD* SpaceHUD = Cast<ASpaceHUD>(UGameplayStatics::GetPlayerController(WorldPtr, 0)->GetHUD());
+void ACampaignGameMode::OnChapterCompleted()
+{
+	// Present a widget filled with general statistics related to the player's performance during the current level
+	//	and a basic menu (with options like "Restart Chapter", "Back to Main Menu" etc.).
 
-			if (SpaceHUD)
-			{
-				SpaceHUD->ToggleInGamePauseMenuInterface();
-			}
-		}, GameOverHUDToggleWait, false);
-	}
+	FTimerHandle ToggleStatsHUDTimerHandle;
+
+	GetWorldTimerManager().SetTimer(ToggleStatsHUDTimerHandle, [this]() {
+		if (CampaignHUD)
+		{
+			CampaignHUD->ToggleChapterEndStatsMenuInterface();
+		}
+	}, LevelEndStatsHUDToggleWait, false);
 }
 
 void ACampaignGameMode::OnCampaignCompleted()
 {
-	// Present a widget filled with general statistics related to the player's performance
-	//	during the current and previous levels.
+	// Present a widget filled with general statistics related to the player's performance during the current
+	//	and previous levels and a basic menu (with options like "Restart Mission", "Back to Main Menu" etc.).
 
-	UWorld* WorldPtr = GetWorld();
-	if (WorldPtr)
+	FTimerHandle ToggleStatsHUDTimerHandle;
+
+	GetWorldTimerManager().SetTimer(ToggleStatsHUDTimerHandle, [this]() {
+		if (CampaignHUD)
+		{
+			CampaignHUD->ToggleGameEndStatsMenuInterface();
+		}
+	}, LevelEndStatsHUDToggleWait, false);
+}
+
+void ACampaignGameMode::CheckIfChapterIsDone()
+{
+	if (EnemiesKilledCount == EnemiesToKillTotal)
 	{
-		FTimerHandle ToggleStatsHUDTimerHandle;
-
-		GetWorldTimerManager().SetTimer(ToggleStatsHUDTimerHandle, [WorldPtr]() {
-			ASpaceHUD* SpaceHUD = Cast<ASpaceHUD>(UGameplayStatics::GetPlayerController(WorldPtr, 0)->GetHUD());
-
-			if (SpaceHUD)
+		USpaceGameInstance* SpaceGameInstance = Cast<USpaceGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+		
+		if (SpaceGameInstance)
+		{
+			// Disable player's interaction ability.
+			ASpacePlayerPawn* SpacePlayerPawn = Cast<ASpacePlayerPawn>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
+			if (SpacePlayerPawn)
 			{
-				SpaceHUD->ToggleLevelEndStatsMenuInterface();
+				SpacePlayerPawn->SetCanInteract(false);
 			}
-		}, GameOverHUDToggleWait, false);
+
+			if (SpaceGameInstance->GetNextChapterForCurrentMission())
+			{
+				OnChapterCompleted();
+			}
+			else
+			{
+				OnCampaignCompleted();
+			}
+		}
 	}
 }

@@ -230,6 +230,9 @@ void ASpacePlayerController::OnPlayerRespawned()
 
 void ASpacePlayerController::Interact()
 {
+	if (!PossessedSpacePawn->CanInteract())
+		return;
+
 	// If we're currently pointing at an object...
 	if (CurrentMouseListeningActorPointedAt != nullptr)
 	{

@@ -36,7 +36,7 @@ ASpacePlayerPawn::ASpacePlayerPawn()
 	CentralSceneComponent                      = CreateDefaultSubobject<USceneComponent    >("Central Player Scene Component");
 	CameraComponent                            = CreateDefaultSubobject<UCameraComponent   >("Camera Component");
 	SpringArmComponent                         = CreateDefaultSubobject<USpringArmComponent>("Spring Arm Component");
-	LootChestQuickInteractArea                  = CreateDefaultSubobject<USphereComponent   >("Loot Chest Auto Interact Area");
+	LootChestQuickInteractArea                 = CreateDefaultSubobject<USphereComponent   >("Loot Chest Auto Interact Area");
 	
 	MoveForwardMaxTurboSpeed                   = 2400.0f;
 	MoveForwardMaxSpeed                        = 1200.0f;
@@ -55,6 +55,7 @@ ASpacePlayerPawn::ASpacePlayerPawn()
 	CameraFOVZoomSpeed                         = 5.0f;
 	Name                                       = FText::FromString("Unnamed Player");
 	Faction                                    = ESpacecraftFaction::Human;
+	bCanInteract                               = true;
 
 	// CentralSceneComponent setup:
 	CentralSceneComponent->SetupAttachment(SpacecraftMeshComponent);
@@ -86,9 +87,9 @@ ASpacePlayerPawn::ASpacePlayerPawn()
 
 	// Ammunition stocks:
 	AmmoPools.Add(EWeaponType::Blaster , FAmmunitionStock(128, 256));
-	AmmoPools.Add(EWeaponType::Cannon  , FAmmunitionStock(  0, 512));
-	AmmoPools.Add(EWeaponType::Volley  , FAmmunitionStock(  0, 128));
-	AmmoPools.Add(EWeaponType::Launcher, FAmmunitionStock(  0,  32));
+	AmmoPools.Add(EWeaponType::Cannon  , FAmmunitionStock(256, 512));
+	AmmoPools.Add(EWeaponType::Volley  , FAmmunitionStock( 64, 128));
+	AmmoPools.Add(EWeaponType::Launcher, FAmmunitionStock( 16,  32));
 }
 
 /** Called when the game starts or when spawned. */
@@ -112,12 +113,13 @@ void ASpacePlayerPawn::Tick(float DeltaTime)
 
 void ASpacePlayerPawn::SearchAndCollectNearbySupplies()
 {
-	NearbyLootChestsCheckUp();
+	if (CanInteract())
+		NearbyLootChestsCheckUp();
 }
 
 void ASpacePlayerPawn::OnLootChestEnterAutoInteractArea_Implementation(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-	if (OtherActor != NULL && OtherActor != this)
+	if (OtherActor != NULL && OtherActor != this && CanInteract())
 	{
 		ALootChest* FoundChest = Cast<ALootChest>(OtherActor);
 

@@ -55,6 +55,10 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Components", Meta = (AllowPrivateAccess = "true"))
 	USphereComponent* LootChestQuickInteractArea;
 
+	/** Determines if the spacecraft can interact with any loot chests at all. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Loot", Meta = (AllowPrivateAccess = "true"))
+	bool bCanInteract;
+
 	/** Types of item boxes that will be grabbed from nearby loot chests (inside quick-interactions area). */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Loot", Meta = (AllowPrivateAccess = "true"))
 	TArray<TSubclassOf<AItemBox>> TypesToPickUp;
@@ -146,6 +150,9 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Spacecraft | Loot Item Receiver Interface")
 	void Supply(AItem* ItemToProvide, EItemTakingAction & ItemTakeAction);
 	virtual void Supply_Implementation(AItem* ItemToProvide, EItemTakingAction & ItemTakeAction) override;
+
+	bool CanInteract() const { return bCanInteract; }
+	void SetCanInteract(bool bNewState) { bCanInteract = bNewState; }
 
 
 	/**********************************

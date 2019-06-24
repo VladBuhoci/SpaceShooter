@@ -2,6 +2,7 @@
 
 #include "GameModes/SpaceGameMode.h"
 #include "Pawns/SpacePlayerPawn.h"
+#include "Pawns/SpaceEnemyPawn.h"
 #include "Controllers/SpacePlayerController.h"
 #include "UI/SpaceHUD.h"
 #include "Loot/Creation/LootWeaponBuilder.h"
@@ -18,8 +19,6 @@ ASpaceGameMode::ASpaceGameMode()
 	DefaultPawnClass      = ASpacePlayerPawn::StaticClass();
 	PlayerControllerClass = ASpacePlayerController::StaticClass();
 	HUDClass              = ASpaceHUD::StaticClass();
-
-	GenericItemBuilder    = CreateDefaultSubobject<ULootItemBuilder>("Generic Item Builder");
 }
 
 void ASpaceGameMode::BeginPlay()
@@ -52,6 +51,9 @@ void ASpaceGameMode::NotifySpacecraftSpawned(ASpacecraftPawn* NewbornSpacecraft)
 	{
 		AllSpacecrafts.Add(NewbornSpacecraft);
 
+		if (NewbornSpacecraft->GetClass()->IsChildOf(ASpaceEnemyPawn::StaticClass()))
+			OnEnemySpacecraftSpawned(NewbornSpacecraft);
+
 		SupplySpacecraftIfNeeded(NewbornSpacecraft);
 	}
 }
@@ -60,7 +62,6 @@ void ASpaceGameMode::NotifySpacecraftDestroyed(ASpacecraftPawn* DestroyedSpacecr
 {
 	if (!DestroyedSpacecraft)
 		return;
-
 
 	if (AllSpacecrafts.Contains(DestroyedSpacecraft))
 	{
@@ -72,9 +73,12 @@ void ASpaceGameMode::NotifySpacecraftDestroyed(ASpacecraftPawn* DestroyedSpacecr
 			OnPlayerDestroyed();
 		}
 		// Else check if there are any enemies left around (note that the player is also included in the array).
-		else if (AllSpacecrafts.Num() == 1)
+		else
 		{
-			OnSectorCleared();
+			OnEnemySpacecraftDestroyed(DestroyedSpacecraft);
+			
+			if (AllSpacecrafts.Num() == 1)
+				OnSectorCleared();
 		}
 	}
 }
@@ -130,11 +134,16 @@ void ASpaceGameMode::SupplySpacecraftWithStartingWeapons(ASpacecraftPawn* Spacec
 	{
 		for (auto WeaponBP : WeaponBlueprints)
 		{
-			AWeapon* Weapon = Cast<AWeapon>(GetLootBuilder(ULootWeaponBuilder::StaticClass())->Build(WeaponBP));
-			
-			if (Weapon)
+			ULootItemBuilder* ItemBuilder = GetLootBuilder(ULootWeaponBuilder::StaticClass());
+
+			if (ItemBuilder)
 			{
-				SpacecraftToSupply->SupplyWeapon(Weapon);
+				AWeapon* Weapon = Cast<AWeapon>(ItemBuilder->Build(WeaponBP));
+
+				if (Weapon)
+				{
+					SpacecraftToSupply->SupplyWeapon(Weapon);
+				}
 			}
 		}
 	}
@@ -171,5 +180,5 @@ void ASpaceGameMode::CreateLootBuilders()
 
 ULootItemBuilder* ASpaceGameMode::GetLootBuilder(TSubclassOf<ULootItemBuilder> Type) const
 {
-	return LootItemBuilders.Contains(Type) ? LootItemBuilders[Type] : GenericItemBuilder;
+	return LootItemBuilders.Contains(Type) ? LootItemBuilders[Type] : nullptr;
 }

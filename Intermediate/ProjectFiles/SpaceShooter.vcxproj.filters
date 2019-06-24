@@ -337,10 +337,25 @@
     <ClInclude Include="..\..\Source\SpaceShooter\Public\GameModes\CampaignGameMode.h">
       <Filter>Source\SpaceShooter\Public\GameModes</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\UI\CampaignHUD.h">
+      <Filter>Source\SpaceShooter\Public\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\GameModes\Gameplay\Chapters.h">
+      <Filter>Source\SpaceShooter\Public\GameModes\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\GameModes\Gameplay\Missions.h">
+      <Filter>Source\SpaceShooter\Public\GameModes\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Globals\SpaceGameInstance.h">
+      <Filter>Source\SpaceShooter\Public\Globals</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source\SpaceShooter\Private\Globals">
       <UniqueIdentifier>{dbe36bf8-457f-4197-81b3-81e4f09ca597}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\SpaceShooter\Public\GameModes\Gameplay">
+      <UniqueIdentifier>{4cc11531-1d76-4ad5-b7ef-756a8e83cb75}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -349,6 +364,12 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\SpaceShooter\Private\GameModes\CampaignGameMode.cpp">
       <Filter>Source\SpaceShooter\Private\GameModes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\UI\CampaignHUD.cpp">
+      <Filter>Source\SpaceShooter\Private\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Globals\SpaceGameInstance.cpp">
+      <Filter>Source\SpaceShooter\Private\Globals</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

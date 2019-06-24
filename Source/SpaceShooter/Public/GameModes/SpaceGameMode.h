@@ -45,13 +45,6 @@ class SPACESHOOTER_API ASpaceGameMode : public AGameModeBase
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Game Mode", Meta = (AllowPrivateAccess = "true"))
 	TMap<TSubclassOf<ULootItemBuilder>, ULootItemBuilder*> LootItemBuilders;
 	
-	/**
-	 * Base class for loot item builders.
-	 * Does nothing when calling its Build() method, but GetLootBuilder() returns it if needed to avoid null reference issues.
-	 */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Game Mode", Meta = (AllowPrivateAccess = "true"))
-	ULootItemBuilder* GenericItemBuilder;
-
 public:
 	/** Sets default values. */
 	ASpaceGameMode();
@@ -69,7 +62,10 @@ public:
 	void NotifySpacecraftSpawned(ASpacecraftPawn* NewbornSpacecraft);
 	void NotifySpacecraftDestroyed(ASpacecraftPawn* DestroyedSpacecraft);
 
-private:
+protected:
+	virtual void OnEnemySpacecraftSpawned(ASpacecraftPawn* NewbornSpacecraft) {}
+	virtual void OnEnemySpacecraftDestroyed(ASpacecraftPawn* DestroyedSpacecraft) {}
+
 	void FindAllSpacecraftsInWorld();
 	void SupplyKnownSpacecraftsInWorld();
 

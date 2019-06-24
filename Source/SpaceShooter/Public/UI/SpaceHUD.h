@@ -7,8 +7,11 @@
 #include "SpaceHUD.generated.h"
 
 // Forward declarations.
-class UUserWidget;
 class ASpacePlayerController;
+
+class UUserWidget;
+
+enum class ESlateVisibility : uint8;
 
 
 USTRUCT(BlueprintInternalUseOnly)
@@ -44,6 +47,10 @@ class SPACESHOOTER_API ASpaceHUD : public AHUD
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space HUD", Meta = (AllowPrivateAccess = "true"))
 	bool bCanDrawCrosshair;
 
+	/** Class of the widget containing all the core UI elements for the selected game mode. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Space HUD", Meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UUserWidget> AllInOneGameHUDWidgetType;
+
 	/** Type of inventory widget to spawn and add it on screen when requested. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Space HUD", Meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UUserWidget> InventoryWidgetType;
@@ -57,7 +64,11 @@ class SPACESHOOTER_API ASpaceHUD : public AHUD
 	 *	and add it on screen when requested.
 	 */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Space HUD", Meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<UUserWidget> LevelEndStatsMenuWidgetType;
+	TSubclassOf<UUserWidget> GameEndStatsMenuWidgetType;
+
+	/** Pointer to the all-in-one-hud widget object. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space HUD", Meta = (AllowPrivateAccess = "true"))
+	UUserWidget* AllInOneGameHUDWidget;
 
 	/** Pointer to the inventory widget object. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space HUD", Meta = (AllowPrivateAccess = "true"))
@@ -69,11 +80,13 @@ class SPACESHOOTER_API ASpaceHUD : public AHUD
 
 	/** Pointer to the in-game overall statistics menu widget object. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space HUD", Meta = (AllowPrivateAccess = "true"))
-	UUserWidget* LevelEndStatsMenuWidget;
+	UUserWidget* GameEndStatsMenuWidget;
 
+protected:
 	bool bShowingLevelEndStatsWidget;
 
 public:
+	/** Sets default values. */
 	ASpaceHUD();
 
 	/** The Main Draw loop for the HUD. */
@@ -96,11 +109,16 @@ public:
 	void ToggleInGamePauseMenuInterface();
 
 	UFUNCTION(BlueprintCallable, Category = "Space HUD")
-	void ToggleLevelEndStatsMenuInterface();
+	void ToggleGameEndStatsMenuInterface();
 
 	// ~ end of public interface.
 
-private:
-	void CreateAndAddWidgets();
+protected:
+	void ToggleLevelEndStatsMenuInterface(UUserWidget* LevelEndStatsWidget);
+
+	virtual void CreateAndAddWidgets();
+
+	ASpacePlayerController* GetSpacePlayerController() const { return SpacePlayerController; }
+	ESlateVisibility GetWidgetOppositeVisibilityState(UUserWidget* Widget) const;
 	void ToggleCursorVisibility(bool bInputUIOnly);
 };
