@@ -36,7 +36,7 @@ public:
 	ACampaignHUD();
 
 protected:
-	virtual void CreateAndAddWidgets() override;
+	virtual void CreateAndAddWidgets(TArray<UUserWidget*> & GameTimeVisibleWidgets) override;
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Space HUD | Campaign HUD")

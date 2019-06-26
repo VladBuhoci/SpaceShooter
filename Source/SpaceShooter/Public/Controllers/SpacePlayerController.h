@@ -20,13 +20,16 @@ class SPACESHOOTER_API ASpacePlayerController : public APlayerController
 	GENERATED_BODY()
 	
 private:
+	/** Utility variable to store the pointer for the pawn in case the controller loses possession over it. */
+	ASpacePlayerPawn* PlayerSpacePawnToPossessAux;
+
 	/** The controlled player pawn of this controller. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Player Controller", Meta = (AllowPrivateAccess = "true"))
-	ASpacePlayerPawn * PossessedSpacePawn;
+	ASpacePlayerPawn* PossessedSpacePawn;
 
 	/** The HUD instance this controller owns. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Player Controller", Meta = (AllowPrivateAccess = "true"))
-	ASpaceHUD * OwnedHUD;
+	ASpaceHUD* OwnedHUD;
 
 	/** The mouse listening actor object the player is having their cursor put on at the moment. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Player Controller", Meta = (AllowPrivateAccess = "true"))
@@ -85,11 +88,12 @@ private:
 	/**********************************
 		  SURVIVABILITY INTERFACE
 	**********************************/
-
+	
 public:
 	void OnPlayerDied();
 	void OnPlayerRespawned();
 
+	void TogglePawnPossession();
 
 	/**********************************
 			  LOOT INTERFACE

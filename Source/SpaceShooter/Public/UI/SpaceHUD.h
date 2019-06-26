@@ -82,6 +82,10 @@ class SPACESHOOTER_API ASpaceHUD : public AHUD
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space HUD", Meta = (AllowPrivateAccess = "true"))
 	UUserWidget* GameEndStatsMenuWidget;
 
+	/** Array of widgets that should only be visible during game time and not when a pausing menu is opened. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space HUD", Meta = (AllowPrivateAccess = "true"))
+	TArray<UUserWidget*> GameTimeWidgets;
+
 protected:
 	bool bShowingLevelEndStatsWidget;
 
@@ -115,12 +119,15 @@ public:
 
 protected:
 	void ToggleLevelEndStatsMenuInterface(UUserWidget* LevelEndStatsWidget);
+	void ToggleCursorVisibility(bool bInputUIOnly);
 
-	virtual void CreateAndAddWidgets();
+	virtual void CreateAndAddWidgets(TArray<UUserWidget*> & GameTimeVisibleWidgets);
 
 	void TryCreateAndAddWidget(TSubclassOf<UUserWidget> WidgetClass, UUserWidget* & Widget, ESlateVisibility Visbility);
 
 	ASpacePlayerController* GetSpacePlayerController() const { return SpacePlayerController; }
 	ESlateVisibility GetWidgetOppositeVisibilityState(UUserWidget* Widget) const;
-	void ToggleCursorVisibility(bool bInputUIOnly);
+
+private:
+	void ToggleGameTimeWidgetsVisibility(ESlateVisibility NewState);
 };

@@ -71,7 +71,7 @@ void ACampaignGameMode::OnSectorCleared()
 	Super::OnSectorCleared();
 
 	// TODO: spawn more enemy waves!
-	//OnChapterObjectiveDone();
+
 }
 
 void ACampaignGameMode::OnPlayerDestroyed()

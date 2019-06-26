@@ -20,6 +20,4 @@ public:
 
 public:
 	virtual void UpdateGoal(EGoalUpdateType UpdateType) override;
-
-	virtual void ResetGoalProgress() override;
 };

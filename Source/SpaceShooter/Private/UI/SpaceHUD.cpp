@@ -33,10 +33,10 @@ void ASpaceHUD::BeginPlay()
 	UWorld* WorldPtr = GetWorld();
 	if (WorldPtr)
 	{
-		SpacePlayerController = Cast<ASpacePlayerController>(UGameplayStatics::GetPlayerController(WorldPtr, 0));
+		SpacePlayerController = Cast<ASpacePlayerController>(PlayerOwner);
 	}
 
-	CreateAndAddWidgets();
+	CreateAndAddWidgets(GameTimeWidgets);
 }
 
 void ASpaceHUD::DrawHUD()
@@ -60,25 +60,46 @@ void ASpaceHUD::UpdateCrosshairIconPosition(float newPosX, float newPosY)
 
 void ASpaceHUD::ToggleInventoryInterface()
 {
-	if (InventoryWidget && !bShowingLevelEndStatsWidget)
+	if (InventoryWidget && !bShowingLevelEndStatsWidget && InGamePauseMenuWidget->GetVisibility() != ESlateVisibility::Visible)
 	{
+		// Disable controls of the player's spacecraft pawn.
+		if (SpacePlayerController)
+		{
+			SpacePlayerController->TogglePawnPossession();
+		}
+
 		ESlateVisibility NewVisibilityState = GetWidgetOppositeVisibilityState(InventoryWidget);
+		bool bGamePaused = !UGameplayStatics::IsGamePaused(GetWorld());
+
+		ToggleGameTimeWidgetsVisibility(InventoryWidget->GetVisibility());
+		ToggleCursorVisibility(bGamePaused);
 
 		InventoryWidget->SetVisibility(NewVisibilityState);
+		InGamePauseMenuWidget->SetVisibility(ESlateVisibility::Collapsed);
+
+		// Also start/stop time.
+		UGameplayStatics::SetGamePaused(GetWorld(), bGamePaused);
 	}
 }
 
 void ASpaceHUD::ToggleInGamePauseMenuInterface()
 {
-	if (InGamePauseMenuWidget && SpacePlayerController && !bShowingLevelEndStatsWidget)
+	if (InGamePauseMenuWidget && !bShowingLevelEndStatsWidget && InventoryWidget->GetVisibility() != ESlateVisibility::Visible)
 	{
+		// Disable controls of the player's spacecraft pawn.
+		if (SpacePlayerController)
+		{
+			SpacePlayerController->TogglePawnPossession();
+		}
+
 		ESlateVisibility NewVisiblityState = GetWidgetOppositeVisibilityState(InGamePauseMenuWidget);
-
-		InGamePauseMenuWidget->SetVisibility(NewVisiblityState);
-
-		bool bGamePaused = ! UGameplayStatics::IsGamePaused(GetWorld());
+		bool bGamePaused = !UGameplayStatics::IsGamePaused(GetWorld());
 		
+		ToggleGameTimeWidgetsVisibility(InGamePauseMenuWidget->GetVisibility());
 		ToggleCursorVisibility(bGamePaused);
+
+		InventoryWidget->SetVisibility(ESlateVisibility::Collapsed);
+		InGamePauseMenuWidget->SetVisibility(NewVisiblityState);
 
 		// Also start/stop time.
 		UGameplayStatics::SetGamePaused(GetWorld(), bGamePaused);
@@ -99,15 +120,24 @@ void ASpaceHUD::ToggleLevelEndStatsMenuInterface(UUserWidget* LevelEndStatsWidge
 	{
 		bShowingLevelEndStatsWidget = true;
 
+		// Disable controls of the player's spacecraft pawn.
+		if (SpacePlayerController)
+		{
+			SpacePlayerController->TogglePawnPossession();
+		}
+
 		ESlateVisibility NewVisiblityState = GetWidgetOppositeVisibilityState(LevelEndStatsWidget);
 
-		LevelEndStatsWidget->SetVisibility(NewVisiblityState);
-
+		ToggleGameTimeWidgetsVisibility(LevelEndStatsWidget->GetVisibility());
 		ToggleCursorVisibility(true);
+
+		InventoryWidget->SetVisibility(ESlateVisibility::Collapsed);
+		InGamePauseMenuWidget->SetVisibility(ESlateVisibility::Collapsed);
+		LevelEndStatsWidget->SetVisibility(NewVisiblityState);
 	}
 }
 
-void ASpaceHUD::CreateAndAddWidgets()
+void ASpaceHUD::CreateAndAddWidgets(TArray<UUserWidget*> & GameTimeVisibleWidgets)
 {
 	if (!SpacePlayerController)
 		return;
@@ -118,6 +148,8 @@ void ASpaceHUD::CreateAndAddWidgets()
 	TryCreateAndAddWidget(InventoryWidgetType, InventoryWidget, ESlateVisibility::Collapsed);
 	TryCreateAndAddWidget(InGamePauseMenuWidgetType, InGamePauseMenuWidget, ESlateVisibility::Collapsed);
 	TryCreateAndAddWidget(GameEndStatsMenuWidgetType, GameEndStatsMenuWidget, ESlateVisibility::Collapsed);
+
+	GameTimeVisibleWidgets.Add(AllInOneGameHUDWidget);
 }
 
 void ASpaceHUD::TryCreateAndAddWidget(TSubclassOf<UUserWidget> WidgetClass, UUserWidget* & Widget, ESlateVisibility Visbility)
@@ -138,6 +170,14 @@ ESlateVisibility ASpaceHUD::GetWidgetOppositeVisibilityState(UUserWidget* Widget
 	return Widget->GetVisibility() == ESlateVisibility::Visible
 		? ESlateVisibility::Collapsed
 		: ESlateVisibility::Visible;
+}
+
+void ASpaceHUD::ToggleGameTimeWidgetsVisibility(ESlateVisibility NewState)
+{
+	for (auto GameOnlyVisibleWidget : GameTimeWidgets)
+	{
+		GameOnlyVisibleWidget->SetVisibility(NewState);
+	}
 }
 
 void ASpaceHUD::ToggleCursorVisibility(bool bInputGameAndUI)

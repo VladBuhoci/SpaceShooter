@@ -11,19 +11,14 @@ ACampaignHUD::ACampaignHUD()
 
 }
 
-void ACampaignHUD::CreateAndAddWidgets()
+void ACampaignHUD::CreateAndAddWidgets(TArray<UUserWidget*> & GameTimeVisibleWidgets)
 {
-	Super::CreateAndAddWidgets();
+	Super::CreateAndAddWidgets(GameTimeVisibleWidgets);
 
 	TryCreateAndAddWidget(ChapterEndStatsMenuWidgetType, ChapterEndStatsMenuWidget, ESlateVisibility::Collapsed);
 	TryCreateAndAddWidget(ChapterGoalWidgetType, GoalWidget, ESlateVisibility::Visible);
 
-	if (GoalWidget)
-	{
-		GoalWidget->SetAnchorsInViewport(FAnchors(100.0f, 50.0f));	// Anchor set in the middle of the left side.
-		GoalWidget->SetPositionInViewport(FVector2D(80.0f, 0.0f));
-		GoalWidget->SetDesiredSizeInViewport(FVector2D(80.0f, 40.0f));
-	}
+	GameTimeVisibleWidgets.Add(GoalWidget);
 }
 
 void ACampaignHUD::ToggleChapterEndStatsMenuInterface()

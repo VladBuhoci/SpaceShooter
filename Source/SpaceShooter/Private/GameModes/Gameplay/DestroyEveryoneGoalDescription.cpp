@@ -13,8 +13,3 @@ void UDestroyEveryoneGoalDescription::UpdateGoal(EGoalUpdateType UpdateType)
 			NotifyGoalListeners();
 	}
 }
-
-void UDestroyEveryoneGoalDescription::ResetGoalProgress()
-{
-	CurrentKilledEnemiesCount = 0;
-}

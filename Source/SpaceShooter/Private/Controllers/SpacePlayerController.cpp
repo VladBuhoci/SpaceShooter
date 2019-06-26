@@ -25,6 +25,7 @@ void ASpacePlayerController::BeginPlay()
 
 	// Cast the pawn to our custom player type so we can make use of its public methods.
 	PossessedSpacePawn = Cast<ASpacePlayerPawn>(GetPawn());
+	PlayerSpacePawnToPossessAux = PossessedSpacePawn;
 
 	// Cast the HUD to our custom HUD type so we can make use of its public methods.
 	OwnedHUD = Cast<ASpaceHUD>(GetHUD());
@@ -63,7 +64,8 @@ void ASpacePlayerController::SetupInputComponent()
 	InputComponent->BindAction("Previous Item In Loot Chest", IE_Pressed, this, &ASpacePlayerController::HighlightPreviousItemBoxInsideChest);
 	InputComponent->BindAction("Next Item In Loot Chest", IE_Pressed, this, &ASpacePlayerController::HighlightNextItemBoxInsideChest);
 
-	InputComponent->BindAction("Toggle Inventory", IE_Pressed, this, &ASpacePlayerController::ToggleHUDInventory);
+	InputComponent->BindAction("Toggle Inventory", IE_Pressed, this, &ASpacePlayerController::ToggleHUDInventory)
+		.bExecuteWhenPaused = true;
 	InputComponent->BindAction("Toggle In-game Pause Menu", IE_Pressed, this, &ASpacePlayerController::ToggleInGamePauseMenu)
 		.bExecuteWhenPaused = true;
 }
@@ -228,9 +230,24 @@ void ASpacePlayerController::OnPlayerRespawned()
 	OwnedHUD->SetCanDrawCrosshairIcon(true);
 }
 
+void ASpacePlayerController::TogglePawnPossession()
+{
+	if (PossessedSpacePawn)
+	{
+		PossessedSpacePawn->EndFiringWeapon();
+		PossessedSpacePawn->DeactivateTurboMode();
+
+		PossessedSpacePawn = nullptr;
+	}
+	else
+	{
+		PossessedSpacePawn = PlayerSpacePawnToPossessAux;
+	}
+}
+
 void ASpacePlayerController::Interact()
 {
-	if (!PossessedSpacePawn->CanInteract())
+	if (!PossessedSpacePawn || !PossessedSpacePawn->CanInteract())
 		return;
 
 	// If we're currently pointing at an object...
@@ -293,7 +310,7 @@ void ASpacePlayerController::EndFiringWeapon()
 
 void ASpacePlayerController::ToggleHUDInventory()
 {
-	if (PossessedSpacePawn && PossessedSpacePawn->IsNotDestroyed() && OwnedHUD)
+	if (PlayerSpacePawnToPossessAux && PlayerSpacePawnToPossessAux->IsNotDestroyed() && OwnedHUD)
 	{
 		OwnedHUD->ToggleInventoryInterface();
 	}
@@ -301,7 +318,7 @@ void ASpacePlayerController::ToggleHUDInventory()
 
 void ASpacePlayerController::ToggleInGamePauseMenu()
 {
-	if (PossessedSpacePawn && PossessedSpacePawn->IsNotDestroyed() && OwnedHUD)
+	if (PlayerSpacePawnToPossessAux && PlayerSpacePawnToPossessAux->IsNotDestroyed() && OwnedHUD)
 	{
 		OwnedHUD->ToggleInGamePauseMenuInterface();
 	}

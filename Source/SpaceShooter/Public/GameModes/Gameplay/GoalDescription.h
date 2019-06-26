@@ -35,10 +35,6 @@ public:
 
 	virtual void UpdateGoal(EGoalUpdateType UpdateType) {}
 
-	// Since the goals are stored in the game instance object, their data will be persistent.
-	// Thus, we are the ones who must reset the progress of each goal.
-	virtual void ResetGoalProgress() {}
-
 protected:
 	void NotifyGoalListeners();
 
