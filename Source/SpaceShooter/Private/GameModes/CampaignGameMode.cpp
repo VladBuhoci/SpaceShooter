@@ -4,6 +4,7 @@
 #include "Globals/SpaceGameInstance.h"
 #include "Pawns/SpacePlayerPawn.h"
 #include "UI/CampaignHUD.h"
+#include "GameModes/Gameplay/GoalDescription.h"
 
 #include "Runtime/Engine/Public/TimerManager.h"
 
@@ -24,7 +25,29 @@ void ACampaignGameMode::BeginPlay()
 	UWorld* WorldPtr = GetWorld();
 	if (WorldPtr)
 	{
+		SpaceGameInstance = Cast<USpaceGameInstance>(UGameplayStatics::GetGameInstance(WorldPtr));
 		CampaignHUD = Cast<ACampaignHUD>(UGameplayStatics::GetPlayerController(WorldPtr, 0)->GetHUD());
+	}
+
+	// Acquire the current chapter's goal and register to it as a listener so we know when it is completed.
+	// Also send the goal's unique widget class to the HUD entity so that it can instantiate it and add it to the viewport.
+	if (SpaceGameInstance && SpaceGameInstance->GetCurrentChapter())
+	{
+		UGoalDescription* OriginalGoal = Cast<UGoalDescription>(SpaceGameInstance->GetCurrentChapter()->GetGameplaySpecification());
+
+		if (OriginalGoal)
+		{
+			FName GoalCloneName = MakeUniqueObjectName(this, OriginalGoal->GetClass());
+
+			GoalToComplete = DuplicateObject(OriginalGoal, this, GoalCloneName);
+			GoalToComplete->SetWidgetClass(OriginalGoal->GetWidgetClass());
+			GoalToComplete->RegisterListener(this);
+
+			if (CampaignHUD)
+			{
+				CampaignHUD->SetGoalWidget(GoalToComplete->GetWidgetClass());
+			}
+		}
 	}
 }
 
@@ -35,16 +58,20 @@ void ACampaignGameMode::OnEnemySpacecraftSpawned(ASpacecraftPawn* NewbornSpacecr
 
 void ACampaignGameMode::OnEnemySpacecraftDestroyed(ASpacecraftPawn* DestroyedSpacecraft)
 {
-	EnemiesKilledCount = FMath::Clamp(EnemiesKilledCount + 1, 0, EnemiesToKillTotal);
+	EnemiesKilledCount++;
 
-	CheckIfChapterIsDone();
+	if (GoalToComplete)
+	{
+		GoalToComplete->UpdateGoal(EGoalUpdateType::EnemyDestroyed);
+	}
 }
 
 void ACampaignGameMode::OnSectorCleared()
 {
 	Super::OnSectorCleared();
 
-	CheckIfChapterIsDone();
+	// TODO: spawn more enemy waves!
+	//OnChapterObjectiveDone();
 }
 
 void ACampaignGameMode::OnPlayerDestroyed()
@@ -86,29 +113,29 @@ void ACampaignGameMode::OnCampaignCompleted()
 	}, LevelEndStatsHUDToggleWait, false);
 }
 
-void ACampaignGameMode::CheckIfChapterIsDone()
+void ACampaignGameMode::NotifyGoalCompleted_Implementation()
 {
-	if (EnemiesKilledCount == EnemiesToKillTotal)
-	{
-		USpaceGameInstance* SpaceGameInstance = Cast<USpaceGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-		
-		if (SpaceGameInstance)
-		{
-			// Disable player's interaction ability.
-			ASpacePlayerPawn* SpacePlayerPawn = Cast<ASpacePlayerPawn>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
-			if (SpacePlayerPawn)
-			{
-				SpacePlayerPawn->SetCanInteract(false);
-			}
+	OnChapterObjectiveDone();
+}
 
-			if (SpaceGameInstance->GetNextChapterForCurrentMission())
-			{
-				OnChapterCompleted();
-			}
-			else
-			{
-				OnCampaignCompleted();
-			}
+void ACampaignGameMode::OnChapterObjectiveDone()
+{
+	if (SpaceGameInstance)
+	{
+		// Disable player's interaction ability.
+		ASpacePlayerPawn* SpacePlayerPawn = Cast<ASpacePlayerPawn>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
+		if (SpacePlayerPawn)
+		{
+			SpacePlayerPawn->SetCanInteract(false);
+		}
+
+		if (SpaceGameInstance->GetNextChapterForCurrentMission())
+		{
+			OnChapterCompleted();
+		}
+		else
+		{
+			OnCampaignCompleted();
 		}
 	}
 }

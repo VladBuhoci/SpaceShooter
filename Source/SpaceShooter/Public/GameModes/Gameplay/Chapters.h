@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "GameModes/Gameplay/DestroyEveryoneGoalDescription.h"
+
 #include "CoreMinimal.h"
 #include "Chapters.generated.h"
 
@@ -17,6 +19,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Chapter Description", Meta = (AllowPrivateAccess = "true"))
 	FName LevelName;
+
+public:
+	virtual UGameplaySpecification* GetGameplaySpecification() const { return nullptr; }
 };
 
 UCLASS(BlueprintType)
@@ -25,6 +30,9 @@ class SPACESHOOTER_API UCampaignChapterDescription : public UChapterDescription
 	GENERATED_BODY()
 
 public:
-	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Chapter Description")
-	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Chapter Description")
+	UGoalDescription* Goal;
+
+public:
+	virtual UGameplaySpecification* GetGameplaySpecification() const override { return Goal; }
 };

@@ -40,8 +40,12 @@ protected:
 		UCampaignMissionDescription* & CreatedMission);
 	
 	UFUNCTION(BlueprintCallable, Category = "Space Game Instance")
-	void AddCampaignChapter(TSubclassOf<UCampaignChapterDescription> CampaignChapterClass, FText ChapterName,
-		FName LevelName, UCampaignMissionDescription* CampaignMissionToAddTo, UCampaignMissionDescription* & CampaignMission);
+	void AddCampaignChapter(TSubclassOf<UCampaignChapterDescription> CampaignChapterClass, FText ChapterName, FName LevelName,
+		UGoalDescription* Goal, UCampaignMissionDescription* CampaignMissionToAddTo, UCampaignMissionDescription* & CampaignMission);
+
+	UFUNCTION(BlueprintCallable, Category = "Space Game Instance")
+	void CreateGoalOfTypeDestroyEveryone(TSubclassOf<UUserWidget> GoalWidgetType, int32 AmountOfEnemiesToKill,
+		UDestroyEveryoneGoalDescription* & GenocideGoal);
 
 
 	/**********************************

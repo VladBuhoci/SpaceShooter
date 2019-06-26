@@ -16,10 +16,9 @@ ASpacecraftExplosion::ASpacecraftExplosion()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	InitialLifeSpan = 7.0f;
 
 	ExplosionRadialForceComponent = CreateDefaultSubobject<URadialForceComponent>("Explosion Radial Force Component");
-
-	LifeSpan = 7.0f;
 
 	ExplosionRadialForceComponent->SetupAttachment(RootComponent);
 	ExplosionRadialForceComponent->Radius = 300.0f;
@@ -34,20 +33,6 @@ void ASpacecraftExplosion::BeginPlay()
 
 	// Once spawned, the explosion effects need to be activated.
 	PlayEffects();
-
-	// We do not want to leave instances of this class hanging around in the world.
-	// So, we wait a few moments for the effects to play and then kill the instance.
-	FTimerHandle SelfDestroyTimerHandler;
-
-	GetWorldTimerManager().SetTimer(SelfDestroyTimerHandler, [this]() {
-		this->Destroy();
-	}, LifeSpan, false);
-}
-
-void ASpacecraftExplosion::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
 }
 
 void ASpacecraftExplosion::PlayEffects()

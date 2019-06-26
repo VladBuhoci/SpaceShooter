@@ -15,14 +15,14 @@ void ACampaignHUD::CreateAndAddWidgets()
 {
 	Super::CreateAndAddWidgets();
 
-	if (ChapterEndStatsMenuWidgetType)
+	TryCreateAndAddWidget(ChapterEndStatsMenuWidgetType, ChapterEndStatsMenuWidget, ESlateVisibility::Collapsed);
+	TryCreateAndAddWidget(ChapterGoalWidgetType, GoalWidget, ESlateVisibility::Visible);
+
+	if (GoalWidget)
 	{
-		ChapterEndStatsMenuWidget = CreateWidget<UUserWidget>(GetSpacePlayerController(), ChapterEndStatsMenuWidgetType);
-		if (ChapterEndStatsMenuWidget)
-		{
-			ChapterEndStatsMenuWidget->AddToViewport(102);
-			ChapterEndStatsMenuWidget->SetVisibility(ESlateVisibility::Collapsed);
-		}
+		GoalWidget->SetAnchorsInViewport(FAnchors(100.0f, 50.0f));	// Anchor set in the middle of the left side.
+		GoalWidget->SetPositionInViewport(FVector2D(80.0f, 0.0f));
+		GoalWidget->SetDesiredSizeInViewport(FVector2D(80.0f, 40.0f));
 	}
 }
 
@@ -32,4 +32,9 @@ void ACampaignHUD::ToggleChapterEndStatsMenuInterface()
 	{
 		ToggleLevelEndStatsMenuInterface(ChapterEndStatsMenuWidget);
 	}
+}
+
+void ACampaignHUD::SetGoalWidget(TSubclassOf<UUserWidget> GoalWidgetClass)
+{
+	ChapterGoalWidgetType = GoalWidgetClass;
 }

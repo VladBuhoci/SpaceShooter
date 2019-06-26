@@ -32,10 +32,6 @@ class SPACESHOOTER_API ASpacecraftExplosion : public AActor
 	 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft Explosion", Meta = (AllowPrivateAccess = "true"))
 	URadialForceComponent* ExplosionRadialForceComponent;
-
-	/** Time to live for this actor, measured in seconds. Once expired, the actor is destroyed. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft Explosion", Meta = (AllowPrivateAccess = "true", ClampMin = "5", UIMin = "5", ClampMax = "15", UIMax = "15"))
-	float LifeSpan;
 	
 public:	
 	/** Sets default values. */
@@ -44,10 +40,6 @@ public:
 protected:
 	/** Called when the game starts or when spawned. */
 	virtual void BeginPlay() override;
-
-public:	
-	/** Called every frame. */
-	virtual void Tick(float DeltaTime) override;
 
 private:
 	void PlayEffects();

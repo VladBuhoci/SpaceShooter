@@ -269,33 +269,39 @@ void ALootChest::HighlightNextItemBoxInsideChest()
 
 void ALootChest::PresentChestIdentity()
 {
-	if (InfoWidgetComponent)
+	if (InfoWidgetComponent && !InfoWidgetComponent->IsVisible())
 		InfoWidgetComponent->SetVisibility(true);
 }
 
 void ALootChest::HideChestIdentity()
 {
-	if (InfoWidgetComponent)
+	if (InfoWidgetComponent && InfoWidgetComponent->IsVisible())
 		InfoWidgetComponent->SetVisibility(false);
 }
 
 void ALootChest::BeginChestInspection()
 {
-	bCurrentlyBeingInspected = true;
+	if (!bCurrentlyBeingInspected)
+	{
+		bCurrentlyBeingInspected = true;
 
-	if (ChestOverviewWidgetComponent)
-		ChestOverviewWidgetComponent->SetVisibility(true);
+		if (ChestOverviewWidgetComponent)
+			ChestOverviewWidgetComponent->SetVisibility(true);
+	}
 }
 
 void ALootChest::EndChestInspection()
 {
-	bCurrentlyBeingInspected = false;
+	if (bCurrentlyBeingInspected)
+	{
+		bCurrentlyBeingInspected = false;
 
-	if (ChestOverviewWidgetComponent)
-		ChestOverviewWidgetComponent->SetVisibility(false);
+		if (ChestOverviewWidgetComponent)
+			ChestOverviewWidgetComponent->SetVisibility(false);
 
-	// Go back to zero to be prepared for the next time when inspection is activated.
-	CurrentlySelectedItemBoxIndex = 0;
+		// Go back to zero to be prepared for the next time when inspection is activated.
+		CurrentlySelectedItemBoxIndex = 0;
+	}
 }
 
 void ALootChest::PopulateAndOpenChest()

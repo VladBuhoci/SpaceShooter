@@ -22,7 +22,7 @@ void USpaceGameInstance::AddCampaignMission(TSubclassOf<UCampaignMissionDescript
 }
 
 void USpaceGameInstance::AddCampaignChapter(TSubclassOf<UCampaignChapterDescription> CampaignChapterClass, FText ChapterName,
-	FName LevelName, UCampaignMissionDescription* CampaignMissionToAddTo, UCampaignMissionDescription* & CampaignMission)
+	FName LevelName, UGoalDescription* Goal, UCampaignMissionDescription* CampaignMissionToAddTo, UCampaignMissionDescription* & CampaignMission)
 {
 	if (!CampaignChapterClass || !CampaignMissionToAddTo)
 		return;
@@ -33,12 +33,25 @@ void USpaceGameInstance::AddCampaignChapter(TSubclassOf<UCampaignChapterDescript
 	{
 		CampaignChapter->ChapterName = ChapterName;
 		CampaignChapter->LevelName   = LevelName;
+		CampaignChapter->Goal        = Goal;
 
 		CampaignMissionToAddTo->AddChapter(CampaignChapter);
 	}
 
 	// Useful in Blueprints for chained calls of this method.
 	CampaignMission = CampaignMissionToAddTo;
+}
+
+void USpaceGameInstance::CreateGoalOfTypeDestroyEveryone(TSubclassOf<UUserWidget> GoalWidgetType, int32 AmountOfEnemiesToKill,
+	UDestroyEveryoneGoalDescription* & GenocideGoal)
+{
+	GenocideGoal = NewObject<UDestroyEveryoneGoalDescription>(this, FName(*("GenocideGoal_" + FString::FromInt(FMath::Rand()))));
+
+	if (GenocideGoal)
+	{
+		GenocideGoal->SetWidgetClass(GoalWidgetType);
+		GenocideGoal->TotalEnemiesToKill = AmountOfEnemiesToKill;
+	}
 }
 
 UChapterDescription* USpaceGameInstance::GetNextChapterForCurrentMission()

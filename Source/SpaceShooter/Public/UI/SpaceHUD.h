@@ -118,6 +118,8 @@ protected:
 
 	virtual void CreateAndAddWidgets();
 
+	void TryCreateAndAddWidget(TSubclassOf<UUserWidget> WidgetClass, UUserWidget* & Widget, ESlateVisibility Visbility);
+
 	ASpacePlayerController* GetSpacePlayerController() const { return SpacePlayerController; }
 	ESlateVisibility GetWidgetOppositeVisibilityState(UUserWidget* Widget) const;
 	void ToggleCursorVisibility(bool bInputUIOnly);

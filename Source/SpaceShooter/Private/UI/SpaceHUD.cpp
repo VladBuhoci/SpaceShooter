@@ -104,9 +104,6 @@ void ASpaceHUD::ToggleLevelEndStatsMenuInterface(UUserWidget* LevelEndStatsWidge
 		LevelEndStatsWidget->SetVisibility(NewVisiblityState);
 
 		ToggleCursorVisibility(true);
-
-		// Also stop time.
-		UGameplayStatics::SetGamePaused(GetWorld(), true);
 	}
 }
 
@@ -115,45 +112,23 @@ void ASpaceHUD::CreateAndAddWidgets()
 	if (!SpacePlayerController)
 		return;
 
-	if (AllInOneGameHUDWidgetType)
-	{
-		AllInOneGameHUDWidget = CreateWidget<UUserWidget>(SpacePlayerController, AllInOneGameHUDWidgetType);
-		if (AllInOneGameHUDWidget)
-		{
-			AllInOneGameHUDWidget->AddToViewport();
-			AllInOneGameHUDWidget->SetVisibility(ESlateVisibility::Visible);
+	SpacePlayerController->SetInputMode(FInputModeGameOnly());
+	
+	TryCreateAndAddWidget(AllInOneGameHUDWidgetType, AllInOneGameHUDWidget, ESlateVisibility::Visible);
+	TryCreateAndAddWidget(InventoryWidgetType, InventoryWidget, ESlateVisibility::Collapsed);
+	TryCreateAndAddWidget(InGamePauseMenuWidgetType, InGamePauseMenuWidget, ESlateVisibility::Collapsed);
+	TryCreateAndAddWidget(GameEndStatsMenuWidgetType, GameEndStatsMenuWidget, ESlateVisibility::Collapsed);
+}
 
-			SpacePlayerController->SetInputMode(FInputModeGameOnly());
-		}
-	}
-
-	if (InventoryWidgetType)
+void ASpaceHUD::TryCreateAndAddWidget(TSubclassOf<UUserWidget> WidgetClass, UUserWidget* & Widget, ESlateVisibility Visbility)
+{
+	if (WidgetClass)
 	{
-		InventoryWidget = CreateWidget<UUserWidget>(SpacePlayerController, InventoryWidgetType);
-		if (InventoryWidget)
+		Widget = CreateWidget<UUserWidget>(SpacePlayerController, WidgetClass);
+		if (Widget)
 		{
-			InventoryWidget->AddToViewport(100);
-			InventoryWidget->SetVisibility(ESlateVisibility::Collapsed);
-		}
-	}
-
-	if (InGamePauseMenuWidgetType)
-	{
-		InGamePauseMenuWidget = CreateWidget<UUserWidget>(SpacePlayerController, InGamePauseMenuWidgetType);
-		if (InGamePauseMenuWidget)
-		{
-			InGamePauseMenuWidget->AddToViewport(101);
-			InGamePauseMenuWidget->SetVisibility(ESlateVisibility::Collapsed);
-		}
-	}
-
-	if (GameEndStatsMenuWidgetType)
-	{
-		GameEndStatsMenuWidget = CreateWidget<UUserWidget>(SpacePlayerController, GameEndStatsMenuWidgetType);
-		if (GameEndStatsMenuWidget)
-		{
-			GameEndStatsMenuWidget->AddToViewport(102);
-			GameEndStatsMenuWidget->SetVisibility(ESlateVisibility::Collapsed);
+			Widget->AddToViewport();
+			Widget->SetVisibility(Visbility);
 		}
 	}
 }

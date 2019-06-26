@@ -19,9 +19,17 @@ class SPACESHOOTER_API ACampaignHUD : public ASpaceHUD
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Space HUD | Campaign HUD", Meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UUserWidget> ChapterEndStatsMenuWidgetType;
 
+	/** Type of in-game chapter goal widget to spawn at level start. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space HUD | Campaign HUD", Meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UUserWidget> ChapterGoalWidgetType;
+
 	/** Pointer to the in-game chapter statistics menu widget object. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space HUD | Campaign HUD", Meta = (AllowPrivateAccess = "true"))
 	UUserWidget* ChapterEndStatsMenuWidget;
+
+	/** Pointer to the in-game chapter goal widget object. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space HUD | Campaign HUD", Meta = (AllowPrivateAccess = "true"))
+	UUserWidget* GoalWidget;
 
 public:
 	/** Sets default values. */
@@ -33,4 +41,6 @@ protected:
 public:
 	UFUNCTION(BlueprintCallable, Category = "Space HUD | Campaign HUD")
 	void ToggleChapterEndStatsMenuInterface();
+
+	void SetGoalWidget(TSubclassOf<UUserWidget> GoalWidgetClass);
 };

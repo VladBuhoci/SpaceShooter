@@ -349,6 +349,18 @@
     <ClInclude Include="..\..\Source\SpaceShooter\Public\Globals\SpaceGameInstance.h">
       <Filter>Source\SpaceShooter\Public\Globals</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Listeners\GoalListener.h">
+      <Filter>Source\SpaceShooter\Public\Listeners</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\GameModes\Gameplay\DestroyEveryoneGoalDescription.h">
+      <Filter>Source\SpaceShooter\Public\GameModes\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\GameModes\Gameplay\GoalDescription.h">
+      <Filter>Source\SpaceShooter\Public\GameModes\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\GameModes\Gameplay\GameplaySpecification.h">
+      <Filter>Source\SpaceShooter\Public\GameModes\Gameplay</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source\SpaceShooter\Private\Globals">
@@ -356,6 +368,9 @@
     </Filter>
     <Filter Include="Source\SpaceShooter\Public\GameModes\Gameplay">
       <UniqueIdentifier>{4cc11531-1d76-4ad5-b7ef-756a8e83cb75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\SpaceShooter\Private\GameModes\Gameplay">
+      <UniqueIdentifier>{7e4428d5-229f-492d-8867-aeacddfb7002}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -370,6 +385,15 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\SpaceShooter\Private\Globals\SpaceGameInstance.cpp">
       <Filter>Source\SpaceShooter\Private\Globals</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Listeners\GoalListener.cpp">
+      <Filter>Source\SpaceShooter\Private\Listeners</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\GameModes\Gameplay\GoalDescription.cpp">
+      <Filter>Source\SpaceShooter\Private\GameModes\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\GameModes\Gameplay\DestroyEveryoneGoalDescription.cpp">
+      <Filter>Source\SpaceShooter\Private\GameModes\Gameplay</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

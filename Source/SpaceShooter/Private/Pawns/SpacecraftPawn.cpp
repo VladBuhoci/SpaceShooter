@@ -451,12 +451,13 @@ float ASpacecraftPawn::TakeDamage(float Damage, FDamageEvent const& DamageEvent,
 
 	if (CurrentHitPoints <= 0.0f)
 	{
-		// TODO: later on, this should be changed to something else to support more weapons.
 		EndFiringWeapon();
 
 		// Disable shield recharging and put down the shield completely.
 		StopShieldRechargeProcess();
 		CurrentShieldPoints = 0;
+
+		GetWorldTimerManager().ClearAllTimersForObject(this);
 
 		DestroySpacecraft();
 	}
