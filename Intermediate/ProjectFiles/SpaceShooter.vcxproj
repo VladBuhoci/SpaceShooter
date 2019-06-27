@@ -267,6 +267,8 @@
     <ClCompile Include="..\..\Source\SpaceShooter\Private\Globals\SpaceGameInstance.cpp" />
     <ClCompile Include="..\..\Source\SpaceShooter\Private\Globals\SpaceUtilsLibrary.cpp" />
     <ClCompile Include="..\..\Source\SpaceShooter\Private\Listeners\GoalListener.cpp" />
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Projectiles\BasicProjectile.cpp" />
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Projectiles\ExplosiveProjectile.cpp" />
     <ClCompile Include="..\..\Source\SpaceShooter\Private\UI\CampaignHUD.cpp" />
     <ClCompile Include="..\..\Source\SpaceShooter\SpaceShooter.cpp" />
     <ClInclude Include="..\..\Source\SpaceShooter\Public\GameModes\CampaignGameMode.h" />
@@ -279,13 +281,15 @@
     <ClInclude Include="..\..\Source\SpaceShooter\Public\Globals\SpaceStructs.h" />
     <ClInclude Include="..\..\Source\SpaceShooter\Public\Globals\SpaceUtilsLibrary.h" />
     <ClInclude Include="..\..\Source\SpaceShooter\Public\Listeners\GoalListener.h" />
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Projectiles\BasicProjectile.h" />
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Projectiles\ExplosiveProjectile.h" />
     <ClInclude Include="..\..\Source\SpaceShooter\Public\UI\CampaignHUD.h" />
     <ClInclude Include="..\..\Source\SpaceShooter\SpaceShooter.h" />
     <ClCompile Include="..\..\Source\SpaceShooter\Private\Components\XYOnlyPhysicsConstraintComponent.cpp" />
     <ClCompile Include="..\..\Source\SpaceShooter\Private\Controllers\SpaceEnemyController.cpp" />
     <ClCompile Include="..\..\Source\SpaceShooter\Private\Controllers\SpacePlayerController.cpp" />
     <ClCompile Include="..\..\Source\SpaceShooter\Private\Effects\SpacecraftDestructionCameraShake.cpp" />
-    <ClCompile Include="..\..\Source\SpaceShooter\Private\Effects\SpacecraftExplosion.cpp" />
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Effects\Explosion.cpp" />
     <ClCompile Include="..\..\Source\SpaceShooter\Private\Effects\SpacecraftTurboModeCameraShake.cpp" />
     <ClCompile Include="..\..\Source\SpaceShooter\Private\GameModes\MainMenuGameMode.cpp" />
     <ClCompile Include="..\..\Source\SpaceShooter\Private\GameModes\SpaceGameMode.cpp" />
@@ -318,7 +322,7 @@
     <ClInclude Include="..\..\Source\SpaceShooter\Public\Controllers\SpaceEnemyController.h" />
     <ClInclude Include="..\..\Source\SpaceShooter\Public\Controllers\SpacePlayerController.h" />
     <ClInclude Include="..\..\Source\SpaceShooter\Public\Effects\SpacecraftDestructionCameraShake.h" />
-    <ClInclude Include="..\..\Source\SpaceShooter\Public\Effects\SpacecraftExplosion.h" />
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Effects\Explosion.h" />
     <ClInclude Include="..\..\Source\SpaceShooter\Public\Effects\SpacecraftTurboModeCameraShake.h" />
     <ClInclude Include="..\..\Source\SpaceShooter\Public\GameModes\MainMenuGameMode.h" />
     <ClInclude Include="..\..\Source\SpaceShooter\Public\GameModes\SpaceGameMode.h" />

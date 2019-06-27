@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "SpacecraftExplosion.generated.h"
+#include "Explosion.generated.h"
 
 // Forward declarations.
 class URadialForceComponent;
@@ -13,34 +13,35 @@ class URadialForceComponent;
 /**
  * Class that handles explosion effects such as particles, sounds and radial forces used to push physics-enabled objects.
  */
-UCLASS()
-class SPACESHOOTER_API ASpacecraftExplosion : public AActor
+UCLASS(Blueprintable)
+class SPACESHOOTER_API AExplosion : public AActor
 {
 	GENERATED_BODY()
 
 	/** Particle system which is spawned to represent the explosion, visually. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft Explosion", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Explosion", Meta = (AllowPrivateAccess = "true"))
 	UParticleSystem* ExplosionParticleEffect;
 
 	/** Sound of the explosion. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft Explosion", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Explosion", Meta = (AllowPrivateAccess = "true"))
 	USoundBase* ExplosionSound;
 
 	/**
 	 * Simulated radial force of the explosion.
 	 * Useful for pushing items with physics enabled (like loot chests) in random directions.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft Explosion", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Explosion", Meta = (AllowPrivateAccess = "true"))
 	URadialForceComponent* ExplosionRadialForceComponent;
 	
 public:	
 	/** Sets default values. */
-	ASpacecraftExplosion();
+	AExplosion();
 
 protected:
-	/** Called when the game starts or when spawned. */
-	virtual void BeginPlay() override;
+	/** Called after things like sounds or particle systems have been activated. */
+	virtual void OnAfterEffects() {}
 
-private:
+public:
+	/** Activates sounds, particle systems and pushing forces to simulate an explosion. */
 	void PlayEffects();
 };

@@ -62,9 +62,6 @@
     <ClCompile Include="..\..\Source\SpaceShooter\Private\Effects\SpacecraftDestructionCameraShake.cpp">
       <Filter>Source\SpaceShooter\Private\Effects</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\SpaceShooter\Private\Effects\SpacecraftExplosion.cpp">
-      <Filter>Source\SpaceShooter\Private\Effects</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\SpaceShooter\Private\Effects\SpacecraftTurboModeCameraShake.cpp">
       <Filter>Source\SpaceShooter\Private\Effects</Filter>
     </ClCompile>
@@ -198,9 +195,6 @@
       <UniqueIdentifier>{02263EA8-684B-4FAE-8FCB-624F3D2EC653}</UniqueIdentifier>
     </Filter>
     <ClInclude Include="..\..\Source\SpaceShooter\Public\Effects\SpacecraftDestructionCameraShake.h">
-      <Filter>Source\SpaceShooter\Public\Effects</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\SpaceShooter\Public\Effects\SpacecraftExplosion.h">
       <Filter>Source\SpaceShooter\Public\Effects</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\SpaceShooter\Public\Effects\SpacecraftTurboModeCameraShake.h">
@@ -361,6 +355,15 @@
     <ClInclude Include="..\..\Source\SpaceShooter\Public\GameModes\Gameplay\GameplaySpecification.h">
       <Filter>Source\SpaceShooter\Public\GameModes\Gameplay</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Effects\Explosion.h">
+      <Filter>Source\SpaceShooter\Public\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Projectiles\BasicProjectile.h">
+      <Filter>Source\SpaceShooter\Public\Projectiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Projectiles\ExplosiveProjectile.h">
+      <Filter>Source\SpaceShooter\Public\Projectiles</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source\SpaceShooter\Private\Globals">
@@ -394,6 +397,15 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\SpaceShooter\Private\GameModes\Gameplay\DestroyEveryoneGoalDescription.cpp">
       <Filter>Source\SpaceShooter\Private\GameModes\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Effects\Explosion.cpp">
+      <Filter>Source\SpaceShooter\Private\Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Projectiles\BasicProjectile.cpp">
+      <Filter>Source\SpaceShooter\Private\Projectiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Projectiles\ExplosiveProjectile.cpp">
+      <Filter>Source\SpaceShooter\Private\Projectiles</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

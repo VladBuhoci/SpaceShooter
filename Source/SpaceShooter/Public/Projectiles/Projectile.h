@@ -19,6 +19,15 @@ class SPACESHOOTER_API AProjectile : public AActor
 {
 	GENERATED_BODY()
 
+protected:
+	/** Base damage dealt by this projectile. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile", Meta = (AllowPrivateAccess = "true"))
+	int32 Damage;
+	
+	/** The owner of this projectile (spacecraft that shot it). */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile", Meta = (AllowPrivateAccess = "true"))
+	ASpacecraftPawn* ProjectileOwner;
+	
 private:
 	/** Mesh component of this projectile. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile", Meta = (AllowPrivateAccess = "true"))
@@ -36,18 +45,10 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Projectile", Meta = (AllowPrivateAccess = "true"))
 	UParticleSystem* ImpactParticleEffect;
 
-	/** The owner of this projectile (spacecraft that shot it). */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile", Meta = (AllowPrivateAccess = "true"))
-	ASpacecraftPawn* ProjectileOwner;
-	
-	/** Damage dealt by this projectile. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile", Meta = (AllowPrivateAccess = "true"))
-	float Damage;
-
 	/** Sound played when this projectile hits a surface. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Projectile", Meta = (AllowPrivateAccess = "true"))
 	USoundBase* ImpactSound;
-	
+
 public:
 	/** Sets default values for this actor's properties. */
 	AProjectile();
@@ -71,27 +72,30 @@ protected:
 	void ExecuteOnProjectileBeginOverlap               (UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	void ExecuteOnProjectileBeginOverlap_Implementation(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	/** Applies damage to a certain actor or actors. */
+	virtual void ApplyDamage(ASpacecraftPawn* HitPawn) {}
+
 private:
 	/** Triggers a few effects (sounds, particles) and then destroys the projectile. */
 	void DestroyProjectile();
 
 
 	/**********************************
-				GETTERS
+				 GETTERS
 	**********************************/
 
 public:
-	/** Gets the mesh component of this projectile. */
-	UFUNCTION(BlueprintPure, Category = "Projectile")
-	UStaticMeshComponent* GetMesh()	const { return MeshComponent; }
-
 	/** Gets the current damage value of this projectile. */
 	UFUNCTION(BlueprintPure, Category = "Projectile")
-	float GetDamage() const { return Damage; }
+	int32 GetDamage() const { return Damage; }
 
 	/** Gets the type of owner that fired this projectile. */
 	UFUNCTION(BlueprintPure, Category = "Projectile")
 	ASpacecraftPawn* GetProjectileOwner() const { return ProjectileOwner; }
+
+	/** Gets the mesh component of this projectile. */
+	UFUNCTION(BlueprintPure, Category = "Projectile")
+	UStaticMeshComponent* GetMesh()	const { return MeshComponent; }
 
 	/** Gets the projectile movement component of this projectile. */
 	UFUNCTION(BlueprintPure, Category = "Projectile")
@@ -99,13 +103,13 @@ public:
 	
 
 	/**********************************
-				SETTERS
+				 SETTERS
 	**********************************/
 
 public:
 	/** Sets a new value for the damage of this projectile. */
 	UFUNCTION(BlueprintCallable, Category = "Projectile")
-	void SetDamage(float NewValue) { Damage = NewValue; }
+	void SetDamage(int32 NewValue) { Damage = NewValue; }
 
 	/** Sets a new owner type for this projectile. */
 	UFUNCTION(BlueprintCallable, Category = "Projectile")

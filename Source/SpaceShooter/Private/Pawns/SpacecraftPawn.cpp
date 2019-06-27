@@ -2,7 +2,7 @@
 
 #include "Pawns/SpacecraftPawn.h"
 #include "Components/XYOnlyPhysicsConstraintComponent.h"
-#include "Effects/SpacecraftExplosion.h"
+#include "Effects/Explosion.h"
 #include "Loot/Items/Weapon.h"
 #include "Projectiles/Projectile.h"
 #include "GameModes/SpaceGameMode.h"
@@ -510,7 +510,13 @@ void ASpacecraftPawn::PlayDestroyEffects()
 	{
 		if (ExplosionEffectsHandlerClass != NULL)
 		{
-			WorldPtr->SpawnActor<ASpacecraftExplosion>(ExplosionEffectsHandlerClass, GetActorLocation(), GetActorRotation());
+			AExplosion* DeathExplosion = WorldPtr->SpawnActor<AExplosion>(ExplosionEffectsHandlerClass,
+				GetActorLocation(), GetActorRotation());
+
+			if (DeathExplosion)
+			{
+				DeathExplosion->PlayEffects();
+			}
 		}
 	}
 }

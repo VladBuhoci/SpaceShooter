@@ -17,7 +17,7 @@ class UFloatingPawnMovement;
 class UParticleSystemComponent;
 
 class UXYOnlyPhysicsConstraintComponent;
-class ASpacecraftExplosion;
+class AExplosion;
 class AProjectile;
 class AWeapon;
 
@@ -159,7 +159,7 @@ protected:
 
 	/** Suit of effects played during this spacecraft's destruction. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spacecraft | Effects")
-	TSubclassOf<ASpacecraftExplosion> ExplosionEffectsHandlerClass;
+	TSubclassOf<AExplosion> ExplosionEffectsHandlerClass;
 
 
 	//////////////////////////////////////////////////////////////////////////

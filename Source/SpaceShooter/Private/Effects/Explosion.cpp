@@ -1,6 +1,6 @@
 // This application is the final year project (2018-2019) of a Computer Science student (me - Vlad Buhoci).
 
-#include "Effects/SpacecraftExplosion.h"
+#include "Effects/Explosion.h"
 
 #include "PhysicsEngine/RadialForceComponent.h"
 
@@ -11,7 +11,7 @@
 #include "Engine/World.h"
 
 
-ASpacecraftExplosion::ASpacecraftExplosion()
+AExplosion::AExplosion()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -27,15 +27,7 @@ ASpacecraftExplosion::ASpacecraftExplosion()
 	ExplosionRadialForceComponent->Falloff = ERadialImpulseFalloff::RIF_Linear;
 }
 
-void ASpacecraftExplosion::BeginPlay()
-{
-	Super::BeginPlay();
-
-	// Once spawned, the explosion effects need to be activated.
-	PlayEffects();
-}
-
-void ASpacecraftExplosion::PlayEffects()
+void AExplosion::PlayEffects()
 {
 	UWorld* WorldPtr = GetWorld();
 
@@ -55,5 +47,7 @@ void ASpacecraftExplosion::PlayEffects()
 
 		// Simulate the explosion's physical force to push physics based objects in different directions.
 		ExplosionRadialForceComponent->FireImpulse();
+
+		OnAfterEffects();
 	}
 }

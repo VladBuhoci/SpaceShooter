@@ -12,6 +12,8 @@
 
 #include "Kismet/GameplayStatics.h"
 
+#include "Engine/World.h"
+
 
 /** Sets default values. */
 AProjectile::AProjectile()
@@ -23,7 +25,7 @@ AProjectile::AProjectile()
 	RootComponent               = MeshComponent;
 	InitialLifeSpan             = 5.0f;
 
-	Damage                      = 0.0f;
+	Damage                      = 0;
 	
 	// MeshComponent setup:
 	MeshComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
@@ -102,10 +104,8 @@ void AProjectile::ExecuteOnProjectileBeginOverlap_Implementation(UPrimitiveCompo
 					//		but not before applying damage to it.
 					if (OtherSpacecraft->GetFaction() != this->ProjectileOwner->GetFaction())
 					{
-						// TODO:
-						UGameplayStatics::ApplyDamage(OtherActor, Damage, ProjectileOwner->GetController(), ProjectileOwner, UDamageType::StaticClass());
-
-						this->DestroyProjectile();
+						ApplyDamage(OtherSpacecraft);
+						DestroyProjectile();
 					}
 				}
 

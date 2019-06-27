@@ -176,7 +176,8 @@ void ASpaceHUD::ToggleGameTimeWidgetsVisibility(ESlateVisibility NewState)
 {
 	for (auto GameOnlyVisibleWidget : GameTimeWidgets)
 	{
-		GameOnlyVisibleWidget->SetVisibility(NewState);
+		if (GameOnlyVisibleWidget)
+			GameOnlyVisibleWidget->SetVisibility(NewState);
 	}
 }
 
