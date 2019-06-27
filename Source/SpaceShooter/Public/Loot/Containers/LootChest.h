@@ -192,6 +192,10 @@ protected:
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Loot Chest")
 	void OnGrabHighlightedItemBoxFromChest(int32 RemovedHighlightedItemBoxIndex, bool bRemoveItem);
 
+	/** Called when the chest has been cleared of all contained items, if it ever had any. */
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Loot Chest")
+	void OnChestEmptied();
+
 private:
 	void PresentChestIdentity();
 	void HideChestIdentity();

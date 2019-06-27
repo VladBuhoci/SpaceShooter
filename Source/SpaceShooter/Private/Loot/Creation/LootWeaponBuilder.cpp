@@ -76,7 +76,7 @@ AItem* ULootWeaponBuilder::Build(TSubclassOf<UItemBlueprint> ItemToBuildBlueprin
 void ULootWeaponBuilder::SetUpWeapon(AWeapon* Weapon, FWeaponAttributes & InitValues, UWeaponBlueprint* WeaponBP, FWeaponBarrel & Barrel, FWeaponBody & Body, FWeaponGrip & Grip)
 {
 	FText        ItemName = FText::Format(FText::FromString("{0}-{1} {2}"), Grip.WeaponNamePrefix, Body.WeaponNamePrefix, Barrel.WeaponNameBase);
-	UTexture2D*  Icon     = WeaponBP->GetItemIcon();
+	UTexture2D*  Icon     = InitValues.Icon;
 	UItemRarity* Rarity   = NewObject<UItemRarity>(this, WeaponBP->GetRarity());
 	EWeaponType  Type     = WeaponBP->GetType();
 	// ...

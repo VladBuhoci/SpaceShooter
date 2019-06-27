@@ -362,6 +362,7 @@ void ALootChest::OpenChest()
 			{
 				EndChestInspection();
 				SetLightIntensityLevel(LightIntensityLow);
+				OnChestEmptied();
 			}
 		}, AnimationLength, false);
 	}
@@ -412,6 +413,10 @@ void ALootChest::GrabItemBoxesFromChest(ILootItemReceiver* ReceivingPawn, TArray
 			if (!HasAnyItemBoxesLeft())
 			{
 				EndChestInspection();
+
+				// Give Blueprint implementations a chance to react to this.
+				OnChestEmptied();
+
 				SetLightIntensityLevel(LightIntensityHigh, LightIntensityLow);
 			}
 			else

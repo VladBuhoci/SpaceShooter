@@ -123,10 +123,10 @@ void AWeapon::ProvideAttributes(TArray<FItemAttribute_Text> & AttributesArrayToS
 	DECL_AND_DEF_ITEM_TEXT_ATTR_FROM_FLOAT_VAR(FireRateAsText, DescrOf(FireRate)           , WeaponAttributes.FireRate)
 	DECL_AND_DEF_ITEM_TEXT_ATTR_FROM_FLOAT_VAR(HeatAsText    , DescrOf(HeatProducedPerShot), WeaponAttributes.HeatProducedPerShot)
 
-	// Combine this with damage as such: ProjectilesPerShot X Damage.
+	// Combine ProjectilesPerShot and Damage properties as such: Damage X ProjectilesPerShot.
 	if (WeaponAttributes.ProjectilesPerShot > 1)
 	{
-		DamageAsText.Value = FText::FromString(FString::FromInt(WeaponAttributes.ProjectilesPerShot) + "x" + DamageAsText.Value.ToString());
+		DamageAsText.Value = FText::FromString(DamageAsText.Value.ToString() + " x" + FString::FromInt(WeaponAttributes.ProjectilesPerShot));
 	}
 
 	AttributesArrayToSupply.Add(DamageAsText);

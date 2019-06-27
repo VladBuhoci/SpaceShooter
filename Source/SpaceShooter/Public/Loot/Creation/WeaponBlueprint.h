@@ -9,9 +9,6 @@
 #include "SubclassOf.h"
 #include "WeaponBlueprint.generated.h"
 
-// Forward declarations.
-class UTexture2D;
-
 
 /**
  * Used by the LootWeaponBuilder class to instantiate Weapon objects.
@@ -22,10 +19,6 @@ class SPACESHOOTER_API UWeaponBlueprint : public UItemBlueprint
 	GENERATED_BODY()
 	
 private:
-	/** Icon of the weapon. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon Blueprint", Meta = (AllowPrivateAccess = "true"))
-	UTexture2D* Icon;
-
 	/** Rarity of the weapon to be spawned. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon Blueprint", Meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UItemRarity> Rarity;
@@ -36,7 +29,6 @@ private:
 
 public:
 	FText GetItemName() const { return FText::FromString("A Gun"); }
-	UTexture2D* GetItemIcon() const { return Icon; }
 	TSubclassOf<UItemRarity> GetRarity() const { return Rarity; }
 	EWeaponType GetType() const { return Type; }
 };

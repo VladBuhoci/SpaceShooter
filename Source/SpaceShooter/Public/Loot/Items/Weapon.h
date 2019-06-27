@@ -14,6 +14,7 @@ class AProjectile;
 class UWeaponPool;
 
 class UMaterialInterface;
+class UTexture2D;
 
 
 /**
@@ -23,6 +24,10 @@ USTRUCT(BlueprintType)
 struct FWeaponAttributes
 {
 	GENERATED_USTRUCT_BODY()
+
+	/** Icon of the weapon. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon", Meta = (AllowPrivateAccess = "true"))
+	UTexture2D* Icon;
 
 	/** Amount of damage one projectile can cause. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")

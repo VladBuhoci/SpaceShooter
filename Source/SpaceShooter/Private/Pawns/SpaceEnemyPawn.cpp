@@ -81,13 +81,17 @@ void ASpaceEnemyPawn::Tick(float DeltaTime)
 
 void ASpaceEnemyPawn::ExecuteOnObjectEnterDetectionArea_Implementation(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
+	// Don't lock on a new target if we already have one to attack.
+	if (Target != NULL)
+		return;
+
 	if (OtherActor != NULL && OtherActor != this)
 	{
 		ASpacecraftPawn* NewTarget = Cast<ASpacecraftPawn>(OtherActor);
 
 		// Acquire a target only if there isn't one at the moment.
 		// Target must be part of a different faction to be considered an enemy for this NPC pawn.
-		if (NewTarget && NewTarget->GetFaction() !=  this->GetFaction() && Target == NULL)
+		if (NewTarget && NewTarget->IsNotDestroyed() && NewTarget->GetFaction() !=  this->GetFaction())
 		{
 			OnNewEnemyFound(NewTarget);
 		}
