@@ -25,6 +25,7 @@ FLootDefinitionWrapper UItemPoolDefinition::GetRandomItemDefinition()
 	// 
 	// ==========================================================
 	// |Item 0 |    Item 1   |Item 2 |    Item 3    |  Item 4   |
+	// |-------|-------------|-------|--------------|-----------|
 	// |1  2  3|4  5  6  7  8|9 10 11|12 13 14 15 16|17 18 19 20|
 	// ==========================================================
 	// Let's say ticket #20 is chosen => Item 4 wins and we call GetRandomItem() on it.

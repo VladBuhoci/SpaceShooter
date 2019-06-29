@@ -77,7 +77,7 @@ void ASpaceGameMode::NotifySpacecraftDestroyed(ASpacecraftPawn* DestroyedSpacecr
 		{
 			OnEnemySpacecraftDestroyed(DestroyedSpacecraft);
 			
-			if (AllSpacecrafts.Num() == 1)
+			if (IsOnlyPlayerLeft())
 				OnSectorCleared();
 		}
 	}
@@ -113,6 +113,11 @@ void ASpaceGameMode::SupplyKnownSpacecraftsInWorld()
 	}
 }
 
+bool ASpaceGameMode::IsOnlyPlayerLeft() const
+{
+	return AllSpacecrafts.Num() == 1 && AllSpacecrafts[0]->GetClass()->IsChildOf<ASpacePlayerPawn>();
+}
+
 void ASpaceGameMode::SupplySpacecraftIfNeeded(ASpacecraftPawn* SpacecraftToSupply)
 {
 	if (!SpacecraftToSupply->HasAnyWeapons())
@@ -123,7 +128,8 @@ void ASpaceGameMode::SupplySpacecraftIfNeeded(ASpacecraftPawn* SpacecraftToSuppl
 	}
 }
 
-void ASpaceGameMode::SupplySpacecraftWithStartingWeapons(ASpacecraftPawn* SpacecraftToSupply, TArray<TSubclassOf<UItemBlueprint>> WeaponBlueprints)
+void ASpaceGameMode::SupplySpacecraftWithStartingWeapons(ASpacecraftPawn* SpacecraftToSupply,
+	const TArray<TSubclassOf<UWeaponBlueprint>> & WeaponBlueprints)
 {
 	if (SpacecraftToSupply == nullptr || WeaponBlueprints.Num() == 0)
 		return;
@@ -176,6 +182,45 @@ void ASpaceGameMode::CreateLootBuilders()
 			}
 		}
 	}
+}
+
+ASpaceEnemyPawn* ASpaceGameMode::SpawnSpacecraftNPC(TSubclassOf<ASpaceEnemyPawn> SpacecraftClass, bool bIsAggressive,
+	const FVector & Location, const FRotator & Rotation,
+	const TArray<TSubclassOf<UWeaponBlueprint>> & ReplacingStartingWeaponBlueprints)
+{
+	ASpaceEnemyPawn* SpawnedNPC = nullptr;
+
+	if (SpacecraftClass)
+	{
+		UWorld* WorldPtr = GetWorld();
+		if (WorldPtr)
+		{
+			FActorSpawnParameters SpawnParams;
+
+			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+			SpawnParams.Owner = this;
+
+			SpawnedNPC = WorldPtr->SpawnActor<ASpaceEnemyPawn>(SpacecraftClass, Location, Rotation, SpawnParams);
+
+			if (SpawnedNPC)
+			{
+				TArray<TSubclassOf<UWeaponBlueprint>> WeaponBPs = ReplacingStartingWeaponBlueprints.Num() > 0
+					? ReplacingStartingWeaponBlueprints
+					: SpawnedNPC->GetStartingWeaponBlueprintTypes();
+
+				SupplySpacecraftWithStartingWeapons(SpawnedNPC, WeaponBPs);
+
+				SpawnedNPC->SetIsAlwaysAggressive(bIsAggressive);
+			}
+		}
+	}
+
+	return SpawnedNPC;
+}
+
+ASpaceEnemyPawn* ASpaceGameMode::SpawnSpacecraftNPC_BP(TSubclassOf<ASpaceEnemyPawn> SpacecraftClass, bool bIsAggressive, const FVector & Location, const FRotator & Rotation, const TArray<TSubclassOf<UWeaponBlueprint>> & ReplacingStartingWeaponBlueprints)
+{
+	return SpawnSpacecraftNPC(SpacecraftClass, bIsAggressive, Location, Rotation, ReplacingStartingWeaponBlueprints);
 }
 
 ULootItemBuilder* ASpaceGameMode::GetLootBuilder(TSubclassOf<ULootItemBuilder> Type) const

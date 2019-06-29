@@ -233,16 +233,25 @@ void ASpacePlayerController::OnPlayerRespawned()
 void ASpacePlayerController::TogglePawnPossession()
 {
 	if (PossessedSpacePawn)
+		DisablePawnPossession();
+	else
+		EnablePawnPossession();
+}
+
+void ASpacePlayerController::DisablePawnPossession()
+{
+	if (PossessedSpacePawn)
 	{
 		PossessedSpacePawn->EndFiringWeapon();
 		PossessedSpacePawn->DeactivateTurboMode();
 
 		PossessedSpacePawn = nullptr;
 	}
-	else
-	{
-		PossessedSpacePawn = PlayerSpacePawnToPossessAux;
-	}
+}
+
+void ASpacePlayerController::EnablePawnPossession()
+{
+	PossessedSpacePawn = PlayerSpacePawnToPossessAux;
 }
 
 void ASpacePlayerController::Interact()

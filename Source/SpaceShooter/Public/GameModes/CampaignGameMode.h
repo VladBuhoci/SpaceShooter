@@ -10,7 +10,12 @@
 
 // Forward declarations.
 class UGoalDescription;
+class USpaceGameInstance;
+class ACampaignHUD;
+class ASpacePlayerPawn;
+
 class UUserWidget;
+class UNavigationSystem;
 
 
 /**
@@ -22,8 +27,10 @@ class SPACESHOOTER_API ACampaignGameMode : public ASpaceGameMode, public IGoalLi
 {
 	GENERATED_BODY()
 
-	class USpaceGameInstance* SpaceGameInstance;
-	class ACampaignHUD* CampaignHUD;
+	USpaceGameInstance* SpaceGameInstance;
+	ACampaignHUD* CampaignHUD;
+	UNavigationSystem* NavSystem;
+	ASpacePlayerPawn* PlayerPawn;
 
 	/** Time (in seconds) until the end level stats widget appears. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Space Game Mode | Campaign Game Mode", Meta = (AllowPrivateAccess = "true"))
@@ -40,6 +47,8 @@ class SPACESHOOTER_API ACampaignGameMode : public ASpaceGameMode, public IGoalLi
 	/** Total number of enemies to be spawned in the level (excludes already-placed enemies). */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Game Mode | Campaign Game Mode", Meta = (AllowPrivateAccess = "true"))
 	int32 EnemiesToSpawnTotal;
+
+	FTimerHandle EnemyWaveSpawnTimerHandle;
 
 public:
 	/** Sets default values. */
@@ -73,7 +82,20 @@ public:
 	virtual void NotifyGoalCompleted_Implementation() override;
 
 private:
+	void RetrieveChapterGoal();
 	void OnChapterObjectiveDone();
+
+protected:
+	UFUNCTION(BlueprintCallable, Category = "Space Game Mode | Campaign Game Mode")
+	void CancelUpcomingEnemyWave();
+
+	UFUNCTION(BlueprintCallable, Category = "Space Game Mode | Campaign Game Mode")
+	void ScheduleNewEnemyWave(bool bAggressiveGroup);
+
+private:
+	void SpawnEnemyWave(bool bAggressiveGroup);
+	void DetermineNPCRandomSpawnLocation(const FVector & Origin, float Radius, float MinDistanceToOrigin,
+		FVector & Location);
 
 
 	/**********************************

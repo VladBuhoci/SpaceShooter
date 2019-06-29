@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Loot/Creation/WeaponBlueprint.h"
+#include "Globals/SpaceStructs.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
@@ -10,6 +11,7 @@
 
 // Forward declarations.
 class ASpacecraftPawn;
+class ASpaceEnemyPawn;
 class UWeaponPool;
 class ULootItemBuilder;
 
@@ -21,11 +23,13 @@ UCLASS()
 class SPACESHOOTER_API ASpaceGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
-	
+
+protected:
 	/** Contains every spacecraft currently spawned in the world. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Game Mode", Meta = (AllowPrivateAccess = "true"))
 	TArray<ASpacecraftPawn*> AllSpacecrafts;
 
+private:
 	/** Type of weapon loot pool to create at map load. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Space Game Mode", Meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UWeaponPool> WeaponPoolClass;
@@ -40,7 +44,7 @@ class SPACESHOOTER_API ASpaceGameMode : public AGameModeBase
 
 	/**
 	 * Map of item builders. Since the game mode reference is available from nearly anywhere,
-			it makes this map easy to access.
+	 *	it makes this map easy to access.
 	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Game Mode", Meta = (AllowPrivateAccess = "true"))
 	TMap<TSubclassOf<ULootItemBuilder>, ULootItemBuilder*> LootItemBuilders;
@@ -69,11 +73,23 @@ protected:
 	void FindAllSpacecraftsInWorld();
 	void SupplyKnownSpacecraftsInWorld();
 
+	bool IsOnlyPlayerLeft() const;
+
 	void SupplySpacecraftIfNeeded(ASpacecraftPawn* SpacecraftToSupply);
-	void SupplySpacecraftWithStartingWeapons(ASpacecraftPawn* SpacecraftToSupply, TArray<TSubclassOf<UItemBlueprint>> WeaponBlueprints);
+	void SupplySpacecraftWithStartingWeapons(ASpacecraftPawn* SpacecraftToSupply,
+		const TArray<TSubclassOf<UWeaponBlueprint>> & WeaponBlueprints);
 
 	void CreateGlobalWeaponPool();
 	void CreateLootBuilders();
+
+	ASpaceEnemyPawn* SpawnSpacecraftNPC(TSubclassOf<ASpaceEnemyPawn> SpacecraftClass, bool bIsAggressive,
+		const FVector & Location = FVector::ZeroVector, const FRotator & Rotation = FRotator::ZeroRotator,
+		const TArray<TSubclassOf<UWeaponBlueprint>> & ReplacingStartingWeaponBlueprints = TArray<TSubclassOf<UWeaponBlueprint>>());
+
+	UFUNCTION(BlueprintCallable, Category = "Space Game Mode", Meta = (DisplayName = "Spawn Spacecraft NPC"))
+	ASpaceEnemyPawn* SpawnSpacecraftNPC_BP(TSubclassOf<ASpaceEnemyPawn> SpacecraftClass, bool bIsAggressive,
+		const FVector & Location, const FRotator & Rotation,
+		const TArray<TSubclassOf<UWeaponBlueprint>> & ReplacingStartingWeaponBlueprints);
 
 	/**********************************
 				 GETTERS
@@ -81,11 +97,11 @@ protected:
 
 public:
 	/** Returns a pointer to the loot pool containing all weapon parts, organized by rarities and weapon types. */
-	UFUNCTION(BlueprintPure, Category = "Loot Chest")
+	UFUNCTION(BlueprintPure, Category = "Space Game Mode")
 	UWeaponPool* GetGlobalWeaponPool() const { return WeaponPool; }
 
 	/** Given a type, returns the right loot item builder. */
-	UFUNCTION(BlueprintPure, Category = "Loot Chest")
+	UFUNCTION(BlueprintPure, Category = "Space Game Mode")
 	ULootItemBuilder* GetLootBuilder(TSubclassOf<ULootItemBuilder> Type) const;
 
 	/** Returns all spacecrafts found in the current world. */

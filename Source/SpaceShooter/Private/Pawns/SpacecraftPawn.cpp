@@ -782,9 +782,9 @@ void ASpacecraftPawn::SupplyWeapon(AWeapon* NewWeapon)
 	}
 }
 
-TArray<TSubclassOf<UItemBlueprint>> ASpacecraftPawn::GetStartingWeaponBlueprintTypes() const
+TArray<TSubclassOf<UWeaponBlueprint>> ASpacecraftPawn::GetStartingWeaponBlueprintTypes() const
 {
-	TArray<TSubclassOf<UItemBlueprint>> BPTypes;
+	TArray<TSubclassOf<UWeaponBlueprint>> BPTypes;
 
 	if (StartingWeapons.BP_1) BPTypes.Add(StartingWeapons.BP_1);
 	if (StartingWeapons.BP_2) BPTypes.Add(StartingWeapons.BP_2);

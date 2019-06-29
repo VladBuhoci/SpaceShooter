@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "Globals/SpaceStructs.h"
+
 #include "CoreMinimal.h"
 #include "GameplaySpecification.generated.h"
 
@@ -11,4 +13,8 @@ class SPACESHOOTER_API UGameplaySpecification : public UObject
 {
 	GENERATED_BODY()
 
+public:
+	/** Describes NPC spawning for a game mode. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Gameplay Specification")
+	FNpcSpawnRules NpcSpawnRules;
 };

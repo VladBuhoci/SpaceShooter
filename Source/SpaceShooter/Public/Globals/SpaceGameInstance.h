@@ -44,7 +44,7 @@ protected:
 		UGoalDescription* Goal, UCampaignMissionDescription* CampaignMissionToAddTo, UCampaignMissionDescription* & CampaignMission);
 
 	UFUNCTION(BlueprintCallable, Category = "Space Game Instance")
-	void CreateGoalOfTypeDestroyEveryone(TSubclassOf<UUserWidget> GoalWidgetType, int32 AmountOfEnemiesToKill,
+	void CreateGoalOfTypeDestroyEveryone(const FNpcSpawnRules & NpcSpawnRules, TSubclassOf<UUserWidget> GoalWidgetType,
 		UDestroyEveryoneGoalDescription* & GenocideGoal);
 
 

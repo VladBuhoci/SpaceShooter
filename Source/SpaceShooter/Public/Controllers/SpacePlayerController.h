@@ -94,6 +94,8 @@ public:
 	void OnPlayerRespawned();
 
 	void TogglePawnPossession();
+	void DisablePawnPossession();
+	void EnablePawnPossession();
 
 	/**********************************
 			  LOOT INTERFACE

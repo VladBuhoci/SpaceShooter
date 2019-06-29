@@ -13,9 +13,6 @@ class SPACESHOOTER_API UDestroyEveryoneGoalDescription : public UGoalDescription
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Goal Description")
-	int32 TotalEnemiesToKill;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Goal Description")
 	int32 CurrentKilledEnemiesCount;
 
 public:

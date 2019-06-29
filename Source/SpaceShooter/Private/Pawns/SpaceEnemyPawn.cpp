@@ -69,8 +69,9 @@ void ASpaceEnemyPawn::BeginPlay()
 {
 	Super::BeginPlay();
 
-	DetectionArea->SetSphereRadius(bAlwaysAggressive ? ComputeModifiedAreaRadius(DetectionAreaRadius, DetectionAreaRadiusModifier) : DetectionAreaRadius);
 	CloseQuartersArea->SetSphereRadius(CloseQuartersAreaRadius);
+
+	UpdateStateBasedOnAggressiveness();
 }
 
 void ASpaceEnemyPawn::Tick(float DeltaTime)
@@ -268,6 +269,15 @@ void ASpaceEnemyPawn::OnEnemyExitCombatArea()
 	}
 }
 
+void ASpaceEnemyPawn::UpdateStateBasedOnAggressiveness()
+{
+	float DeterminedDetectionRadius = bAlwaysAggressive
+		? ComputeModifiedAreaRadius(DetectionAreaRadius, DetectionAreaRadiusModifier)
+		: DetectionAreaRadius;
+
+	DetectionArea->SetSphereRadius(DeterminedDetectionRadius);
+}
+
 void ASpaceEnemyPawn::BeginFiringWeapon()
 {
 	if (Target)
@@ -310,9 +320,12 @@ void ASpaceEnemyPawn::SpawnLootChest(TSubclassOf<ALootChest> ChestTypeToSpawn)
 	UWorld* World = GetWorld();
 	if (World)
 	{
+		FActorSpawnParameters SpawnParams;
 		FTransform ChestTransform;
 		FVector    ChestLocation = GetActorLocation() + FMath::RandPointInBox(LootBoundingBox);
 		FRotator   ChestRotation = GetActorRotation();
+
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
 		// Spawn chest with a random rotation around the Z (up) axis.
 		ChestRotation.Yaw += FMath::RandRange(0.0f, 359.9f);
@@ -320,7 +333,7 @@ void ASpaceEnemyPawn::SpawnLootChest(TSubclassOf<ALootChest> ChestTypeToSpawn)
 		ChestTransform.SetLocation(ChestLocation);
 		ChestTransform.SetRotation(ChestRotation.Quaternion());
 
-		World->SpawnActor<ALootChest>(ChestTypeToSpawn, ChestTransform);
+		World->SpawnActor<ALootChest>(ChestTypeToSpawn, ChestTransform, SpawnParams);
 	}
 }
 

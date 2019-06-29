@@ -7,9 +7,9 @@ void UDestroyEveryoneGoalDescription::UpdateGoal(EGoalUpdateType UpdateType)
 {
 	if (UpdateType == EGoalUpdateType::EnemyDestroyed)
 	{
-		CurrentKilledEnemiesCount = FMath::Clamp(CurrentKilledEnemiesCount + 1, 0, TotalEnemiesToKill);
+		CurrentKilledEnemiesCount = FMath::Clamp(CurrentKilledEnemiesCount + 1, 0, NpcSpawnRules.TotalNPCsToBeSpawned);
 
-		if (CurrentKilledEnemiesCount == TotalEnemiesToKill)
+		if (CurrentKilledEnemiesCount == NpcSpawnRules.TotalNPCsToBeSpawned)
 			NotifyGoalListeners();
 	}
 }

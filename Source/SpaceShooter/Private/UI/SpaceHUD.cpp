@@ -62,7 +62,7 @@ void ASpaceHUD::ToggleInventoryInterface()
 {
 	if (InventoryWidget && !bShowingLevelEndStatsWidget && InGamePauseMenuWidget->GetVisibility() != ESlateVisibility::Visible)
 	{
-		// Disable controls of the player's spacecraft pawn.
+		// Disable/enable controls of the player's spacecraft pawn.
 		if (SpacePlayerController)
 		{
 			SpacePlayerController->TogglePawnPossession();
@@ -86,7 +86,7 @@ void ASpaceHUD::ToggleInGamePauseMenuInterface()
 {
 	if (InGamePauseMenuWidget && !bShowingLevelEndStatsWidget && InventoryWidget->GetVisibility() != ESlateVisibility::Visible)
 	{
-		// Disable controls of the player's spacecraft pawn.
+		// Disable/enable controls of the player's spacecraft pawn.
 		if (SpacePlayerController)
 		{
 			SpacePlayerController->TogglePawnPossession();
@@ -119,12 +119,6 @@ void ASpaceHUD::ToggleLevelEndStatsMenuInterface(UUserWidget* LevelEndStatsWidge
 	if (!bShowingLevelEndStatsWidget)
 	{
 		bShowingLevelEndStatsWidget = true;
-
-		// Disable controls of the player's spacecraft pawn.
-		if (SpacePlayerController)
-		{
-			SpacePlayerController->TogglePawnPossession();
-		}
 
 		ESlateVisibility NewVisiblityState = GetWidgetOppositeVisibilityState(LevelEndStatsWidget);
 

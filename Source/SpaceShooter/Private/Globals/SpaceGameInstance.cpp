@@ -42,15 +42,15 @@ void USpaceGameInstance::AddCampaignChapter(TSubclassOf<UCampaignChapterDescript
 	CampaignMission = CampaignMissionToAddTo;
 }
 
-void USpaceGameInstance::CreateGoalOfTypeDestroyEveryone(TSubclassOf<UUserWidget> GoalWidgetType, int32 AmountOfEnemiesToKill,
-	UDestroyEveryoneGoalDescription* & GenocideGoal)
+void USpaceGameInstance::CreateGoalOfTypeDestroyEveryone(const FNpcSpawnRules & NpcSpawnRules,
+	TSubclassOf<UUserWidget> GoalWidgetType, UDestroyEveryoneGoalDescription* & GenocideGoal)
 {
 	GenocideGoal = NewObject<UDestroyEveryoneGoalDescription>(this, FName(*("GenocideGoal_" + FString::FromInt(FMath::Rand()))));
 
 	if (GenocideGoal)
 	{
 		GenocideGoal->SetWidgetClass(GoalWidgetType);
-		GenocideGoal->TotalEnemiesToKill = AmountOfEnemiesToKill;
+		GenocideGoal->NpcSpawnRules = NpcSpawnRules;
 	}
 }
 

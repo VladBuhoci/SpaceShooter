@@ -176,6 +176,8 @@ private:
 	void OnEnemyEnterCombatArea();
 	void OnEnemyExitCombatArea();
 
+	void UpdateStateBasedOnAggressiveness();
+
 private:
 	/** Used to control the timer that takes care of the tiny HP/SP HUD visibility after taking damage. */
 	FTimerHandle ShowSurvivabilityWidgetOnDamageTakenTimerHandle;
@@ -215,12 +217,20 @@ private:
 
 
 	/**********************************
-				GETTERS
+				 GETTERS
 	**********************************/
 
 public:
 	bool IsAlwaysAggressive() const { return bAlwaysAggressive; }
 	TArray<ASpacecraftPawn*> GetAllSpacecraftsInDetectionArea(ESpacecraftFaction Factions = ESpacecraftFaction::Both);
+
+
+	/**********************************
+				 SETTERS
+	**********************************/
+
+public:
+	void SetIsAlwaysAggressive(bool bState) { bAlwaysAggressive = bState; UpdateStateBasedOnAggressiveness(); }
 
 
 	/**********************************

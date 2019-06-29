@@ -299,6 +299,9 @@ FVector ASpaceEnemyController::GetNewRandomLocationInNavMesh()
 
 void ASpaceEnemyController::LookForAndAttackEnemyInCloseProximity()
 {
+	if (!PossessedSpacePawn)
+		return;
+
 	// We don't search for a new target if we're already attacking one.
 	if (SpacecraftState == ESpacecraftState::Attacking)
 		return;
@@ -313,6 +316,9 @@ void ASpaceEnemyController::LookForAndAttackEnemyInCloseProximity()
 
 ASpacecraftPawn* ASpaceEnemyController::FindEnemyAroundThisPawn(bool bSearchEntireWorldForEnemies)
 {
+	if (!PossessedSpacePawn)
+		return nullptr;
+
 	ESpacecraftFaction OppositeFaction = PossessedSpacePawn->GetFaction() == ESpacecraftFaction::Human
 		? ESpacecraftFaction::Clone
 		: ESpacecraftFaction::Human;

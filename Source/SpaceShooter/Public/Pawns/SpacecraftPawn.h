@@ -413,9 +413,9 @@ public:
 	**********************************/
 
 public:
-	UStaticMeshComponent*				GetSpacecraftMeshComponent()	  const { return SpacecraftMeshComponent; }
-	ESpacecraftFaction					GetFaction()					  const { return Faction; }
-	TMap<EWeaponType, FAmmunitionStock> GetAmmoPools()					  const { return AmmoPools; }
-	bool								HasAnyWeapons()					  const { return PreparedWeapons.HasAnyWeapons(); }
-	TArray<TSubclassOf<UItemBlueprint>> GetStartingWeaponBlueprintTypes() const;
+	UStaticMeshComponent*				  GetSpacecraftMeshComponent()	    const { return SpacecraftMeshComponent; }
+	ESpacecraftFaction					  GetFaction()					    const { return Faction; }
+	TMap<EWeaponType, FAmmunitionStock>   GetAmmoPools()					const { return AmmoPools; }
+	bool								  HasAnyWeapons()					const { return PreparedWeapons.HasAnyWeapons(); }
+	TArray<TSubclassOf<UWeaponBlueprint>> GetStartingWeaponBlueprintTypes() const;
 };
