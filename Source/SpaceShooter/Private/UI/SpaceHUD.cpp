@@ -77,6 +77,8 @@ void ASpaceHUD::ToggleInventoryInterface()
 		InventoryWidget->SetVisibility(NewVisibilityState);
 		InGamePauseMenuWidget->SetVisibility(ESlateVisibility::Collapsed);
 
+		OnInventoryInterfaceVisibilityChanged(NewVisibilityState);
+
 		// Also start/stop time.
 		UGameplayStatics::SetGamePaused(GetWorld(), bGamePaused);
 	}

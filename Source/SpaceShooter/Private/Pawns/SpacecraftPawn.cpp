@@ -218,24 +218,26 @@ bool ASpacecraftPawn::IsCurrentlyFlying() const
 
 void ASpacecraftPawn::RotateSpacecraft(FRotator Rotator)
 {
-	FRotator previousRotation = SpacecraftMeshComponent->GetComponentRotation();
-	FRotator newRotation      = UKismetMathLibrary::RInterpTo(previousRotation, Rotator, FApp::GetDeltaTime(), SpacecraftTurnSpeed);
+	FRotator PreviousRotation = SpacecraftMeshComponent->GetComponentRotation();
+	FRotator NewRotation      = UKismetMathLibrary::RInterpTo(PreviousRotation, Rotator, FApp::GetDeltaTime(), SpacecraftTurnSpeed);
 	
 	// If the yaw happens to be negative, calculate the positive value it could have been instead (e.g.: for -40 it is 320).
-	previousRotation.Yaw = previousRotation.Yaw >= 0.0f ? previousRotation.Yaw : 360.0f + previousRotation.Yaw;
-	newRotation.Yaw      = newRotation.Yaw      >= 0.0f ? newRotation.Yaw      : 360.0f + newRotation.Yaw;
+	PreviousRotation.Yaw = PreviousRotation.Yaw >= 0.0f ? PreviousRotation.Yaw : 360.0f + PreviousRotation.Yaw;
+	NewRotation.Yaw      = NewRotation.Yaw      >= 0.0f ? NewRotation.Yaw      : 360.0f + NewRotation.Yaw;
 
-	if (UKismetMathLibrary::Round(previousRotation.Yaw) != UKismetMathLibrary::Round(newRotation.Yaw))
+	if (UKismetMathLibrary::Round(PreviousRotation.Yaw) != UKismetMathLibrary::Round(NewRotation.Yaw))
 	{
-		bool bRotateClockwise = UKismetMathLibrary::Abs(previousRotation.Yaw - newRotation.Yaw) <= 180.0f ? previousRotation.Yaw < newRotation.Yaw : previousRotation.Yaw > newRotation.Yaw;
+		bool bRotateClockwise = UKismetMathLibrary::Abs(PreviousRotation.Yaw - NewRotation.Yaw) <= 180.0f
+			? PreviousRotation.Yaw < NewRotation.Yaw
+			: PreviousRotation.Yaw > NewRotation.Yaw;
 
 		if (bRotateClockwise)
 		{
-			RotateSpacecraftClockwise(newRotation);
+			RotateSpacecraftClockwise(NewRotation);
 		}
 		else
 		{
-			RotateSpacecraftCounterclockwise(newRotation);
+			RotateSpacecraftCounterclockwise(NewRotation);
 		}
 	}
 	else
@@ -343,50 +345,82 @@ void ASpacecraftPawn::DestroyWeaponry()
 	DestructWeapon(PreparedWeapons.Slot_4);
 }
 
-AWeapon* ASpacecraftPawn::SetWeaponOnPreparedSlot_1(AWeapon* WeaponToAdd, FAttachmentTransformRules & AttachRules)
+AWeapon* ASpacecraftPawn::SetWeaponOnPreparedSlot_1(AWeapon* WeaponToAdd, FAttachmentTransformRules & AttachRules,
+	bool bEquipNewWeapon)
 {
 	AWeapon* PreviousWeaponSittingInSlot = PreparedWeapons.Slot_1;
 
 	PreparedWeapons.Slot_1 = WeaponToAdd;
-	PreparedWeapons.Slot_1->AttachToComponent(SpacecraftMeshComponent, AttachRules, TEXT("Weapon_AttachPoint_DEV"));
+	
+	if (PreparedWeapons.Slot_1)
+	{
+		PreparedWeapons.Slot_1->AttachToComponent(SpacecraftMeshComponent, AttachRules, TEXT("Weapon_AttachPoint_DEV"));
 
-	EquipWeaponFromSlot_1();
+		if (bEquipNewWeapon)
+		{
+			EquipWeaponFromSlot_1();
+		}
+	}
 
 	return PreviousWeaponSittingInSlot;
 }
 
-AWeapon* ASpacecraftPawn::SetWeaponOnPreparedSlot_2(AWeapon* WeaponToAdd, FAttachmentTransformRules & AttachRules)
+AWeapon* ASpacecraftPawn::SetWeaponOnPreparedSlot_2(AWeapon* WeaponToAdd, FAttachmentTransformRules & AttachRules,
+	bool bEquipNewWeapon)
 {
 	AWeapon* PreviousWeaponSittingInSlot = PreparedWeapons.Slot_2;
 
 	PreparedWeapons.Slot_2 = WeaponToAdd;
-	PreparedWeapons.Slot_2->AttachToComponent(SpacecraftMeshComponent, AttachRules, TEXT("Weapon_AttachPoint_DEV"));
+	
+	if (PreparedWeapons.Slot_2)
+	{
+		PreparedWeapons.Slot_2->AttachToComponent(SpacecraftMeshComponent, AttachRules, TEXT("Weapon_AttachPoint_DEV"));
 
-	EquipWeaponFromSlot_2();
+		if (bEquipNewWeapon)
+		{
+			EquipWeaponFromSlot_2();
+		}
+	}
 
 	return PreviousWeaponSittingInSlot;
 }
 
-AWeapon* ASpacecraftPawn::SetWeaponOnPreparedSlot_3(AWeapon* WeaponToAdd, FAttachmentTransformRules & AttachRules)
+AWeapon* ASpacecraftPawn::SetWeaponOnPreparedSlot_3(AWeapon* WeaponToAdd, FAttachmentTransformRules & AttachRules,
+	bool bEquipNewWeapon)
 {
 	AWeapon* PreviousWeaponSittingInSlot = PreparedWeapons.Slot_3;
 
 	PreparedWeapons.Slot_3 = WeaponToAdd;
-	PreparedWeapons.Slot_3->AttachToComponent(SpacecraftMeshComponent, AttachRules, TEXT("Weapon_AttachPoint_DEV"));
 
-	EquipWeaponFromSlot_3();
+	if (PreparedWeapons.Slot_3)
+	{
+		PreparedWeapons.Slot_3->AttachToComponent(SpacecraftMeshComponent, AttachRules, TEXT("Weapon_AttachPoint_DEV"));
+
+		if (bEquipNewWeapon)
+		{
+			EquipWeaponFromSlot_3();
+		}
+	}
 
 	return PreviousWeaponSittingInSlot;
 }
 
-AWeapon* ASpacecraftPawn::SetWeaponOnPreparedSlot_4(AWeapon* WeaponToAdd, FAttachmentTransformRules & AttachRules)
+AWeapon* ASpacecraftPawn::SetWeaponOnPreparedSlot_4(AWeapon* WeaponToAdd, FAttachmentTransformRules & AttachRules,
+	bool bEquipNewWeapon)
 {
 	AWeapon* PreviousWeaponSittingInSlot = PreparedWeapons.Slot_4;
 
 	PreparedWeapons.Slot_4 = WeaponToAdd;
-	PreparedWeapons.Slot_4->AttachToComponent(SpacecraftMeshComponent, AttachRules, TEXT("Weapon_AttachPoint_DEV"));
+	
+	if (PreparedWeapons.Slot_4)
+	{
+		PreparedWeapons.Slot_4->AttachToComponent(SpacecraftMeshComponent, AttachRules, TEXT("Weapon_AttachPoint_DEV"));
 
-	EquipWeaponFromSlot_4();
+		if (bEquipNewWeapon)
+		{
+			EquipWeaponFromSlot_4();
+		}
+	}
 
 	return PreviousWeaponSittingInSlot;
 }
@@ -407,7 +441,7 @@ AWeapon* ASpacecraftPawn::GetWeaponOnPreparedSlot(int32 SlotIndex) const
 	}
 }
 
-AWeapon* ASpacecraftPawn::SetWeaponOnPreparedSlot(AWeapon* WeaponToAdd, int32 SlotIndex)
+AWeapon* ASpacecraftPawn::SetWeaponOnPreparedSlot(AWeapon* WeaponToAdd, int32 SlotIndex, bool bEquipNewWeapon)
 {
 	if (SlotIndex < 1 || SlotIndex > 4)
 		return nullptr;
@@ -416,10 +450,10 @@ AWeapon* ASpacecraftPawn::SetWeaponOnPreparedSlot(AWeapon* WeaponToAdd, int32 Sl
 
 	switch (SlotIndex)
 	{
-	case 1: return SetWeaponOnPreparedSlot_1(WeaponToAdd, AttachRules);
-	case 2: return SetWeaponOnPreparedSlot_2(WeaponToAdd, AttachRules);
-	case 3: return SetWeaponOnPreparedSlot_3(WeaponToAdd, AttachRules);
-	case 4: return SetWeaponOnPreparedSlot_4(WeaponToAdd, AttachRules);
+	case 1: return SetWeaponOnPreparedSlot_1(WeaponToAdd, AttachRules, bEquipNewWeapon);
+	case 2: return SetWeaponOnPreparedSlot_2(WeaponToAdd, AttachRules, bEquipNewWeapon);
+	case 3: return SetWeaponOnPreparedSlot_3(WeaponToAdd, AttachRules, bEquipNewWeapon);
+	case 4: return SetWeaponOnPreparedSlot_4(WeaponToAdd, AttachRules, bEquipNewWeapon);
 
 	default: return nullptr;
 	}
@@ -601,22 +635,26 @@ void ASpacecraftPawn::EndFiringWeapon()
 
 void ASpacecraftPawn::EquipWeaponFromSlot_1()
 {
-	EquipWeapon(PreparedWeapons.Slot_1);
+	if (PreparedWeapons.Slot_1)
+		EquipWeapon(PreparedWeapons.Slot_1);
 }
 
 void ASpacecraftPawn::EquipWeaponFromSlot_2()
 {
-	EquipWeapon(PreparedWeapons.Slot_2);
+	if (PreparedWeapons.Slot_2)
+		EquipWeapon(PreparedWeapons.Slot_2);
 }
 
 void ASpacecraftPawn::EquipWeaponFromSlot_3()
 {
-	EquipWeapon(PreparedWeapons.Slot_3);
+	if (PreparedWeapons.Slot_3)
+		EquipWeapon(PreparedWeapons.Slot_3);
 }
 
 void ASpacecraftPawn::EquipWeaponFromSlot_4()
 {
-	EquipWeapon(PreparedWeapons.Slot_4);
+	if (PreparedWeapons.Slot_4)
+		EquipWeapon(PreparedWeapons.Slot_4);
 }
 
 void ASpacecraftPawn::EquipWeaponFromSlot(int32 SlotIndex)
@@ -647,6 +685,39 @@ void ASpacecraftPawn::EquipWeaponFromSlot_Random()
 	int32 WeaponIndex = GetRandomOccupiedWeaponSlotIndex();
 
 	EquipWeaponFromSlot(WeaponIndex);
+}
+
+void ASpacecraftPawn::RemoveWeaponFromSlot(int32 SlotIndex)
+{
+	if (SlotIndex < 1 || SlotIndex > 4)
+		return;
+
+	// Check if the weapon to be removed is the one we're currently using.
+
+	bool bWeaponToRemoveIsEquipped = EquippedWeapon == GetWeaponOnPreparedSlot(SlotIndex);
+	AWeapon* RemovedWeapon = nullptr;
+	
+	switch (SlotIndex)
+	{
+	case 1: RemovedWeapon = PreparedWeapons.Slot_1; PreparedWeapons.Slot_1 = nullptr; break;
+	case 2: RemovedWeapon = PreparedWeapons.Slot_2; PreparedWeapons.Slot_2 = nullptr; break;
+	case 3: RemovedWeapon = PreparedWeapons.Slot_3; PreparedWeapons.Slot_3 = nullptr; break;
+	case 4: RemovedWeapon = PreparedWeapons.Slot_4; PreparedWeapons.Slot_4 = nullptr; break;
+	}
+	
+	if (bWeaponToRemoveIsEquipped)
+	{
+		UnequipCurrentWeapon();
+
+		AWeapon* WeaponToReplaceRemovedOne = GetWeaponOnPreparedSlot(GetFirstOccupiedWeaponSlotIndex());
+
+		EquipWeapon(WeaponToReplaceRemovedOne);
+	}
+
+	if (RemovedWeapon)
+		RemovedWeapon->Destroy();
+
+	OnActiveWeaponSlotsStateChanged();
 }
 
 bool ASpacecraftPawn::IsSpaceAvailableForAnotherWeapon()
@@ -719,12 +790,14 @@ void ASpacecraftPawn::DestructWeapon(AWeapon* WeaponToDestroy)
 // TODO: slow down the process, add some visual effect?
 void ASpacecraftPawn::EquipWeapon(AWeapon* WeaponToEquip)
 {
+	UnequipCurrentWeapon();
+
 	if (WeaponToEquip != nullptr)
 	{
-		UnequipCurrentWeapon();
-
 		EquippedWeapon = WeaponToEquip;
 		EquippedWeapon->SetVisibility(true);
+
+		OnActiveWeaponSlotsStateChanged();
 	}
 }
 
@@ -777,8 +850,7 @@ void ASpacecraftPawn::SupplyWeapon(AWeapon* NewWeapon)
 	}
 	else
 	{
-		// TODO: add in inventory if there's space available.
-		// SetWeaponInInventorySlot(NewWeapon, FreeInventorySlotIndex);
+		AddItemToInventory(NewWeapon);
 	}
 }
 

@@ -20,9 +20,13 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Loot | Item Rarity")
 	FText RarityName;
 
-	/** Color of this rarity type. WIll be used to distinguish items in the game */
+	/** Color of this rarity type. It will be used to distinguish items in the game. */
 	UPROPERTY(EditDefaultsOnly, Category = "Loot | Item Rarity")
 	FColor RarityColour;
+
+	/** Grade of this rarity type. It will be used to sort items in an array. */
+	UPROPERTY(EditDefaultsOnly, Category = "Loot | Item Rarity")
+	int32 RarityGrade;
 
 public:
 	UFUNCTION(BlueprintPure, Category = "Loot | Item Rarity")
@@ -30,4 +34,7 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Loot | Item Rarity")
 	FColor GetRarityColour() const { return RarityColour; }
+
+	UFUNCTION(BlueprintPure, Category = "Loot | Item Rarity")
+	int32 GetRarityGrade() const { return RarityGrade; }
 };

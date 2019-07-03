@@ -66,6 +66,11 @@ class SPACESHOOTER_API ASpaceHUD : public AHUD
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Space HUD", Meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UUserWidget> GameEndStatsMenuWidgetType;
 
+	/** Array of widgets that should only be visible during game time and not when a pausing menu is opened. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space HUD", Meta = (AllowPrivateAccess = "true"))
+	TArray<UUserWidget*> GameTimeWidgets;
+
+protected:
 	/** Pointer to the all-in-one-hud widget object. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space HUD", Meta = (AllowPrivateAccess = "true"))
 	UUserWidget* AllInOneGameHUDWidget;
@@ -82,11 +87,6 @@ class SPACESHOOTER_API ASpaceHUD : public AHUD
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space HUD", Meta = (AllowPrivateAccess = "true"))
 	UUserWidget* GameEndStatsMenuWidget;
 
-	/** Array of widgets that should only be visible during game time and not when a pausing menu is opened. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space HUD", Meta = (AllowPrivateAccess = "true"))
-	TArray<UUserWidget*> GameTimeWidgets;
-
-protected:
 	bool bShowingLevelEndStatsWidget;
 
 public:
@@ -105,6 +105,15 @@ public:
 	void UpdateCrosshairIconPosition(float newPosX, float newPosY);
 
 	void SetCanDrawCrosshairIcon(bool NewState) { bCanDrawCrosshair = NewState; }
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Space HUD")
+	void OnPlayerSpacecraftActiveSlotsStateChanged();
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Space HUD")
+	void OnPlayerSpacecraftInventoryStateChanged();
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Space HUD")
+	void OnInventoryInterfaceVisibilityChanged(ESlateVisibility NewState);
 
 	UFUNCTION(BlueprintCallable, Category = "Space HUD")
 	void ToggleInventoryInterface();

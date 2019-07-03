@@ -19,7 +19,7 @@ class UParticleSystemComponent;
 class UXYOnlyPhysicsConstraintComponent;
 class AExplosion;
 class AProjectile;
-class AWeapon;
+class AItem;
 
 
 /**
@@ -351,10 +351,19 @@ public:
 	void EquipWeaponFromSlot_FirstValidIndex();
 	void EquipWeaponFromSlot_Random();
 
+	/**
+	 * Removes the weapon at the indicated slot, if the provided index is valid.
+	 * 
+	 * @param SlotIndex Valid values are between 1 and 4 inclusive.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Spacecraft | Weapons")
+	void RemoveWeaponFromSlot(int32 SlotIndex);
+
 protected:
 	/** Destructs the weapons attached to the spacecraft. */
 	virtual void DestroyWeaponry();
 
+	UFUNCTION(BlueprintPure, Category = "Spacecraft | Weapons")
 	AWeapon* GetWeaponOnPreparedSlot(int32 SlotIndex) const;
 
 	/**
@@ -362,7 +371,7 @@ protected:
 	 * Providing an incorrect index value (not between 1 and 4) has no effect.
 	 * @returns The previous weapon sitting there or null if the slot was empty.
 	 */
-	AWeapon* SetWeaponOnPreparedSlot(AWeapon* WeaponToAdd, int32 SlotIndex);
+	AWeapon* SetWeaponOnPreparedSlot(AWeapon* WeaponToAdd, int32 SlotIndex, bool bEquipNewWeapon = true);
 
 	/** Returns true if at least one weapon or inventory slot is empty. */
 	bool IsSpaceAvailableForAnotherWeapon();
@@ -377,10 +386,10 @@ protected:
 	int32 GetRandomOccupiedWeaponSlotIndex();
 
 private:
-	AWeapon* SetWeaponOnPreparedSlot_1(AWeapon* WeaponToAdd, FAttachmentTransformRules & AttachRules);
-	AWeapon* SetWeaponOnPreparedSlot_2(AWeapon* WeaponToAdd, FAttachmentTransformRules & AttachRules);
-	AWeapon* SetWeaponOnPreparedSlot_3(AWeapon* WeaponToAdd, FAttachmentTransformRules & AttachRules);
-	AWeapon* SetWeaponOnPreparedSlot_4(AWeapon* WeaponToAdd, FAttachmentTransformRules & AttachRules);
+	AWeapon* SetWeaponOnPreparedSlot_1(AWeapon* WeaponToAdd, FAttachmentTransformRules & AttachRules, bool bEquipNewWeapon);
+	AWeapon* SetWeaponOnPreparedSlot_2(AWeapon* WeaponToAdd, FAttachmentTransformRules & AttachRules, bool bEquipNewWeapon);
+	AWeapon* SetWeaponOnPreparedSlot_3(AWeapon* WeaponToAdd, FAttachmentTransformRules & AttachRules, bool bEquipNewWeapon);
+	AWeapon* SetWeaponOnPreparedSlot_4(AWeapon* WeaponToAdd, FAttachmentTransformRules & AttachRules, bool bEquipNewWeapon);
 	
 	/** Will trigger the firing of the equipped weapon held by this spacecraft. */
 	void FireWeapon_Internal();
@@ -390,7 +399,12 @@ private:
 
 	void DestructWeapon(AWeapon* WeaponToDestroy);
 	void EquipWeapon(AWeapon* WeaponToEquip);
+
+protected:
 	void UnequipCurrentWeapon();
+
+protected:
+	virtual void OnActiveWeaponSlotsStateChanged() {}
 
 
 	/**********************************
@@ -406,6 +420,9 @@ public:
 	
 	void SupplyAmmo(EWeaponType WeaponTypeAmmo, int32 AmmoAmountToAdd, int32 & AmmoAdded);
 	void SupplyWeapon(AWeapon* NewWeapon);
+
+protected:
+	virtual void AddItemToInventory(AItem* NewItem) {}
 
 
 	/**********************************

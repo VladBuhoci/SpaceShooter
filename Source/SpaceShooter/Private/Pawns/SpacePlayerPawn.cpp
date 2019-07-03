@@ -1,6 +1,7 @@
 // This application is the final year project (2018-2019) of a Computer Science student (me - Vlad Buhoci).
 
 #include "Pawns/SpacePlayerPawn.h"
+#include "Loot/Inventory.h"
 #include "Loot/Items/Weapon.h"
 #include "Loot/Items/AmmunitionPile.h"
 #include "Loot/Containers/LootChest.h"
@@ -37,13 +38,14 @@ ASpacePlayerPawn::ASpacePlayerPawn()
 	CameraComponent                            = CreateDefaultSubobject<UCameraComponent   >("Camera Component");
 	SpringArmComponent                         = CreateDefaultSubobject<USpringArmComponent>("Spring Arm Component");
 	LootChestQuickInteractArea                 = CreateDefaultSubobject<USphereComponent   >("Loot Chest Auto Interact Area");
-	
+	Inventory                                  = CreateDefaultSubobject<UInventory         >("Inventory");
+
 	MoveForwardMaxTurboSpeed                   = 2400.0f;
 	MoveForwardMaxSpeed                        = 1200.0f;
 	MoveBackwardSpeed                          = 900.0f;
-	MaxHitPoints                               = 100.0f;
-	MaxShieldPoints                            = 200.0f;
-	ShieldRechargeRate                         = 10.0f;
+	MaxHitPoints                               = 250.0f;
+	MaxShieldPoints                            = 500.0f;
+	ShieldRechargeRate                         = 50.0f;
 	ShieldRechargeDelay                        = 1.25f;
 	SpacecraftTurnSpeed                        = 10.0f;
 	SpringArmLength_SpeedFactor                = 0.25f;	// 25% of the spacecraft's velocity is used as base value for the spring arm's length.
@@ -56,6 +58,7 @@ ASpacePlayerPawn::ASpacePlayerPawn()
 	Name                                       = FText::FromString("Unnamed Player");
 	Faction                                    = ESpacecraftFaction::Human;
 	bCanInteract                               = true;
+	InventorySlotsCount                        = 26;
 
 	// CentralSceneComponent setup:
 	CentralSceneComponent->SetupAttachment(SpacecraftMeshComponent);
@@ -83,13 +86,15 @@ ASpacePlayerPawn::ASpacePlayerPawn()
 	LootChestQuickInteractArea->OnComponentBeginOverlap.AddDynamic(this, &ASpacePlayerPawn::OnLootChestEnterAutoInteractArea);
 	// ~ end of LootChestDetectionArea setup.
 
-	//////////////////////////////////////////////////////////////////////////
-
 	// Ammunition stocks:
 	AmmoPools.Add(EWeaponType::Blaster , FAmmunitionStock(128, 256));
 	AmmoPools.Add(EWeaponType::Cannon  , FAmmunitionStock(256, 512));
 	AmmoPools.Add(EWeaponType::Volley  , FAmmunitionStock( 64, 128));
 	AmmoPools.Add(EWeaponType::Launcher, FAmmunitionStock( 16,  32));
+
+	// Inventory setup:
+	Inventory->SetUpInventorySlots(InventorySlotsCount);
+	// ~ end of Inventory setup.
 }
 
 /** Called when the game starts or when spawned. */
@@ -97,6 +102,7 @@ void ASpacePlayerPawn::BeginPlay()
 {
 	Super::BeginPlay();
 
+	OnInventoryStateChanged();
 }
 
 /** Called every frame. */
@@ -239,6 +245,70 @@ void ASpacePlayerPawn::EndFiringWeapon()
 
 }
 
+void ASpacePlayerPawn::GetAllItemsFromInventory(TArray<AItem*> & Items)
+{
+	if (!Inventory)
+		return;
+
+	Inventory->GetAllItems(Items);
+}
+
+AItem* ASpacePlayerPawn::GetItemFromInventoryAt(int32 Index)
+{
+	return Inventory ? Inventory->GetItemAt(Index) : nullptr;
+}
+
+void ASpacePlayerPawn::SwapActiveWeaponWithActiveWeapon(int32 ActiveSlotIndex1, int32 ActiveSlotIndex2)
+{
+	if (ActiveSlotIndex1 < 1 || ActiveSlotIndex1 > 4 || ActiveSlotIndex2 < 1 || ActiveSlotIndex2 > 4)
+		return;
+
+	AWeapon* PreviousActiveWeapon1 = GetWeaponOnPreparedSlot(ActiveSlotIndex1);
+	AWeapon* PreviousActiveWeapon2 = GetWeaponOnPreparedSlot(ActiveSlotIndex2);
+	bool bWeapon1WasEquipped       = PreviousActiveWeapon1 == EquippedWeapon;
+	bool bWeapon2WasEquipped       = PreviousActiveWeapon2 == EquippedWeapon;
+	
+	if (bWeapon1WasEquipped || bWeapon2WasEquipped)
+		UnequipCurrentWeapon();
+
+	SetWeaponOnPreparedSlot(PreviousActiveWeapon2, ActiveSlotIndex1, bWeapon1WasEquipped);
+	SetWeaponOnPreparedSlot(PreviousActiveWeapon1, ActiveSlotIndex2, bWeapon2WasEquipped);
+
+	OnActiveWeaponSlotsStateChanged();
+}
+
+void ASpacePlayerPawn::SwapActiveWeaponWithInventoryWeapon(int32 ActiveSlotIndex, int32 InventorySlotIndex)
+{
+	if (ActiveSlotIndex < 1 || ActiveSlotIndex > 4 || InventorySlotIndex < 0 || InventorySlotIndex > InventorySlotsCount - 1)
+		return;
+
+	if (Inventory)
+	{
+		AWeapon* PreviousActiveWeapon  = GetWeaponOnPreparedSlot(ActiveSlotIndex);
+		AWeapon* PreviousInventWeapon  = Inventory->ReplaceItemAtIndex(InventorySlotIndex, PreviousActiveWeapon, true);
+		bool bWeaponToSpareWasEquipped = PreviousActiveWeapon == EquippedWeapon;
+
+		if (bWeaponToSpareWasEquipped)
+			UnequipCurrentWeapon();
+
+		SetWeaponOnPreparedSlot(PreviousInventWeapon, ActiveSlotIndex, bWeaponToSpareWasEquipped);
+
+		OnActiveWeaponSlotsStateChanged();
+		OnInventoryStateChanged();
+	}
+}
+
+void ASpacePlayerPawn::RemoveItemFromInventory(int32 SlotIndex)
+{
+	if (Inventory)
+	{
+		if (Inventory->RemoveItem(SlotIndex))
+		{
+			OnInventoryStateChanged();
+		}
+	}
+}
+
 bool ASpacePlayerPawn::IsSpaceAvailableOnSpacecraft()
 {
 	return IsSpaceAvailableForAnotherWeapon() || IsSpaceAvailableInInventory();
@@ -246,8 +316,44 @@ bool ASpacePlayerPawn::IsSpaceAvailableOnSpacecraft()
 
 bool ASpacePlayerPawn::IsSpaceAvailableInInventory()
 {
-	// TODO: add an inventory and implement this.
-	return false;
+	return Inventory ? !Inventory->IsFull() : false;
+}
+
+void ASpacePlayerPawn::AddItemToInventory(AItem* NewItem)
+{
+	if (Inventory)
+	{
+		if (Inventory->AddItem(NewItem, true))
+		{
+			OnInventoryStateChanged();
+		}
+	}
+}
+
+void ASpacePlayerPawn::OnActiveWeaponSlotsStateChanged()
+{
+	ASpacePlayerController* SpacePlayerController = Cast<ASpacePlayerController>(GetController());
+	if (SpacePlayerController)
+	{
+		ASpaceHUD* SpaceHUD = Cast<ASpaceHUD>(SpacePlayerController->GetHUD());
+		if (SpaceHUD)
+		{
+			SpaceHUD->OnPlayerSpacecraftActiveSlotsStateChanged();
+		}
+	}
+}
+
+void ASpacePlayerPawn::OnInventoryStateChanged()
+{
+	ASpacePlayerController* SpacePlayerController = Cast<ASpacePlayerController>(GetController());
+	if (SpacePlayerController)
+	{
+		ASpaceHUD* SpaceHUD = Cast<ASpaceHUD>(SpacePlayerController->GetHUD());
+		if (SpaceHUD)
+		{
+			SpaceHUD->OnPlayerSpacecraftInventoryStateChanged();
+		}
+	}
 }
 
 void ASpacePlayerPawn::Supply_Implementation(AItem* ItemToProvide, EItemTakingAction & ItemTakeAction)

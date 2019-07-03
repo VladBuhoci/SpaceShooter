@@ -267,6 +267,7 @@
     <ClCompile Include="..\..\Source\SpaceShooter\Private\Globals\SpaceGameInstance.cpp" />
     <ClCompile Include="..\..\Source\SpaceShooter\Private\Globals\SpaceUtilsLibrary.cpp" />
     <ClCompile Include="..\..\Source\SpaceShooter\Private\Listeners\GoalListener.cpp" />
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Loot\Inventory.cpp" />
     <ClCompile Include="..\..\Source\SpaceShooter\Private\Projectiles\BasicProjectile.cpp" />
     <ClCompile Include="..\..\Source\SpaceShooter\Private\Projectiles\ExplosiveProjectile.cpp" />
     <ClCompile Include="..\..\Source\SpaceShooter\Private\UI\CampaignHUD.cpp" />
@@ -281,6 +282,7 @@
     <ClInclude Include="..\..\Source\SpaceShooter\Public\Globals\SpaceStructs.h" />
     <ClInclude Include="..\..\Source\SpaceShooter\Public\Globals\SpaceUtilsLibrary.h" />
     <ClInclude Include="..\..\Source\SpaceShooter\Public\Listeners\GoalListener.h" />
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\Inventory.h" />
     <ClInclude Include="..\..\Source\SpaceShooter\Public\Projectiles\BasicProjectile.h" />
     <ClInclude Include="..\..\Source\SpaceShooter\Public\Projectiles\ExplosiveProjectile.h" />
     <ClInclude Include="..\..\Source\SpaceShooter\Public\UI\CampaignHUD.h" />

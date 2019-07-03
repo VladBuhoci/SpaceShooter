@@ -102,11 +102,11 @@ class SPACESHOOTER_API ALootChest : public AActor, public IMousePointerListener
 	UWidgetComponent* ChestOverviewWidgetComponent;
 
 	/** Array of the item boxes inside this loot chest. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Loot Chest", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Loot Chest", Meta = (AllowPrivateAccess = "true"))
 	TArray<AItemBox*> ContainedItemBoxes;
 
 	/** Index of the highlighted item box at the moment. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Loot Chest", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Loot Chest", Meta = (AllowPrivateAccess = "true"))
 	int32 CurrentlySelectedItemBoxIndex;
 
 public:

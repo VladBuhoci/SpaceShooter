@@ -16,6 +16,7 @@ class UParticleSystemComponent;
 
 class ALootChest;
 class AItemBox;
+class UInventory;
 
 
 /**
@@ -139,9 +140,48 @@ public:
 	/**********************************
 		    INVENTORY INTERFACE
 	**********************************/
+
+private:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Inventory", Meta = (AllowPrivateAccess = "true"))
+	UInventory* Inventory;
+
+protected:
+	int32 InventorySlotsCount;
+
+public:
+	UFUNCTION(BlueprintCallable, Category = "Spacecraft | Inventory")
+	void GetAllItemsFromInventory(TArray<AItem*> & Items);
+
+	UFUNCTION(BlueprintCallable, Category = "Spacecraft | Inventory")
+	AItem* GetItemFromInventoryAt(int32 Index);
+
+	/**
+	 * Swaps the two weapons.
+	 * NOTE: the ActiveSlotIndex 1 & 2 values should be between 1 and 4, not 0 and 3!
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Spacecraft | Inventory")
+	void SwapActiveWeaponWithActiveWeapon(int32 ActiveSlotIndex1, int32 ActiveSlotIndex2);
+
+	/**
+	 * Swaps the two weapons.
+	 * NOTE: the ActiveSlotIndex value should be between 1 and 4, not 0 and 3!
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Spacecraft | Inventory")
+	void SwapActiveWeaponWithInventoryWeapon(int32 ActiveSlotIndex, int32 InventorySlotIndex);
+
+	/** Removes the item at the indicated slot, if the provided index is valid (index is zero-based). */
+	UFUNCTION(BlueprintCallable, Category = "Spacecraft | Weapons")
+	void RemoveItemFromInventory(int32 SlotIndex);
+
 private:
 	bool IsSpaceAvailableOnSpacecraft();
 	bool IsSpaceAvailableInInventory();
+
+protected:
+	virtual void AddItemToInventory(AItem* NewItem) override;
+	virtual void OnActiveWeaponSlotsStateChanged() override;
+	
+	void OnInventoryStateChanged();
 
 	/**
 	 * Loot Item Receiver Interface implementation.
