@@ -3,11 +3,13 @@
 #include "Loot/Creation/LootWeaponBuilder.h"
 #include "Loot/Creation/ItemBlueprint.h"
 #include "Loot/Creation/WeaponBlueprint.h"
+#include "Loot/Creation/PreciseWeaponBlueprint.h"
 #include "Loot/Creation/WeaponPool.h"
 #include "Loot/Creation/WeaponPartsPool.h"
 #include "Loot/Items/Item.h"
 #include "Loot/Items/Weapon.h"
 #include "GameModes/SpaceGameMode.h"
+#include "Globals/SpaceGameInstance.h"
 
 #include "Materials/MaterialInterface.h"
 
@@ -38,34 +40,70 @@ AItem* ULootWeaponBuilder::Build(TSubclassOf<UItemBlueprint> ItemToBuildBlueprin
 	if (!ItemToBuildBlueprint)
 		return nullptr;
 
+	UWeaponBlueprint* WeaponBP = NewObject<UWeaponBlueprint>(this, ItemToBuildBlueprint);
+
+	return Build(WeaponBP, SpawnedItemTransform);
+}
+
+AItem* ULootWeaponBuilder::Build(UItemBlueprint* ItemToBuildBlueprint, const FTransform & SpawnedItemTransform)
+{
+	if (!ItemToBuildBlueprint)
+		return nullptr;
+
 	AWeapon* SpawnedWeapon = nullptr;
 	UWorld* WorldPtr = GetWorld();
 
 	if (WorldPtr)
 	{
 		ASpaceGameMode* SpaceGameMode = Cast<ASpaceGameMode>(UGameplayStatics::GetGameMode(WorldPtr));
-		UWeaponBlueprint* WeaponBP = NewObject<UWeaponBlueprint>(this, ItemToBuildBlueprint);
-
-		if (SpaceGameMode && WeaponBP)
+		
+		if (SpaceGameMode)
 		{
 			FWeaponBarrel Barrel;
-			FWeaponBody Body;
-			FWeaponGrip Grip;
+			FWeaponBody   Body;
+			FWeaponGrip   Grip;
+
+			EWeaponType Type = EWeaponType::Unknown;
+			TSubclassOf<UItemRarity> Rarity;
 
 			// Obtain the components to set up the weapon.
-			if (SpaceGameMode->GetGlobalWeaponPool()->GetWeaponParts(WeaponBP->GetRarity(), WeaponBP->GetType(), Barrel, Body, Grip))
+			if (ItemToBuildBlueprint->GetClass()->IsChildOf(UPreciseWeaponBlueprint::StaticClass()))
 			{
-				// Create the bare-bones weapon.
-				SpawnedWeapon = WorldPtr->SpawnActor<AWeapon>(AWeapon::StaticClass(), SpawnedItemTransform);
+				UPreciseWeaponBlueprint* WeaponBP = Cast<UPreciseWeaponBlueprint>(ItemToBuildBlueprint);
 
-				if (SpawnedWeapon)
+				if (WeaponBP)
 				{
-					FWeaponAttributes AttrValues;
+					WeaponBP->GetBarrel(Barrel);
+					WeaponBP->GetBody(Body);
+					WeaponBP->GetGrip(Grip);
 
-					SpaceGameMode->GetGlobalWeaponPool()->GetWeaponTemplate(WeaponBP->GetType(), AttrValues);
-
-					SetUpWeapon(SpawnedWeapon, AttrValues, WeaponBP, Barrel, Body, Grip);
+					Type = WeaponBP->GetType();
+					Rarity = WeaponBP->GetRarity();
 				}
+			}
+			else
+			{
+				UWeaponBlueprint* WeaponBP = Cast<UWeaponBlueprint>(ItemToBuildBlueprint);
+
+				if (WeaponBP)
+				{
+					SpaceGameMode->GetGlobalWeaponPool()->GetWeaponParts(WeaponBP->GetRarity(), WeaponBP->GetType(), Barrel, Body, Grip);
+
+					Type = WeaponBP->GetType();
+					Rarity = WeaponBP->GetRarity();
+				}
+			}
+
+			// Create the bare-bones weapon.
+			SpawnedWeapon = WorldPtr->SpawnActor<AWeapon>(AWeapon::StaticClass(), SpawnedItemTransform);
+
+			if (SpawnedWeapon)
+			{
+				FWeaponAttributes AttrValues;
+
+				SpaceGameMode->GetGlobalWeaponPool()->GetWeaponTemplate(Type, AttrValues);
+
+				SetUpWeapon(SpawnedWeapon, AttrValues, Type, Rarity, Barrel, Body, Grip);
 			}
 		}
 	}
@@ -73,12 +111,13 @@ AItem* ULootWeaponBuilder::Build(TSubclassOf<UItemBlueprint> ItemToBuildBlueprin
 	return SpawnedWeapon;
 }
 
-void ULootWeaponBuilder::SetUpWeapon(AWeapon* Weapon, FWeaponAttributes & InitValues, UWeaponBlueprint* WeaponBP, FWeaponBarrel & Barrel, FWeaponBody & Body, FWeaponGrip & Grip)
+void ULootWeaponBuilder::SetUpWeapon(AWeapon* Weapon, FWeaponAttributes & InitValues, EWeaponType ItemType, TSubclassOf<UItemRarity> ItemRarity,
+	FWeaponBarrel & Barrel, FWeaponBody & Body, FWeaponGrip & Grip)
 {
 	FText        ItemName = FText::Format(FText::FromString("{0}-{1} {2}"), Grip.WeaponNamePrefix, Body.WeaponNamePrefix, Barrel.WeaponNameBase);
 	UTexture2D*  Icon     = InitValues.Icon;
-	UItemRarity* Rarity   = NewObject<UItemRarity>(this, WeaponBP->GetRarity());
-	EWeaponType  Type     = WeaponBP->GetType();
+	UItemRarity* Rarity   = NewObject<UItemRarity>(this, ItemRarity);
+	EWeaponType  Type     = ItemType;
 	// ...
 	UStaticMesh*        BarrelMesh   = Barrel.BarrelMesh;
 	UStaticMesh*        BodyMesh     = Body.BodyMesh;
@@ -108,6 +147,9 @@ void ULootWeaponBuilder::SetUpWeapon(AWeapon* Weapon, FWeaponAttributes & InitVa
 	Weapon->SetFiringSound(FiringSound);
 	// ...
 	Weapon->SetNumericAttributes(InitValues);
+
+	// Save a persistent copy of this weapon's components in the Space Game Instance object.
+	GetSpaceGameInstance()->CreateWeaponDescriptor(Type, ItemRarity, Barrel, Body, Grip, Weapon);
 }
 
 TMap<EWeaponAttribute, float> ULootWeaponBuilder::GetCombinedAttributeModifierMap(FWeaponBarrel & Barrel, FWeaponBody & Body, FWeaponGrip & Grip)
@@ -152,4 +194,14 @@ void ULootWeaponBuilder::ModifyWeaponAttributesWithModifierMap(FWeaponAttributes
 	WEAPON_ATTRIBUTE_MODIFIER_MAP_HELPER_PERCENTAGE_VALUE(Attributes, Modifiers, HeatProducedPerShot)
 	WEAPON_ATTRIBUTE_MODIFIER_MAP_HELPER_PERCENTAGE_VALUE(Attributes, Modifiers, CoolingRate)
 	WEAPON_ATTRIBUTE_MODIFIER_MAP_HELPER_UNIT_VALUE(Attributes, Modifiers, AmmoPerShot)
+}
+
+USpaceGameInstance* ULootWeaponBuilder::GetSpaceGameInstance()
+{
+	if (!SpaceGameInstance)
+	{
+		SpaceGameInstance = Cast<USpaceGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	}
+
+	return SpaceGameInstance;
 }

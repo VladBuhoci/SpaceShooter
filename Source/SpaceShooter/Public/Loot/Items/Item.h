@@ -73,7 +73,7 @@ public:
 	**********************************/
 
 public:
-	void SetItemName(FText & ItemName) { this->Name = ItemName; }
+	void SetItemName(const FText & ItemName) { this->Name = ItemName; }
 	void SetItemIcon(UTexture2D* ItemIcon) { this->Icon = ItemIcon; }
 	void SetItemRarity(UItemRarity* ItemRarity) { this->Rarity = ItemRarity; }
 };

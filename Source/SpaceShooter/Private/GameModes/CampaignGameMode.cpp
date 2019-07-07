@@ -6,6 +6,7 @@
 #include "Pawns/SpacePlayerPawn.h"
 #include "UI/CampaignHUD.h"
 #include "Controllers/SpacePlayerController.h"
+#include "Loot/Creation/PreciseWeaponBlueprint.h"
 
 #include "Runtime/Engine/Public/TimerManager.h"
 
@@ -47,6 +48,26 @@ void ACampaignGameMode::BeginPlay()
 	if (IsOnlyPlayerLeft())
 	{
 		OnSectorCleared();
+	}
+}
+
+void ACampaignGameMode::OnPlayerSpacecraftSpawned(ASpacecraftPawn* NewbornSpacecraft)
+{
+	if (NewbornSpacecraft)
+	{
+		USpaceGameInstance* GameInstance = SpaceGameInstance = Cast<USpaceGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+
+		if (GameInstance)
+		{
+			int32 WeaponToEquipIndex;
+			TArray<UPreciseWeaponBlueprint*> WeaponBPs;
+
+			GameInstance->GetPlayerWeapons(WeaponBPs, WeaponToEquipIndex);
+
+			SupplySpacecraftWithStartingWeapons(NewbornSpacecraft, WeaponBPs);
+
+			NewbornSpacecraft->EquipWeaponFromSlot(WeaponToEquipIndex);
+		}
 	}
 }
 

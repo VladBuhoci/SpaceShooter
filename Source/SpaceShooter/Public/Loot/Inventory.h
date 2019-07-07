@@ -43,7 +43,9 @@ public:
 	bool AddItem(AItem* ItemToAdd, bool bShouldTriggerItemSorting);
 	void AddItems(TArray<AItem*> ItemsToAdd);
 	
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void GetAllItems(TArray<AItem*> & Items);
+
 	AItem* GetItemAt(int32 Index);
 
 	/**

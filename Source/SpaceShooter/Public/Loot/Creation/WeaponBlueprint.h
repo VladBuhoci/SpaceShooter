@@ -28,7 +28,9 @@ private:
 	EWeaponType Type;
 
 public:
-	FText GetItemName() const { return FText::FromString("A Gun"); }
 	TSubclassOf<UItemRarity> GetRarity() const { return Rarity; }
 	EWeaponType GetType() const { return Type; }
+
+	void SetRarity(TSubclassOf<UItemRarity> ItemRarity) { Rarity = ItemRarity; }
+	void SetType(EWeaponType WeaponType) { Type = WeaponType; }
 };

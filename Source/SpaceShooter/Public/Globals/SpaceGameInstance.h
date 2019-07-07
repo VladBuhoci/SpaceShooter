@@ -2,12 +2,23 @@
 
 #pragma once
 
+#include "Globals/SpaceEnums.h"
+#include "Loot/Creation/WeaponPartsPool.h"
+#include "Loot/Creation/LootItemBuilder.h"
 #include "GameModes/Gameplay/Missions.h"
 
 #include "CoreMinimal.h"
 #include "TextProperty.h"
 #include "Engine/GameInstance.h"
 #include "SpaceGameInstance.generated.h"
+
+// Forward declarations.
+class UWeaponBlueprint;
+class UItemRarity;
+class AWeapon;
+class AItem;
+
+struct FPreparedWeapons;
 
 
 /**
@@ -34,6 +45,23 @@ class SPACESHOOTER_API USpaceGameInstance : public UGameInstance
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Game Instance", Meta = (AllowPrivateAccess = "true"))
 	UChapterDescription* NextChapter;
 
+	UPreciseWeaponBlueprint* ActiveSlotWeaponDescr1;
+	UPreciseWeaponBlueprint* ActiveSlotWeaponDescr2;
+	UPreciseWeaponBlueprint* ActiveSlotWeaponDescr3;
+	UPreciseWeaponBlueprint* ActiveSlotWeaponDescr4;
+
+	/** The array is updated often during a chapter and cleared at every chapter end or on demand. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Game Instance", Meta = (AllowPrivateAccess = "true"))
+	TMap<AItem*, UItemBlueprint*> SavedPlayerItemDescriptorsDuringCurrentLevel;
+
+	/** The array is updated before each chapter transition so the player can be supplied when the next level begins. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Game Instance", Meta = (AllowPrivateAccess = "true"))
+	TMap<AItem*, UItemBlueprint*> SavedPlayerItemDescriptors;
+
+	/** Index of the prepared slot holding the weapon the player was using before a chapter transition. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Game Instance", Meta = (AllowPrivateAccess = "true"))
+	int32 CurrentWeaponActiveSlotIndex;
+
 protected:
 	UFUNCTION(BlueprintCallable, Category = "Space Game Instance")
 	void AddCampaignMission(TSubclassOf<UCampaignMissionDescription> CampaignMissionClass, FText Name,
@@ -46,6 +74,16 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Space Game Instance")
 	void CreateGoalOfTypeDestroyEveryone(const FNpcSpawnRules & NpcSpawnRules, TSubclassOf<UUserWidget> GoalWidgetType,
 		UDestroyEveryoneGoalDescription* & GenocideGoal);
+
+public:
+	UFUNCTION(BlueprintCallable, Category = "Space Game Instance")
+	void SavePlayerWeapons(const TArray<AItem*> & InventoryItems, const FPreparedWeapons & ActiveWeapons, int32 EquippedWeaponIndex);
+
+	UFUNCTION(BlueprintCallable, Category = "Space Game Instance")
+	void ClearPlayerWeapons(bool bOnlyCurrentChapterAcquiredItems);
+
+private:
+	bool IsItemOwnedByPlayer(AItem* Item, const FPreparedWeapons & ActiveWeapons, const TArray<AItem*> & InventoryItems) const;
 
 
 	/**********************************
@@ -65,6 +103,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Space Game Instance")
 	UChapterDescription* GetNextChapterForCurrentMission();
 
+	UFUNCTION(BlueprintCallable, Category = "Space Game Instance")
+	void GetPlayerWeapons(TArray<UPreciseWeaponBlueprint*> & WeaponBPs, int32 & EquippedWeaponIndex);
+
 
 	/**********************************
 				 SETTERS
@@ -76,4 +117,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Space Game Instance")
 	void SetCurrentChapter(UChapterDescription* NewChapter);
+
+	UPreciseWeaponBlueprint* CreateWeaponDescriptor(EWeaponType Type, TSubclassOf<UItemRarity> Rarity,
+		FWeaponBarrel & Barrel, FWeaponBody & Body, FWeaponGrip & Grip, AWeapon* ConstructedWeapon);
 };

@@ -14,3 +14,8 @@ AItem* ULootItemBuilder::Build(TSubclassOf<UItemBlueprint> ItemToBuildBlueprint,
 {
 	return nullptr;
 }
+
+AItem* ULootItemBuilder::Build(UItemBlueprint* ItemToBuildBlueprint, const FTransform & SpawnedItemTransform)
+{
+	return nullptr;
+}

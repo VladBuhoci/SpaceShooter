@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Loot/Creation/WeaponBlueprint.h"
+#include "Loot/Creation/PreciseWeaponBlueprint.h"
 #include "Globals/SpaceStructs.h"
 
 #include "CoreMinimal.h"
@@ -48,6 +48,8 @@ private:
 	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space Game Mode", Meta = (AllowPrivateAccess = "true"))
 	TMap<TSubclassOf<ULootItemBuilder>, ULootItemBuilder*> LootItemBuilders;
+
+	bool bInitialSupplyDeliveredToFirstSpacecrafts;
 	
 public:
 	/** Sets default values. */
@@ -67,6 +69,7 @@ public:
 	void NotifySpacecraftDestroyed(ASpacecraftPawn* DestroyedSpacecraft);
 
 protected:
+	virtual void OnPlayerSpacecraftSpawned(ASpacecraftPawn* NewbornSpacecraft) {}
 	virtual void OnEnemySpacecraftSpawned(ASpacecraftPawn* NewbornSpacecraft) {}
 	virtual void OnEnemySpacecraftDestroyed(ASpacecraftPawn* DestroyedSpacecraft) {}
 
@@ -78,6 +81,8 @@ protected:
 	void SupplySpacecraftIfNeeded(ASpacecraftPawn* SpacecraftToSupply);
 	void SupplySpacecraftWithStartingWeapons(ASpacecraftPawn* SpacecraftToSupply,
 		const TArray<TSubclassOf<UWeaponBlueprint>> & WeaponBlueprints);
+	void SupplySpacecraftWithStartingWeapons(ASpacecraftPawn* SpacecraftToSupply,
+		const TArray<UPreciseWeaponBlueprint*> & WeaponBlueprints);
 
 	void CreateGlobalWeaponPool();
 	void CreateLootBuilders();
@@ -97,12 +102,12 @@ protected:
 
 public:
 	/** Returns a pointer to the loot pool containing all weapon parts, organized by rarities and weapon types. */
-	UFUNCTION(BlueprintPure, Category = "Space Game Mode")
-	UWeaponPool* GetGlobalWeaponPool() const { return WeaponPool; }
+	UFUNCTION(BlueprintCallable, Category = "Space Game Mode")
+	UWeaponPool* GetGlobalWeaponPool();
 
 	/** Given a type, returns the right loot item builder. */
-	UFUNCTION(BlueprintPure, Category = "Space Game Mode")
-	ULootItemBuilder* GetLootBuilder(TSubclassOf<ULootItemBuilder> Type) const;
+	UFUNCTION(BlueprintCallable, Category = "Space Game Mode")
+	ULootItemBuilder* GetLootBuilder(TSubclassOf<ULootItemBuilder> Type);
 
 	/** Returns all spacecrafts found in the current world. */
 	UFUNCTION(BlueprintPure, Category = "Space Game Mode")

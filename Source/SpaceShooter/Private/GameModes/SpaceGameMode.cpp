@@ -19,14 +19,19 @@ ASpaceGameMode::ASpaceGameMode()
 	DefaultPawnClass      = ASpacePlayerPawn::StaticClass();
 	PlayerControllerClass = ASpacePlayerController::StaticClass();
 	HUDClass              = ASpaceHUD::StaticClass();
+
+	bInitialSupplyDeliveredToFirstSpacecrafts = false;
 }
 
 void ASpaceGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CreateGlobalWeaponPool();
-	CreateLootBuilders();
+	if (!WeaponPool)
+		CreateGlobalWeaponPool();
+
+	if (LootItemBuilders.Num() == 0)
+		CreateLootBuilders();
 
 	FindAllSpacecraftsInWorld();
 	SupplyKnownSpacecraftsInWorld();
@@ -53,8 +58,11 @@ void ASpaceGameMode::NotifySpacecraftSpawned(ASpacecraftPawn* NewbornSpacecraft)
 
 		if (NewbornSpacecraft->GetClass()->IsChildOf(ASpaceEnemyPawn::StaticClass()))
 			OnEnemySpacecraftSpawned(NewbornSpacecraft);
+		else if (NewbornSpacecraft->GetClass()->IsChildOf(ASpacePlayerPawn::StaticClass()))
+			OnPlayerSpacecraftSpawned(NewbornSpacecraft);
 
-		SupplySpacecraftIfNeeded(NewbornSpacecraft);
+		if (bInitialSupplyDeliveredToFirstSpacecrafts)
+			SupplySpacecraftIfNeeded(NewbornSpacecraft);
 	}
 }
 
@@ -101,6 +109,15 @@ void ASpaceGameMode::FindAllSpacecraftsInWorld()
 			{
 				AllSpacecrafts.Add(Cast<ASpacecraftPawn>(ShipActor));
 			}
+
+			// Move player at the top of the array.
+			int32 PlayerIndex = 0;
+
+			for (int32 i = 0; i < AllSpacecrafts.Num(); i++)
+				if (AllSpacecrafts[i]->GetClass()->IsChildOf<ASpacePlayerPawn>())
+					PlayerIndex = i;
+
+			AllSpacecrafts.Swap(0, PlayerIndex);
 		}
 	}
 }
@@ -111,6 +128,8 @@ void ASpaceGameMode::SupplyKnownSpacecraftsInWorld()
 	{
 		SupplySpacecraftIfNeeded(Spacecraft);
 	}
+
+	bInitialSupplyDeliveredToFirstSpacecrafts = true;
 }
 
 bool ASpaceGameMode::IsOnlyPlayerLeft() const
@@ -138,10 +157,37 @@ void ASpaceGameMode::SupplySpacecraftWithStartingWeapons(ASpacecraftPawn* Spacec
 
 	if (WorldPtr)
 	{
+		ULootItemBuilder* ItemBuilder = GetLootBuilder(ULootWeaponBuilder::StaticClass());
+
 		for (auto WeaponBP : WeaponBlueprints)
 		{
-			ULootItemBuilder* ItemBuilder = GetLootBuilder(ULootWeaponBuilder::StaticClass());
+			if (ItemBuilder)
+			{
+				AWeapon* Weapon = Cast<AWeapon>(ItemBuilder->Build(WeaponBP));
 
+				if (Weapon)
+				{
+					SpacecraftToSupply->SupplyWeapon(Weapon);
+				}
+			}
+		}
+	}
+}
+
+void ASpaceGameMode::SupplySpacecraftWithStartingWeapons(ASpacecraftPawn* SpacecraftToSupply,
+	const TArray<UPreciseWeaponBlueprint*> & WeaponBlueprints)
+{
+	if (SpacecraftToSupply == nullptr || WeaponBlueprints.Num() == 0)
+		return;
+
+	UWorld* WorldPtr = GetWorld();
+
+	if (WorldPtr)
+	{
+		ULootItemBuilder* ItemBuilder = GetLootBuilder(ULootWeaponBuilder::StaticClass());
+
+		for (auto WeaponBP : WeaponBlueprints)
+		{
 			if (ItemBuilder)
 			{
 				AWeapon* Weapon = Cast<AWeapon>(ItemBuilder->Build(WeaponBP));
@@ -223,7 +269,18 @@ ASpaceEnemyPawn* ASpaceGameMode::SpawnSpacecraftNPC_BP(TSubclassOf<ASpaceEnemyPa
 	return SpawnSpacecraftNPC(SpacecraftClass, bIsAggressive, Location, Rotation, ReplacingStartingWeaponBlueprints);
 }
 
-ULootItemBuilder* ASpaceGameMode::GetLootBuilder(TSubclassOf<ULootItemBuilder> Type) const
+UWeaponPool * ASpaceGameMode::GetGlobalWeaponPool()
 {
+	if (!WeaponPool)
+		CreateGlobalWeaponPool();
+
+	return WeaponPool;
+}
+
+ULootItemBuilder* ASpaceGameMode::GetLootBuilder(TSubclassOf<ULootItemBuilder> Type)
+{
+	if (LootItemBuilders.Num() == 0)
+		CreateLootBuilders();
+
 	return LootItemBuilders.Contains(Type) ? LootItemBuilders[Type] : nullptr;
 }

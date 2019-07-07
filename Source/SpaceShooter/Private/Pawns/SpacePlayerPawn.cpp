@@ -291,8 +291,11 @@ void ASpacePlayerPawn::SwapActiveWeaponWithInventoryWeapon(int32 ActiveSlotIndex
 		if (bWeaponToSpareWasEquipped)
 			UnequipCurrentWeapon();
 
-		// Do not receive OnOverheated/OnCooledDown calls from inventory weapons.
-		PreviousActiveWeapon->RegisterStateListener(nullptr);
+		if (PreviousActiveWeapon)
+		{
+			// Do not receive OnOverheated/OnCooledDown calls from inventory weapons.
+			PreviousActiveWeapon->RegisterStateListener(nullptr);
+		}
 
 		SetWeaponOnPreparedSlot(PreviousInventWeapon, ActiveSlotIndex, bWeaponToSpareWasEquipped);
 

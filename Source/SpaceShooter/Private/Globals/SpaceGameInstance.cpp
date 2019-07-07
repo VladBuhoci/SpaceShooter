@@ -1,6 +1,8 @@
 // This application is the final year project (2018-2019) of a Computer Science student (me - Vlad Buhoci).
 
-#include "SpaceGameInstance.h"
+#include "Globals/SpaceGameInstance.h"
+#include "Loot/Items/Weapon.h"
+#include "Loot/Creation/PreciseWeaponBlueprint.h"
 
 
 void USpaceGameInstance::AddCampaignMission(TSubclassOf<UCampaignMissionDescription> CampaignMissionClass,
@@ -55,6 +57,73 @@ void USpaceGameInstance::CreateGoalOfTypeDestroyEveryone(const FNpcSpawnRules & 
 	}
 }
 
+void USpaceGameInstance::SavePlayerWeapons(const TArray<AItem*> & InventoryItems, const FPreparedWeapons & ActiveWeapons,
+	int32 EquippedWeaponIndex)
+{
+	SavedPlayerItemDescriptors.Append(SavedPlayerItemDescriptorsDuringCurrentLevel);
+	SavedPlayerItemDescriptorsDuringCurrentLevel.Empty();
+
+	// Clear unnecessary data (other spacecrafts' stuff).
+	for (auto Iter = SavedPlayerItemDescriptors.CreateIterator(); Iter; ++Iter)
+	{
+		if (!IsItemOwnedByPlayer(Iter.Key(), ActiveWeapons, InventoryItems))
+		{
+			Iter.RemoveCurrent();
+		}
+	}
+
+	ActiveSlotWeaponDescr1 = SavedPlayerItemDescriptors.Contains(ActiveWeapons.Slot_1)
+		? (UPreciseWeaponBlueprint*) SavedPlayerItemDescriptors[ActiveWeapons.Slot_1]
+		: nullptr;
+
+	ActiveSlotWeaponDescr2 = SavedPlayerItemDescriptors.Contains(ActiveWeapons.Slot_2)
+		? (UPreciseWeaponBlueprint*) SavedPlayerItemDescriptors[ActiveWeapons.Slot_2]
+		: nullptr;
+
+	ActiveSlotWeaponDescr3 = SavedPlayerItemDescriptors.Contains(ActiveWeapons.Slot_3)
+		? (UPreciseWeaponBlueprint*) SavedPlayerItemDescriptors[ActiveWeapons.Slot_3]
+		: nullptr;
+
+	ActiveSlotWeaponDescr4 = SavedPlayerItemDescriptors.Contains(ActiveWeapons.Slot_4)
+		? (UPreciseWeaponBlueprint*) SavedPlayerItemDescriptors[ActiveWeapons.Slot_4]
+		: nullptr;
+
+	CurrentWeaponActiveSlotIndex = EquippedWeaponIndex;
+}
+
+void USpaceGameInstance::ClearPlayerWeapons(bool bOnlyCurrentChapterAcquiredItems)
+{
+	SavedPlayerItemDescriptorsDuringCurrentLevel.Empty();
+
+	if (!bOnlyCurrentChapterAcquiredItems)
+	{
+		ActiveSlotWeaponDescr1 = nullptr;
+		ActiveSlotWeaponDescr2 = nullptr;
+		ActiveSlotWeaponDescr3 = nullptr;
+		ActiveSlotWeaponDescr4 = nullptr;
+
+		SavedPlayerItemDescriptors.Empty();
+
+		CurrentWeaponActiveSlotIndex = 0;
+	}
+}
+
+bool USpaceGameInstance::IsItemOwnedByPlayer(AItem* Item, const FPreparedWeapons & ActiveWeapons, const TArray<AItem*> & InventoryItems) const
+{
+	if (!Item)	return false;
+
+	if (Item == ActiveWeapons.Slot_1)	return true;
+	if (Item == ActiveWeapons.Slot_2)	return true;
+	if (Item == ActiveWeapons.Slot_3)	return true;
+	if (Item == ActiveWeapons.Slot_4)	return true;
+
+	for (auto InvItem : InventoryItems)
+		if (Item == InvItem)
+			return true;
+
+	return false;
+}
+
 UChapterDescription* USpaceGameInstance::GetNextChapterForCurrentMission()
 {
 	// First check if we cached a pointer to the next chapter.
@@ -90,6 +159,20 @@ UChapterDescription* USpaceGameInstance::GetNextChapterForCurrentMission()
 	return nullptr;
 }
 
+void USpaceGameInstance::GetPlayerWeapons(TArray<UPreciseWeaponBlueprint*> & WeaponBPs, int32 & EquippedWeaponIndex)
+{
+	WeaponBPs.Add(ActiveSlotWeaponDescr1);
+	WeaponBPs.Add(ActiveSlotWeaponDescr2);
+	WeaponBPs.Add(ActiveSlotWeaponDescr3);
+	WeaponBPs.Add(ActiveSlotWeaponDescr4);
+
+	for (auto Iter = SavedPlayerItemDescriptors.CreateIterator(); Iter; ++Iter)
+		if (UPreciseWeaponBlueprint* WeaponDescr = Cast<UPreciseWeaponBlueprint>(Iter.Value()))
+			WeaponBPs.AddUnique(WeaponDescr);
+
+	EquippedWeaponIndex = CurrentWeaponActiveSlotIndex;
+}
+
 void USpaceGameInstance::SetCurrentMission(UMissionDescription* NewMission)
 {
 	CurrentMission = NewMission;
@@ -101,4 +184,24 @@ void USpaceGameInstance::SetCurrentChapter(UChapterDescription* NewChapter)
 {
 	CurrentChapter = NewChapter;
 	NextChapter    = nullptr;
+}
+
+UPreciseWeaponBlueprint* USpaceGameInstance::CreateWeaponDescriptor(EWeaponType Type, TSubclassOf<UItemRarity> Rarity,
+	FWeaponBarrel & Barrel, FWeaponBody & Body, FWeaponGrip & Grip, AWeapon* ConstructedWeapon)
+{
+	FString ObjUniqueName              = "WeaponDescriptor_" + FString::FromInt(FMath::Rand());
+	UPreciseWeaponBlueprint* CreatedBP = NewObject<UPreciseWeaponBlueprint>(this, FName(*ObjUniqueName));
+
+	if (CreatedBP)
+	{
+		CreatedBP->SetType(Type);
+		CreatedBP->SetRarity(Rarity);
+		CreatedBP->SetBarrel(Barrel);
+		CreatedBP->SetBody(Body);
+		CreatedBP->SetGrip(Grip);
+
+		SavedPlayerItemDescriptorsDuringCurrentLevel.Add(ConstructedWeapon, CreatedBP);
+	}
+
+	return CreatedBP;
 }

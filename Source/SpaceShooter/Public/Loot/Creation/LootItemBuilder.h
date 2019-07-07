@@ -26,4 +26,5 @@ public:
 	ULootItemBuilder();
 
 	virtual AItem* Build(TSubclassOf<UItemBlueprint> ItemToBuildBlueprint, const FTransform & SpawnedItemTransform = FTransform::Identity);
+	virtual AItem* Build(UItemBlueprint* ItemToBuildBlueprint, const FTransform & SpawnedItemTransform = FTransform::Identity);
 };

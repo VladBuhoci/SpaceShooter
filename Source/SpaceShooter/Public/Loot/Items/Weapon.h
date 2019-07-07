@@ -13,6 +13,7 @@
 class AProjectile;
 class UWeaponPool;
 class IWeaponStateListener;
+class UPreciseWeaponBlueprint;
 
 class UMaterialInterface;
 class UTexture2D;
@@ -94,23 +95,23 @@ protected:
 	UStaticMeshComponent* MeshComponent;
 
 	/** Type of this weapon. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
 	EWeaponType Type;
 
 	/** Class of the projectile to spawn when shooting. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
 	TSubclassOf<AProjectile> ProjectileClass;
 
 	/** Particle system which is spawned whenever this weapon shoots projectiles. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
 	UParticleSystem* WeaponFiringParticleEffect;
 
 	/** Sound played whenever this weapon shoots projectiles. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
 	USoundBase* WeaponFiringSound;
 
 	/** Weapon public numeric attributes. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
 	FWeaponAttributes WeaponAttributes;
 
 private:
@@ -141,7 +142,6 @@ private:
 	bool bIsOverheated;
 
 	UWeaponPool* GlobalWeaponPool;
-
 	IWeaponStateListener* WeaponOwner;
 
 public:

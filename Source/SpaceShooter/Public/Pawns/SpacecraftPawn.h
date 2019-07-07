@@ -44,26 +44,6 @@ struct FStartingWeapons
 	TSubclassOf<UWeaponBlueprint> BP_4;
 };
 
-USTRUCT(BlueprintType)
-struct FPreparedWeapons
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Weapons")
-	AWeapon* Slot_1;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Weapons")
-	AWeapon* Slot_2;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Weapons")
-	AWeapon* Slot_3;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Weapons")
-	AWeapon* Slot_4;
-
-	bool HasAnyWeapons() const { return Slot_1 || Slot_2 || Slot_3 || Slot_4; }
-};
-
 /**
  * Base class of all spacecrafts (player or NPCs).
  */
@@ -352,6 +332,9 @@ public:
 	void EquipWeaponFromSlot_FirstValidIndex();
 	void EquipWeaponFromSlot_Random();
 
+	UFUNCTION(BlueprintPure, Category = "Spacecraft | Weapons")
+	int32 GetEquippedWeaponSlotIndex() const { return FindSlotIndexForWeapon(EquippedWeapon); }
+
 	/**
 	 * Removes the weapon at the indicated slot, if the provided index is valid.
 	 * 
@@ -366,6 +349,9 @@ protected:
 
 	UFUNCTION(BlueprintPure, Category = "Spacecraft | Weapons")
 	AWeapon* GetWeaponOnPreparedSlot(int32 SlotIndex) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Spacecraft | Weapons")
+	void GetPlayerActiveWeapons(FPreparedWeapons & ActiveWeapons) { ActiveWeapons = PreparedWeapons; }
 
 	/**
 	 * Sets the given weapon on the chosen prepared weapon slot.

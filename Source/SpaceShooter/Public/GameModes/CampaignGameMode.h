@@ -58,6 +58,7 @@ protected:
 	/** Called when the game starts or when spawned. */
 	virtual void BeginPlay() override;
 
+	virtual void OnPlayerSpacecraftSpawned(ASpacecraftPawn* NewbornSpacecraft) override;
 	virtual void OnEnemySpacecraftSpawned(ASpacecraftPawn* NewbornSpacecraft) override;
 	virtual void OnEnemySpacecraftDestroyed(ASpacecraftPawn* DestroyedSpacecraft) override;
 

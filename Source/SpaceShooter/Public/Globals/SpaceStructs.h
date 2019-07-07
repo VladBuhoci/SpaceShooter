@@ -10,6 +10,7 @@
 class UTexture2D;
 
 class ASpaceEnemyPawn;
+class AWeapon;
 
 
 /**
@@ -33,6 +34,29 @@ struct FAmmunitionStock
 	FAmmunitionStock(bool bInfiniteAmmo)			   : bEndlessAmmo(bInfiniteAmmo)								{};
 	FAmmunitionStock(int32 CurrMaxAmmo)                : FAmmunitionStock(CurrMaxAmmo, CurrMaxAmmo)					{};
 	FAmmunitionStock(int32 CurrentAmmo, int32 MaxAmmo) : CurrentAmmoQuantity(CurrentAmmo), MaxAmmoQuantity(MaxAmmo)	{};
+};
+
+/**
+ * Contains the 4 active weapon slots of any spacecraft.
+ */
+USTRUCT(BlueprintType)
+struct FPreparedWeapons
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Weapons")
+	AWeapon* Slot_1;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Weapons")
+	AWeapon* Slot_2;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Weapons")
+	AWeapon* Slot_3;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spacecraft | Weapons")
+	AWeapon* Slot_4;
+
+	bool HasAnyWeapons() const { return Slot_1 || Slot_2 || Slot_3 || Slot_4; }
 };
 
 /**
