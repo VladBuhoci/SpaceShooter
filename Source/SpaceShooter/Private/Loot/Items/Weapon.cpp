@@ -7,6 +7,7 @@
 #include "Globals/SpaceEnums.h"
 #include "Globals/SpaceStructs.h"
 #include "GameModes/SpaceGameMode.h"
+#include "Listeners/WeaponStateListener.h"
 
 #include "Components/StaticMeshComponent.h"
 
@@ -123,10 +124,10 @@ void AWeapon::ProvideAttributes(TArray<FItemAttribute_Text> & AttributesArrayToS
 	DECL_AND_DEF_ITEM_TEXT_ATTR_FROM_FLOAT_VAR(FireRateAsText, DescrOf(FireRate)           , WeaponAttributes.FireRate)
 	DECL_AND_DEF_ITEM_TEXT_ATTR_FROM_FLOAT_VAR(HeatAsText    , DescrOf(HeatProducedPerShot), WeaponAttributes.HeatProducedPerShot)
 
-	// Combine ProjectilesPerShot and Damage properties as such: Damage X ProjectilesPerShot.
 	if (WeaponAttributes.ProjectilesPerShot > 1)
 	{
-		DamageAsText.Value = FText::FromString(DamageAsText.Value.ToString() + " x" + FString::FromInt(WeaponAttributes.ProjectilesPerShot));
+		// Combine ProjectilesPerShot and Damage properties as such: ProjectilesPerShot X Damage.
+		DamageAsText.Value = FText::FromString(FString::FromInt(WeaponAttributes.ProjectilesPerShot) + "x " + DamageAsText.Value.ToString());
 	}
 
 	AttributesArrayToSupply.Add(DamageAsText);
@@ -142,6 +143,11 @@ void AWeapon::ProvideAttributes(TArray<FItemAttribute_Text> & AttributesArrayToS
 	}
 
 #undef DescrOf
+}
+
+void AWeapon::RegisterStateListener(IWeaponStateListener* NewListener)
+{
+	WeaponOwner = NewListener;
 }
 
 void AWeapon::SetVisibility(bool CurrentState)
@@ -296,11 +302,19 @@ void AWeapon::ProduceHeat()
 void AWeapon::EnterOverheatedState()
 {
 	bIsOverheated = true;
+
+	if (UObject* OwnerAsObj = Cast<UObject>(WeaponOwner))
+		if (OwnerAsObj->IsValidLowLevel())
+			IWeaponStateListener::Execute_OnWeaponOverheated(OwnerAsObj, this);
 }
 
 void AWeapon::ExitOverheatedState()
 {
 	bIsOverheated = false;
+
+	if (UObject* OwnerAsObj = Cast<UObject>(WeaponOwner))
+		if (OwnerAsObj->IsValidLowLevel())
+			IWeaponStateListener::Execute_OnWeaponCooledDown(OwnerAsObj, this);
 }
 
 void AWeapon::CoolDown(float DeltaTime)
@@ -364,5 +378,15 @@ void AWeapon::SetNumericAttributes(FWeaponAttributes & Attributes)
 
 	// Sanity checks.
 
-	WeaponAttributes.Accuracy = FMath::Clamp(WeaponAttributes.Accuracy, 0.0f, 100.0f);
+	WeaponAttributes.Damage                = FMath::Clamp(WeaponAttributes.Damage, 1, WeaponAttributes.Damage);
+	WeaponAttributes.ProjectilesPerShot    = FMath::Clamp(WeaponAttributes.ProjectilesPerShot, 0, WeaponAttributes.ProjectilesPerShot);
+	WeaponAttributes.SpreadAngle           = FMath::Clamp(WeaponAttributes.SpreadAngle, 1.0f, WeaponAttributes.SpreadAngle);
+	WeaponAttributes.Accuracy              = FMath::Clamp(WeaponAttributes.Accuracy, 0.0f, 100.0f);
+	WeaponAttributes.AccuracyRecoveryRate  = FMath::Clamp(WeaponAttributes.AccuracyRecoveryRate, 1.0f, WeaponAttributes.AccuracyRecoveryRate);
+	WeaponAttributes.AccuracyRecoveryDelay = FMath::Clamp(WeaponAttributes.AccuracyRecoveryDelay, 0.0f, WeaponAttributes.AccuracyRecoveryDelay);
+	WeaponAttributes.FireRate              = FMath::Clamp(WeaponAttributes.FireRate, 0.1f, WeaponAttributes.FireRate);
+	WeaponAttributes.Recoil                = FMath::Clamp(WeaponAttributes.Recoil, 0.1f, WeaponAttributes.Recoil);
+	WeaponAttributes.HeatProducedPerShot   = FMath::Clamp(WeaponAttributes.HeatProducedPerShot, 0.0f, WeaponAttributes.HeatProducedPerShot);
+	WeaponAttributes.CoolingRate           = FMath::Clamp(WeaponAttributes.CoolingRate, 1.0f, WeaponAttributes.CoolingRate);
+	WeaponAttributes.AmmoPerShot           = FMath::Clamp(WeaponAttributes.AmmoPerShot, 0, WeaponAttributes.AmmoPerShot);
 }

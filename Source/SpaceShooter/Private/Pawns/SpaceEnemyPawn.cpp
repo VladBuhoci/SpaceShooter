@@ -40,6 +40,7 @@ ASpaceEnemyPawn::ASpaceEnemyPawn()
 	LootBoundingBox.Min                 = FVector(-75.0f, -50.0f, 20.0f);
 	LootBoundingBox.Max                 = FVector( 75.0f,  50.0f, 40.0f);
 	SurvivabilityWidgetVisibilityTime   = 1.5f;
+	bWaitingForWeaponToCoolDown         = false;
 	
 	DetectionArea->SetupAttachment(SpacecraftMeshComponent);
 	DetectionArea->SetSphereRadius(DetectionAreaRadius);
@@ -296,6 +297,45 @@ void ASpaceEnemyPawn::EndFiringWeapon()
 {
 	Super::EndFiringWeapon();
 
+}
+
+void ASpaceEnemyPawn::OnWeaponOverheated_Implementation(AWeapon* OverheatedWeapon)
+{
+	Super::OnWeaponOverheated_Implementation(OverheatedWeapon);
+
+	if (OverheatedWeapon == EquippedWeapon)
+	{
+		int32 UsableWeaponIndex = FindRandomCooledDownWeaponActiveSlotIndex();
+
+		if (UsableWeaponIndex > 0)
+		{
+			EquipWeaponFromSlot(UsableWeaponIndex);
+
+			bWaitingForWeaponToCoolDown = false;
+		}
+		else
+		{
+			// OnCooledDown will check for this variable and equip the given weapon if true.
+			bWaitingForWeaponToCoolDown = true;
+		}
+	}
+}
+
+void ASpaceEnemyPawn::OnWeaponCooledDown_Implementation(AWeapon* CooledDownWeapon)
+{
+	Super::OnWeaponCooledDown_Implementation(CooledDownWeapon);
+
+	if (bWaitingForWeaponToCoolDown)
+	{
+		int32 WeaponToUseIndex = FindSlotIndexForWeapon(CooledDownWeapon);
+
+		if (WeaponToUseIndex > 0)
+		{
+			EquipWeaponFromSlot(WeaponToUseIndex);
+
+			bWaitingForWeaponToCoolDown = false;
+		}
+	}
 }
 
 void ASpaceEnemyPawn::TryToCreateLootChests()

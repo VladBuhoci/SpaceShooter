@@ -291,6 +291,9 @@ void ASpacePlayerPawn::SwapActiveWeaponWithInventoryWeapon(int32 ActiveSlotIndex
 		if (bWeaponToSpareWasEquipped)
 			UnequipCurrentWeapon();
 
+		// Do not receive OnOverheated/OnCooledDown calls from inventory weapons.
+		PreviousActiveWeapon->RegisterStateListener(nullptr);
+
 		SetWeaponOnPreparedSlot(PreviousInventWeapon, ActiveSlotIndex, bWeaponToSpareWasEquipped);
 
 		OnActiveWeaponSlotsStateChanged();
@@ -354,6 +357,13 @@ void ASpacePlayerPawn::OnInventoryStateChanged()
 			SpaceHUD->OnPlayerSpacecraftInventoryStateChanged();
 		}
 	}
+}
+
+void ASpacePlayerPawn::DestroyWeaponry()
+{
+	Super::DestroyWeaponry();
+
+	Inventory->ClearAllItems();
 }
 
 void ASpacePlayerPawn::Supply_Implementation(AItem* ItemToProvide, EItemTakingAction & ItemTakeAction)

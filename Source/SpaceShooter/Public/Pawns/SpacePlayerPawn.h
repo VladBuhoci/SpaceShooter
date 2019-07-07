@@ -183,6 +183,9 @@ protected:
 	
 	void OnInventoryStateChanged();
 
+	/** Destructs the weapons attached to the spacecraft. */
+	virtual void DestroyWeaponry() override;
+
 	/**
 	 * Loot Item Receiver Interface implementation.
 	 */

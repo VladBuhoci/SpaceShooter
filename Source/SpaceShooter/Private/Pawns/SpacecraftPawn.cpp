@@ -345,8 +345,7 @@ void ASpacecraftPawn::DestroyWeaponry()
 	DestructWeapon(PreparedWeapons.Slot_4);
 }
 
-AWeapon* ASpacecraftPawn::SetWeaponOnPreparedSlot_1(AWeapon* WeaponToAdd, FAttachmentTransformRules & AttachRules,
-	bool bEquipNewWeapon)
+AWeapon* ASpacecraftPawn::SetWeaponOnPreparedSlot_1(AWeapon* WeaponToAdd, FAttachmentTransformRules & AttachRules, bool bEquipNewWeapon)
 {
 	AWeapon* PreviousWeaponSittingInSlot = PreparedWeapons.Slot_1;
 
@@ -355,6 +354,7 @@ AWeapon* ASpacecraftPawn::SetWeaponOnPreparedSlot_1(AWeapon* WeaponToAdd, FAttac
 	if (PreparedWeapons.Slot_1)
 	{
 		PreparedWeapons.Slot_1->AttachToComponent(SpacecraftMeshComponent, AttachRules, TEXT("Weapon_AttachPoint_DEV"));
+		PreparedWeapons.Slot_1->RegisterStateListener(this);
 
 		if (bEquipNewWeapon)
 		{
@@ -365,8 +365,7 @@ AWeapon* ASpacecraftPawn::SetWeaponOnPreparedSlot_1(AWeapon* WeaponToAdd, FAttac
 	return PreviousWeaponSittingInSlot;
 }
 
-AWeapon* ASpacecraftPawn::SetWeaponOnPreparedSlot_2(AWeapon* WeaponToAdd, FAttachmentTransformRules & AttachRules,
-	bool bEquipNewWeapon)
+AWeapon* ASpacecraftPawn::SetWeaponOnPreparedSlot_2(AWeapon* WeaponToAdd, FAttachmentTransformRules & AttachRules, bool bEquipNewWeapon)
 {
 	AWeapon* PreviousWeaponSittingInSlot = PreparedWeapons.Slot_2;
 
@@ -375,6 +374,7 @@ AWeapon* ASpacecraftPawn::SetWeaponOnPreparedSlot_2(AWeapon* WeaponToAdd, FAttac
 	if (PreparedWeapons.Slot_2)
 	{
 		PreparedWeapons.Slot_2->AttachToComponent(SpacecraftMeshComponent, AttachRules, TEXT("Weapon_AttachPoint_DEV"));
+		PreparedWeapons.Slot_2->RegisterStateListener(this);
 
 		if (bEquipNewWeapon)
 		{
@@ -385,8 +385,7 @@ AWeapon* ASpacecraftPawn::SetWeaponOnPreparedSlot_2(AWeapon* WeaponToAdd, FAttac
 	return PreviousWeaponSittingInSlot;
 }
 
-AWeapon* ASpacecraftPawn::SetWeaponOnPreparedSlot_3(AWeapon* WeaponToAdd, FAttachmentTransformRules & AttachRules,
-	bool bEquipNewWeapon)
+AWeapon* ASpacecraftPawn::SetWeaponOnPreparedSlot_3(AWeapon* WeaponToAdd, FAttachmentTransformRules & AttachRules, bool bEquipNewWeapon)
 {
 	AWeapon* PreviousWeaponSittingInSlot = PreparedWeapons.Slot_3;
 
@@ -395,6 +394,7 @@ AWeapon* ASpacecraftPawn::SetWeaponOnPreparedSlot_3(AWeapon* WeaponToAdd, FAttac
 	if (PreparedWeapons.Slot_3)
 	{
 		PreparedWeapons.Slot_3->AttachToComponent(SpacecraftMeshComponent, AttachRules, TEXT("Weapon_AttachPoint_DEV"));
+		PreparedWeapons.Slot_3->RegisterStateListener(this);
 
 		if (bEquipNewWeapon)
 		{
@@ -405,8 +405,7 @@ AWeapon* ASpacecraftPawn::SetWeaponOnPreparedSlot_3(AWeapon* WeaponToAdd, FAttac
 	return PreviousWeaponSittingInSlot;
 }
 
-AWeapon* ASpacecraftPawn::SetWeaponOnPreparedSlot_4(AWeapon* WeaponToAdd, FAttachmentTransformRules & AttachRules,
-	bool bEquipNewWeapon)
+AWeapon* ASpacecraftPawn::SetWeaponOnPreparedSlot_4(AWeapon* WeaponToAdd, FAttachmentTransformRules & AttachRules, bool bEquipNewWeapon)
 {
 	AWeapon* PreviousWeaponSittingInSlot = PreparedWeapons.Slot_4;
 
@@ -415,6 +414,7 @@ AWeapon* ASpacecraftPawn::SetWeaponOnPreparedSlot_4(AWeapon* WeaponToAdd, FAttac
 	if (PreparedWeapons.Slot_4)
 	{
 		PreparedWeapons.Slot_4->AttachToComponent(SpacecraftMeshComponent, AttachRules, TEXT("Weapon_AttachPoint_DEV"));
+		PreparedWeapons.Slot_4->RegisterStateListener(this);
 
 		if (bEquipNewWeapon)
 		{
@@ -720,7 +720,7 @@ void ASpacecraftPawn::RemoveWeaponFromSlot(int32 SlotIndex)
 	OnActiveWeaponSlotsStateChanged();
 }
 
-bool ASpacecraftPawn::IsSpaceAvailableForAnotherWeapon()
+bool ASpacecraftPawn::IsSpaceAvailableForAnotherWeapon() const
 {
 	return PreparedWeapons.Slot_1 == nullptr
 		|| PreparedWeapons.Slot_2 == nullptr
@@ -728,7 +728,7 @@ bool ASpacecraftPawn::IsSpaceAvailableForAnotherWeapon()
 		|| PreparedWeapons.Slot_4 == nullptr;
 }
 
-int32 ASpacecraftPawn::GetFirstFreeWeaponSlotIndex()
+int32 ASpacecraftPawn::GetFirstFreeWeaponSlotIndex() const
 {
 	return
 		PreparedWeapons.Slot_1 == nullptr ? 1 :
@@ -737,7 +737,7 @@ int32 ASpacecraftPawn::GetFirstFreeWeaponSlotIndex()
 		PreparedWeapons.Slot_4 == nullptr ? 4 : 0;
 }
 
-int32 ASpacecraftPawn::GetFirstOccupiedWeaponSlotIndex()
+int32 ASpacecraftPawn::GetFirstOccupiedWeaponSlotIndex() const
 {
 	return
 		PreparedWeapons.Slot_1 != nullptr ? 1 :
@@ -746,7 +746,7 @@ int32 ASpacecraftPawn::GetFirstOccupiedWeaponSlotIndex()
 		PreparedWeapons.Slot_4 != nullptr ? 4 : 0;
 }
 
-int32 ASpacecraftPawn::GetRandomOccupiedWeaponSlotIndex()
+int32 ASpacecraftPawn::GetRandomOccupiedWeaponSlotIndex() const
 {
 	if (!HasAnyWeapons())
 		return 0;
@@ -761,6 +761,36 @@ int32 ASpacecraftPawn::GetRandomOccupiedWeaponSlotIndex()
 	int32 RandIndex = FMath::RandRange(0, SlotIndices.Num() - 1);
 
 	return SlotIndices[RandIndex];
+}
+
+int32 ASpacecraftPawn::FindSlotIndexForWeapon(AWeapon* Weapon) const
+{
+	if (!HasAnyWeapons())
+		return 0;
+
+	if (PreparedWeapons.Slot_1 == Weapon)	return 1;
+	if (PreparedWeapons.Slot_2 == Weapon)	return 2;
+	if (PreparedWeapons.Slot_3 == Weapon)	return 3;
+	if (PreparedWeapons.Slot_4 == Weapon)	return 4;
+	
+	return 0;
+}
+
+int32 ASpacecraftPawn::FindRandomCooledDownWeaponActiveSlotIndex() const
+{
+	if (!HasAnyWeapons())
+		return 0;
+
+	TArray<int32> SlotIndices;
+
+	if (PreparedWeapons.Slot_1 && !PreparedWeapons.Slot_1->IsOverheated())	SlotIndices.Add(1);
+	if (PreparedWeapons.Slot_2 && !PreparedWeapons.Slot_2->IsOverheated())	SlotIndices.Add(2);
+	if (PreparedWeapons.Slot_3 && !PreparedWeapons.Slot_3->IsOverheated())	SlotIndices.Add(3);
+	if (PreparedWeapons.Slot_4 && !PreparedWeapons.Slot_4->IsOverheated())	SlotIndices.Add(4);
+	
+	int32 RandIndex = FMath::RandRange(0, SlotIndices.Num() - 1);
+
+	return SlotIndices.Num() > 0 ? SlotIndices[RandIndex] : 0;
 }
 
 void ASpacecraftPawn::FireWeapon_Internal()

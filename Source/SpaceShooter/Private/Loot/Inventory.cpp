@@ -109,6 +109,12 @@ AItem* UInventory::RemoveItem(int32 SlotIndex)
 	return DiscardedItem;
 }
 
+void UInventory::ClearAllItems()
+{
+	for (int32 i = 0; i < ItemSlots.Num(); i++)
+		RemoveItem(i);
+}
+
 void UInventory::SortInventory()
 {
 	if (ItemSlots.Num() > 0)

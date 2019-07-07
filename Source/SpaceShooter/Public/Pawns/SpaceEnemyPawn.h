@@ -199,6 +199,18 @@ public:
 
 
 	/**********************************
+	  WEAPON STATE LISTENER INTERFACE
+	**********************************/
+
+public:
+	virtual void OnWeaponOverheated_Implementation(AWeapon* OverheatedWeapon) override;
+	virtual void OnWeaponCooledDown_Implementation(AWeapon* CooledDownWeapon) override;
+
+private:
+	bool bWaitingForWeaponToCoolDown;
+
+
+	/**********************************
 			  LOOT INTERFACE
 	**********************************/
 

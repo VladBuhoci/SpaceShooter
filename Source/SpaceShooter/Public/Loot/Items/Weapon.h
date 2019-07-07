@@ -12,6 +12,7 @@
 // Forward declarations.
 class AProjectile;
 class UWeaponPool;
+class IWeaponStateListener;
 
 class UMaterialInterface;
 class UTexture2D;
@@ -141,6 +142,8 @@ private:
 
 	UWeaponPool* GlobalWeaponPool;
 
+	IWeaponStateListener* WeaponOwner;
+
 public:
 	/** Sets default values for this actor's properties. */
 	AWeapon();
@@ -159,6 +162,8 @@ public:
 	virtual void ProvideAttributes(TArray<FItemAttribute_Text> & AttributesArrayToSupply) override;
 
 public:
+	void RegisterStateListener(IWeaponStateListener* NewListener);
+
 	void SetVisibility(bool CurrentState);
 
 private:

@@ -367,6 +367,9 @@
     <ClInclude Include="..\..\Source\SpaceShooter\Public\Loot\Inventory.h">
       <Filter>Source\SpaceShooter\Public\Loot</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceShooter\Public\Listeners\WeaponStateListener.h">
+      <Filter>Source\SpaceShooter\Public\Listeners</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source\SpaceShooter\Private\Globals">
@@ -412,6 +415,9 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\SpaceShooter\Private\Loot\Inventory.cpp">
       <Filter>Source\SpaceShooter\Private\Loot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceShooter\Private\Listeners\WeaponStateListener.cpp">
+      <Filter>Source\SpaceShooter\Private\Listeners</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

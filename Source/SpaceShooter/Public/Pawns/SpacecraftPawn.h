@@ -5,6 +5,7 @@
 #include "Globals/SpaceEnums.h"
 #include "Globals/SpaceStructs.h"
 #include "Loot/Creation/WeaponBlueprint.h"
+#include "Listeners/WeaponStateListener.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
@@ -67,7 +68,7 @@ struct FPreparedWeapons
  * Base class of all spacecrafts (player or NPCs).
  */
 UCLASS()
-class SPACESHOOTER_API ASpacecraftPawn : public APawn
+class SPACESHOOTER_API ASpacecraftPawn : public APawn, public IWeaponStateListener
 {
 	GENERATED_BODY()
 
@@ -374,16 +375,22 @@ protected:
 	AWeapon* SetWeaponOnPreparedSlot(AWeapon* WeaponToAdd, int32 SlotIndex, bool bEquipNewWeapon = true);
 
 	/** Returns true if at least one weapon or inventory slot is empty. */
-	bool IsSpaceAvailableForAnotherWeapon();
+	bool IsSpaceAvailableForAnotherWeapon() const;
 
 	/** Returns the index of the first empty weapon slot found, or 0 if none is free. */
-	int32 GetFirstFreeWeaponSlotIndex();
+	int32 GetFirstFreeWeaponSlotIndex() const;
 
 	/** Returns the index of the first occupied weapon slot found, or 0 if there are no weapons equipped. */
-	int32 GetFirstOccupiedWeaponSlotIndex();
+	int32 GetFirstOccupiedWeaponSlotIndex() const;
 
 	/** Returns a random index of an occupied weapon slot, or 0 if there are no weapons equipped. */
-	int32 GetRandomOccupiedWeaponSlotIndex();
+	int32 GetRandomOccupiedWeaponSlotIndex() const;
+
+	/** Returns the prepared slot index of the given weapon, or 0 if not found. */
+	int32 FindSlotIndexForWeapon(AWeapon* Weapon) const;
+
+	/** Returns the index of a random non-overheated weapon, if such a weapon exists. */
+	int32 FindRandomCooledDownWeaponActiveSlotIndex() const;
 
 private:
 	AWeapon* SetWeaponOnPreparedSlot_1(AWeapon* WeaponToAdd, FAttachmentTransformRules & AttachRules, bool bEquipNewWeapon);
@@ -405,6 +412,20 @@ protected:
 
 protected:
 	virtual void OnActiveWeaponSlotsStateChanged() {}
+
+
+	/**********************************
+	  WEAPON STATE LISTENER INTERFACE
+	**********************************/
+
+public:
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Spacecraft | Weapon State Listener Interface")
+	void OnWeaponOverheated(AWeapon* OverheatedWeapon);
+	virtual void OnWeaponOverheated_Implementation(AWeapon* OverheatedWeapon) override {}
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Spacecraft | Weapon State Listener Interface")
+	void OnWeaponCooledDown(AWeapon* CooledDownWeapon);
+	virtual void OnWeaponCooledDown_Implementation(AWeapon* CooledDownWeapon) override {}
 
 
 	/**********************************

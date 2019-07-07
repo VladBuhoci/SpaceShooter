@@ -61,6 +61,9 @@ public:
 	 */
 	AItem* RemoveItem(int32 SlotIndex);
 
+	/** Removes every item from the inventory, leaving the slots empty. */
+	void ClearAllItems();
+
 	bool IsFull() const { return FirstEmptySlotIndex == ItemSlots.Num(); }
 
 private:
