@@ -320,7 +320,7 @@ ASpacecraftPawn* ASpaceEnemyController::FindEnemyAroundThisPawn(bool bSearchEnti
 		return nullptr;
 
 	ESpacecraftFaction OppositeFaction = PossessedSpacePawn->GetFaction() == ESpacecraftFaction::Human
-		? ESpacecraftFaction::Clone
+		? ESpacecraftFaction::Alien
 		: ESpacecraftFaction::Human;
 
 	TArray<ASpacecraftPawn*> FoundShips = bSearchEntireWorldForEnemies

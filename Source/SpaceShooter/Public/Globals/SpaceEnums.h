@@ -18,11 +18,11 @@ enum class ESpacecraftFaction : uint8
 	/** The human race. */
 	Human,
 
-	/** The clone race. */
-	Clone,
+	/** The alien race. */
+	Alien,
 
 	/** Do not use this directly. Introduced for C++ only. */
-	Both = Human | Clone
+	Both = Human | Alien
 };
 
 /**

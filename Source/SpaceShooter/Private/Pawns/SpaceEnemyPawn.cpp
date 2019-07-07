@@ -208,7 +208,6 @@ void ASpaceEnemyPawn::OnDamageTaken(ASpacecraftPawn* DamageCauser)
 	}
 }
 
-// TODO: W.I.P.
 void ASpaceEnemyPawn::PreDestroy(bool & bShouldPlayDestroyEffects, bool & bShouldBeDestroyed)
 {
 	// ... anything to add here? (besides triggering a loot chest spawn event)
