@@ -27,7 +27,8 @@ void USpaceGameInstance::AddCampaignChapter(TSubclassOf<UCampaignChapterDescript
 	if (!CampaignChapterClass || !CampaignMissionToAddTo)
 		return;
 
-	UCampaignChapterDescription* CampaignChapter = NewObject<UCampaignChapterDescription>(this, FName(*("CampaignChapter_" + ChapterName.ToString())));
+	FString CampaignChapterObjUniqueName         = "CampaignChapter_" + ChapterName.ToString() + "_" + LevelName.ToString();
+	UCampaignChapterDescription* CampaignChapter = NewObject<UCampaignChapterDescription>(this, FName(*CampaignChapterObjUniqueName));
 
 	if (CampaignChapter)
 	{
