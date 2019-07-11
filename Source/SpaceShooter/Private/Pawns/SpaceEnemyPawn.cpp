@@ -93,7 +93,7 @@ void ASpaceEnemyPawn::ExecuteOnObjectEnterDetectionArea_Implementation(UPrimitiv
 
 		// Acquire a target only if there isn't one at the moment.
 		// Target must be part of a different faction to be considered an enemy for this NPC pawn.
-		if (NewTarget && NewTarget->IsNotDestroyed() && NewTarget->GetFaction() !=  this->GetFaction())
+		if (NewTarget && NewTarget->IsNotDestroyed() && NewTarget->GetFaction() != this->GetFaction())
 		{
 			OnNewEnemyFound(NewTarget);
 		}

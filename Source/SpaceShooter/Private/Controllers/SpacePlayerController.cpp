@@ -115,7 +115,7 @@ void ASpacePlayerController::HandleCursorPointingAtMouseListeningActors()
 		// TraceTypeQuery2 is defined as "Camera" trace channel in the Editor, so we're going to use that.
 		bHitSuccessful = GetHitResultUnderCursorByChannel(ETraceTypeQuery::TraceTypeQuery2, true, HitResult);
 		
-		if (bHitSuccessful)
+		if (bHitSuccessful && HitResult.GetActor())
 		{
 			if (HitResult.GetActor()->Implements<UMousePointerListener>())
 			{

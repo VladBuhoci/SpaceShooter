@@ -353,7 +353,7 @@ AWeapon* ASpacecraftPawn::SetWeaponOnPreparedSlot_1(AWeapon* WeaponToAdd, FAttac
 	
 	if (PreparedWeapons.Slot_1)
 	{
-		PreparedWeapons.Slot_1->AttachToComponent(SpacecraftMeshComponent, AttachRules, TEXT("Weapon_AttachPoint_DEV"));
+		PreparedWeapons.Slot_1->AttachToComponent(SpacecraftMeshComponent, AttachRules, TEXT("Weapon_AttachPoint"));
 		PreparedWeapons.Slot_1->RegisterStateListener(this);
 
 		if (bEquipNewWeapon)
@@ -373,7 +373,7 @@ AWeapon* ASpacecraftPawn::SetWeaponOnPreparedSlot_2(AWeapon* WeaponToAdd, FAttac
 	
 	if (PreparedWeapons.Slot_2)
 	{
-		PreparedWeapons.Slot_2->AttachToComponent(SpacecraftMeshComponent, AttachRules, TEXT("Weapon_AttachPoint_DEV"));
+		PreparedWeapons.Slot_2->AttachToComponent(SpacecraftMeshComponent, AttachRules, TEXT("Weapon_AttachPoint"));
 		PreparedWeapons.Slot_2->RegisterStateListener(this);
 
 		if (bEquipNewWeapon)
@@ -393,7 +393,7 @@ AWeapon* ASpacecraftPawn::SetWeaponOnPreparedSlot_3(AWeapon* WeaponToAdd, FAttac
 
 	if (PreparedWeapons.Slot_3)
 	{
-		PreparedWeapons.Slot_3->AttachToComponent(SpacecraftMeshComponent, AttachRules, TEXT("Weapon_AttachPoint_DEV"));
+		PreparedWeapons.Slot_3->AttachToComponent(SpacecraftMeshComponent, AttachRules, TEXT("Weapon_AttachPoint"));
 		PreparedWeapons.Slot_3->RegisterStateListener(this);
 
 		if (bEquipNewWeapon)
@@ -413,7 +413,7 @@ AWeapon* ASpacecraftPawn::SetWeaponOnPreparedSlot_4(AWeapon* WeaponToAdd, FAttac
 	
 	if (PreparedWeapons.Slot_4)
 	{
-		PreparedWeapons.Slot_4->AttachToComponent(SpacecraftMeshComponent, AttachRules, TEXT("Weapon_AttachPoint_DEV"));
+		PreparedWeapons.Slot_4->AttachToComponent(SpacecraftMeshComponent, AttachRules, TEXT("Weapon_AttachPoint"));
 		PreparedWeapons.Slot_4->RegisterStateListener(this);
 
 		if (bEquipNewWeapon)

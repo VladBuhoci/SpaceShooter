@@ -78,18 +78,6 @@ struct FItemAttributeDescription
 	{}
 };
 
-/**
- * Contains the usual game stats (total kills, shots fired, shots hit (defining player's average accuracy) etc.)
- */
-USTRUCT(BlueprintType)
-struct FLevelOverallStats
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Space HUD")
-	int32 TotalKills;
-};
-
 /** Pairs a type of NPC with the chance of this type being instantiated and added to the world. */
 USTRUCT(BlueprintType)
 struct FSpawnableNPC
