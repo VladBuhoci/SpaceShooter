@@ -320,6 +320,7 @@
     <ClInclude Include="..\..\Source\SpaceShooter\Public\UI\SpaceHUD.h">
       <Filter>Source\SpaceShooter\Public\UI</Filter>
     </ClInclude>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\SpaceShooter\Public\Globals\SpaceStructs.h">

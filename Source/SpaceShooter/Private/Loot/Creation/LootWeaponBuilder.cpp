@@ -103,7 +103,11 @@ AItem* ULootWeaponBuilder::Build(UItemBlueprint* ItemToBuildBlueprint, const FTr
 
 				SpaceGameMode->GetGlobalWeaponPool()->GetWeaponTemplate(Type, AttrValues);
 
+				// Fill up the variables.
 				SetUpWeapon(SpawnedWeapon, AttrValues, Type, Rarity, Barrel, Body, Grip);
+
+				// Save a persistent copy of this weapon's components in the Space Game Instance object.
+				GetSpaceGameInstance()->CreateWeaponDescriptor(Type, Rarity, Barrel, Body, Grip, SpawnedWeapon);
 			}
 		}
 	}
@@ -147,9 +151,6 @@ void ULootWeaponBuilder::SetUpWeapon(AWeapon* Weapon, FWeaponAttributes & InitVa
 	Weapon->SetFiringSound(FiringSound);
 	// ...
 	Weapon->SetNumericAttributes(InitValues);
-
-	// Save a persistent copy of this weapon's components in the Space Game Instance object.
-	GetSpaceGameInstance()->CreateWeaponDescriptor(Type, ItemRarity, Barrel, Body, Grip, Weapon);
 }
 
 TMap<EWeaponAttribute, float> ULootWeaponBuilder::GetCombinedAttributeModifierMap(FWeaponBarrel & Barrel, FWeaponBody & Body, FWeaponGrip & Grip)

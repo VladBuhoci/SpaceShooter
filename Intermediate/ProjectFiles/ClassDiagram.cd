@@ -1,0 +1,675 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="UXYOnlyPhysicsConstraintComponent" Collapsed="true">
+    <Position X="21" Y="3.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Components\XYOnlyPhysicsConstraintComponent.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ASpaceEnemyController" Collapsed="true">
+    <Position X="26.25" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAABCIACAAAgQAAAIEEkARRAQABBAASIAAEAHhSIM=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Controllers\SpaceEnemyController.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ASpacePlayerController" Collapsed="true">
+    <Position X="28.5" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAQFBAADQAAAQAIAAQAggAIQQAAJEAAAAAAABg1AM=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Controllers\SpacePlayerController.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="USpacecraftDestructionCameraShake" Collapsed="true">
+    <Position X="18" Y="2.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Effects\SpacecraftDestructionCameraShake.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AExplosion" Collapsed="true">
+    <Position X="18" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAAAAAAAAAAEAAQAEAAABAAAAAAAgAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Effects\Explosion.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="USpacecraftTurboModeCameraShake" Collapsed="true">
+    <Position X="21" Y="2.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Effects\SpacecraftTurboModeCameraShake.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ACampaignGameMode" Collapsed="true">
+    <Position X="6.25" Y="12" Width="2" />
+    <InheritanceLine Type="ASpaceGameMode" FixedFromPoint="true">
+      <Path>
+        <Point X="7.25" Y="11.441" />
+        <Point X="7.25" Y="12" />
+      </Path>
+    </InheritanceLine>
+    <InheritanceLine Type="IGoalListener" ManuallyRouted="true" FixedFromPoint="true">
+      <Path>
+        <Point X="7.25" Y="13.25" />
+        <Point X="7.25" Y="12.82" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>EAAQSAiAAACDQAEAgAAAAAAAAggBACBKBAgIgBAgCIA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\GameModes\CampaignGameMode.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMainMenuGameMode" Collapsed="true">
+    <Position X="21" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\GameModes\MainMenuGameMode.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ASpaceGameMode" Collapsed="true">
+    <Position X="6.5" Y="10.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQGAAAICAQCQAggAABCAAQApAAAAQogBYAAgKAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\GameModes\SpaceGameMode.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UDestroyEveryoneGoalDescription" Collapsed="true">
+    <Position X="2.75" Y="12.75" Width="2.5" />
+    <InheritanceLine Type="UGoalDescription" FixedFromPoint="true">
+      <Path>
+        <Point X="4" Y="12.191" />
+        <Point X="4" Y="12.75" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\GameModes\Gameplay\DestroyEveryoneGoalDescription.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UChapterDescription" Collapsed="true">
+    <Position X="14" Y="9.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAEAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\GameModes\Gameplay\Chapters.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UCampaignChapterDescription" Collapsed="true">
+    <Position X="13.75" Y="11" Width="2.5" />
+    <InheritanceLine Type="UChapterDescription" FixedToPoint="true">
+      <Path>
+        <Point X="14.875" Y="10.191" />
+        <Point X="14.875" Y="11" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\GameModes\Gameplay\Chapters.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UGameplaySpecification" Collapsed="true">
+    <Position X="3" Y="10.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\GameModes\Gameplay\GameplaySpecification.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UGoalDescription" Collapsed="true">
+    <Position X="3" Y="11.5" Width="1.75" />
+    <InheritanceLine Type="UGameplaySpecification" FixedToPoint="true">
+      <Path>
+        <Point X="4" Y="10.941" />
+        <Point X="4" Y="11.5" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAgAAAAQAAAAIAIAAAAAAAAAAAAAQAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\GameModes\Gameplay\GoalDescription.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UMissionDescription" Collapsed="true">
+    <Position X="11" Y="9.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAABAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\GameModes\Gameplay\Missions.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UCampaignMissionDescription" Collapsed="true">
+    <Position X="10.5" Y="11.25" Width="2.5" />
+    <InheritanceLine Type="UMissionDescription" FixedToPoint="true">
+      <Path>
+        <Point X="11.875" Y="10.441" />
+        <Point X="11.875" Y="11.25" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAABAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\GameModes\Gameplay\Missions.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="USpaceGameInstance" Collapsed="true">
+    <Position X="24" Y="2.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>IAIACQABAACAAAAAAFALAAAAAAEQCAIAAQMACIAAJCA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Globals\SpaceGameInstance.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="USpaceUtilsLibrary" Collapsed="true">
+    <Position X="26.25" Y="2.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Globals\SpaceUtilsLibrary.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UGoalListener" Collapsed="true">
+    <Position X="18" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Listeners\GoalListener.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IGoalListener" Collapsed="true">
+    <Position X="6.5" Y="13.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Listeners\GoalListener.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UWeaponStateListener" Collapsed="true">
+    <Position X="18" Y="3.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Listeners\WeaponStateListener.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IWeaponStateListener" Collapsed="true">
+    <Position X="1.75" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Listeners\WeaponStateListener.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UMousePointerListener" Collapsed="true">
+    <Position X="28.5" Y="1.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Listeners\MousePointerListener.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IMousePointerListener" Collapsed="true">
+    <Position X="4.75" Y="2" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Listeners\MousePointerListener.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UInventory" Collapsed="true">
+    <Position X="21" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEABAAAAEAEAAAAQAAAgAAAgEAAAgAsAIAAAACQAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Loot\Inventory.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UItemRarity" Collapsed="true">
+    <Position X="24" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAAAABAAAAQAAAAAAAAAAAAAAAQAAABAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Loot\ItemRarity.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UWorldAwareObject" Collapsed="true">
+    <Position X="7" Y="8" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Loot\WorldAwareObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AAmmunitionBox" Collapsed="true">
+    <Position X="10.5" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Loot\Containers\AmmunitionBox.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AItemBox" Collapsed="true">
+    <Position X="11.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAABAAAAAAAgAAAAAAAAAAAAAAAAAAAAgQAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Loot\Containers\ItemBox.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ALootChest" Collapsed="true">
+    <Position X="7.25" Y="3.5" Width="1.5" />
+    <InheritanceLine Type="IMousePointerListener" ManuallyRouted="true">
+      <Path>
+        <Point X="5.625" Y="2.562" />
+        <Point X="5.625" Y="3.141" />
+        <Point X="8" Y="3.141" />
+        <Point X="8" Y="3.5" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>EAIxBQBICBgIBAMShsBRDCsoIgkIEgCAABEIAUAgwAI=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Loot\Containers\LootChest.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AWeaponBox" Collapsed="true">
+    <Position X="12.75" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Loot\Containers\WeaponBox.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UPreciseWeaponBlueprint" Collapsed="true">
+    <Position X="0.5" Y="9.75" Width="2" />
+    <InheritanceLine Type="UWeaponBlueprint" FixedToPoint="true">
+      <Path>
+        <Point X="1.375" Y="9.191" />
+        <Point X="1.375" Y="9.75" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAATAAAAAAAAAAAAABAAAAAAgAgAAEQAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Loot\Creation\PreciseWeaponBlueprint.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UAmmunitionBlueprint" Collapsed="true">
+    <Position X="2.75" Y="8.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAABAAAABAAAIAEAQAAAAQBAAAEAAAQ=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Loot\Creation\AmmunitionBlueprint.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UItemBlueprint" Collapsed="true">
+    <Position X="1.75" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Loot\Creation\ItemBlueprint.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ULootAmmoBuilder" Collapsed="true">
+    <Position X="10.25" Y="5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Loot\Creation\LootAmmoBuilder.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ULootItemBuilder" Collapsed="true">
+    <Position X="11.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Loot\Creation\LootItemBuilder.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ULootDefinition" Collapsed="true">
+    <Position X="6.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Loot\Creation\LootPool.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UItemDefinition" Collapsed="true">
+    <Position X="5.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Loot\Creation\LootPool.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UItemPoolDefinition" Collapsed="true">
+    <Position X="7.75" Y="6.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Loot\Creation\LootPool.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UItemPoolListDefinition" Collapsed="true">
+    <Position X="8.25" Y="9.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACQAAAAACAAAAAAAAAAAKgQAAAAAAQAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Loot\Creation\LootPool.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ULootWeaponBuilder" Collapsed="true">
+    <Position X="12.75" Y="5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAgAAAABAAAAAAgAEQgAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Loot\Creation\LootWeaponBuilder.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UWeaponBlueprint" Collapsed="true">
+    <Position X="0.5" Y="8.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAABAAAQAAAAAAAEQAQAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Loot\Creation\WeaponBlueprint.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UWeaponPartsPool" Collapsed="true">
+    <Position X="5.75" Y="9.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>gCAAAAAABAAAAAAEAAAAAgAAAAAAAAAAAAAAAAAAgAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Loot\Creation\WeaponPartsPool.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UWeaponPool" Collapsed="true">
+    <Position X="28.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAACAAAAAAAAAAAQAAAAAAAAAACAAQABAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Loot\Creation\WeaponPool.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AAmmunitionPile" Collapsed="true">
+    <Position X="11" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABBAAAAAAEAACAABAAAAAAAAAAEAAgAAAQAAAAAwQAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Loot\Items\AmmunitionPile.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AItem" Collapsed="true">
+    <Position X="10" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ERAAARAAAAAAAAAAQAAAAAAAAAUAQAAAAAAAAAEgQAQ=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Loot\Items\Item.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ULootItemReceiver" Collapsed="true">
+    <Position X="26.25" Y="1.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Loot\Items\LootItemReceiver.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ILootItemReceiver" Collapsed="true">
+    <Position X="4.75" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Loot\Items\LootItemReceiver.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AWeapon" Collapsed="true">
+    <Position X="8.75" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>YjICBBgIIMECAAAAJBAQFgHIAAAJKAkUTUAgAwA4wEQ=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Loot\Items\Weapon.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMainMenuPlayerPawn" Collapsed="true">
+    <Position X="24" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Pawns\MainMenuPlayerPawn.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ASpacecraftPawn" Collapsed="true">
+    <Position X="1.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AwEgYEYTQphOI3QyEDEIRjQCKM1ygFir4dgC0CAw5AI=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Pawns\SpacecraftPawn.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ASpaceEnemyPawn" Collapsed="true">
+    <Position X="1.5" Y="3.5" Width="1.75" />
+    <InheritanceLine Type="ASpacecraftPawn" FixedToPoint="true">
+      <Path>
+        <Point X="2.5" Y="2.57" />
+        <Point X="2.5" Y="3.125" />
+        <Point X="2.125" Y="3.125" />
+        <Point X="2.125" Y="3.5" />
+      </Path>
+    </InheritanceLine>
+    <InheritanceLine Type="IMousePointerListener" ManuallyRouted="true" FixedToPoint="true">
+      <Path>
+        <Point X="5.625" Y="2.562" />
+        <Point X="5.625" Y="3.237" />
+        <Point X="2.938" Y="3.237" />
+        <Point X="2.938" Y="3.5" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>EEEgQJQIQBIQKBOQAABIAGAEABwCAgAAFQxCIAIgUEY=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Pawns\SpaceEnemyPawn.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ASpacePlayerPawn" Collapsed="true">
+    <Position X="1.5" Y="5.5" Width="1.75" />
+    <InheritanceLine Type="ASpacecraftPawn" ManuallyRouted="true">
+      <Path>
+        <Point X="2.5" Y="2.57" />
+        <Point X="2.5" Y="2.904" />
+        <Point X="1.25" Y="2.904" />
+        <Point X="1.25" Y="5.125" />
+        <Point X="2.375" Y="5.125" />
+        <Point X="2.375" Y="5.5" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AJEgIORACDAAKAAQEAEACAgAgCQCAAEQNiAAgmAiZCY=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Pawns\SpacePlayerPawn.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ABasicProjectile" Collapsed="true">
+    <Position X="15.75" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Projectiles\BasicProjectile.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AExplosiveProjectile" Collapsed="true">
+    <Position X="13.25" Y="2" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAIAAQAAAAAAAAAAAAAAAAABAEAAABAAAAAAEAAACAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Projectiles\ExplosiveProjectile.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AProjectile" Collapsed="true">
+    <Position X="14.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AKAAAACIgAgBRAEAAAAAEAAEBEgICAAQAAYAAEAgAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Projectiles\Projectile.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ACampaignHUD" Collapsed="true">
+    <Position X="0.5" Y="12.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAABAAAAAAgAAAASAAAAAAAAAAAAAhAABAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\UI\CampaignHUD.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ASpaceHUD" Collapsed="true">
+    <Position X="0.5" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ICAgAAgAQhmABMKgABAAgAkgAQAAAAAgBBQBAAEggAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\UI\SpaceHUD.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="FAmmunitionStock" Collapsed="true">
+    <Position X="17.25" Y="4.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAACAAABAAAAAAAAEAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Globals\SpaceStructs.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="FPreparedWeapons" Collapsed="true">
+    <Position X="19.25" Y="6.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAABAAAAAAEAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Globals\SpaceStructs.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="FItemAttributeDescription" Collapsed="true">
+    <Position X="19.25" Y="5.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAgEAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Globals\SpaceStructs.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="FSpawnableNPC" Collapsed="true">
+    <Position X="21.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAgAAAAAAAAAAAAgAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Globals\SpaceStructs.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="FNpcSpawnRules" Collapsed="true">
+    <Position X="17.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAgAAAAAEQAEEBEAAACBBAAAAAAABAAAABAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Globals\SpaceStructs.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="FItemAttribute_Float" Collapsed="true">
+    <Position X="23.5" Y="4.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAEAAAgAAEAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Globals\ItemAttributes.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="FItemAttribute_IntervalInt" Collapsed="true">
+    <Position X="26.5" Y="4.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAACAABAAAAAAAAAAAQgAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Globals\ItemAttributes.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="FItemAttribute_Text" Collapsed="true">
+    <Position X="17.25" Y="5.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAABAAgAAEAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Globals\ItemAttributes.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="FInventorySlot" Collapsed="true">
+    <Position X="21.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Loot\Inventory.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="FLootDefinitionWrapper" Collapsed="true">
+    <Position X="26.5" Y="5.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAAAAAAACAAAAAAAAAAAAAgAAAAAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Loot\Creation\LootPool.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="FItemPoolCandidate" Collapsed="true">
+    <Position X="21.5" Y="5.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Loot\Creation\LootPool.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="FWeaponBarrel" Collapsed="true">
+    <Position X="17.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAAAAAAQAAAABBAgAAAAAAAAgAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Loot\Creation\WeaponPartsPool.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="FWeaponBody" Collapsed="true">
+    <Position X="19.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAAAAEAAAAAAAAABAAAAAAgAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Loot\Creation\WeaponPartsPool.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="FWeaponGrip" Collapsed="true">
+    <Position X="21.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAAAAAAAAAAAAAABAAAAAAAAAAAIAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Loot\Creation\WeaponPartsPool.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="FWeaponRarityPool" Collapsed="true">
+    <Position X="23.5" Y="7.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAEAEAAAAAAAAAAAAAAIAAAAEAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Loot\Creation\WeaponPool.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="FWeaponAttributes" Collapsed="true">
+    <Position X="26.5" Y="6.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACAAAAAAAACAAAIAAAAAAgAAAAAAEACBAkRAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Loot\Items\Weapon.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="FStartingWeapons" Collapsed="true">
+    <Position X="23.5" Y="6.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAPAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Pawns\SpacecraftPawn.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="FLootChestWithChance_KeyValue_Pair" Collapsed="true">
+    <Position X="23.5" Y="5.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Pawns\SpaceEnemyPawn.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="FCrosshairParams" Collapsed="true">
+    <Position X="19.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\UI\SpaceHUD.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Enum Name="ESpacecraftState" Collapsed="true">
+    <Position X="17.25" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAABAAAAAAAAAAAAAAAABCAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Controllers\SpaceEnemyController.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="ESpaceControllerNotification" Collapsed="true">
+    <Position X="19.25" Y="11" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAUAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Controllers\SpaceEnemyController.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="EGoalUpdateType" Collapsed="true">
+    <Position X="17.25" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAEAAAAAAgAAAAAAAAAAAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\GameModes\Gameplay\GoalDescription.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="ESpacecraftFaction" Collapsed="true">
+    <Position X="17.25" Y="11" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABAAAAAAAAAgAAAAAAAAAAAAAQAAAAAAQAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Globals\SpaceEnums.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="EWeaponType" Collapsed="true">
+    <Position X="21.5" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAACAAAAAAAAAAAAAAAAACAAAIAAAAAABA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Globals\SpaceEnums.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="EWeaponAttribute" Collapsed="true">
+    <Position X="19.25" Y="10.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACAAAAAAAACAAAIAAAAAAgAAAAAAEACBAgRABA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Globals\SpaceEnums.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="EItemTakingAction" Collapsed="true">
+    <Position X="19.25" Y="9.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAABAAAEAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Globals\SpaceEnums.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="ELootChestState" Collapsed="true">
+    <Position X="21.5" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAEAAAgAAAAAAAAACAAAA=</HashCode>
+      <FileName>E:\Proiecte\Unreal Engine 4 (proiecte)\SpaceShooter\Source\SpaceShooter\Public\Loot\Containers\LootChest.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
