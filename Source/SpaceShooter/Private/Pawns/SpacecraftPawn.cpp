@@ -497,7 +497,7 @@ float ASpacecraftPawn::TakeDamage(float Damage, FDamageEvent const& DamageEvent,
 	}
 
 	// Give subclasses a chance to react to this event before returning.
-	OnDamageTaken(Cast<ASpacecraftPawn>(DamageCauser));
+	OnDamageTaken(Cast<ASpacecraftPawn>(DamageCauser), Damage);
 
 	return Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 }

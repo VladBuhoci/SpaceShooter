@@ -3,6 +3,7 @@
 #include "Pawns/SpaceEnemyPawn.h"
 #include "Controllers/SpaceEnemyController.h"
 #include "Loot/Containers/LootChest.h"
+#include "UI/SpaceHUD.h"
 
 #include "Components/SphereComponent.h"
 #include "Components/StaticMeshComponent.h"
@@ -11,6 +12,8 @@
 #include "Engine/World.h"
 
 #include "Runtime/Engine/Public/TimerManager.h"
+
+#include "Kismet/GameplayStatics.h"
 
 
 ASpaceEnemyPawn::ASpaceEnemyPawn()
@@ -176,7 +179,7 @@ void ASpaceEnemyPawn::OnMouseLeave_Implementation()
 	bCurrentlyPointedAt = false;
 }
 
-void ASpaceEnemyPawn::OnDamageTaken(ASpacecraftPawn* DamageCauser)
+void ASpaceEnemyPawn::OnDamageTaken(ASpacecraftPawn* DamageCauser, int32 DamageTaken)
 {
 	// If this Pawn is not currently pointed at, the widget will be visible only temporarily.
 	if (! bCurrentlyPointedAt)
@@ -206,6 +209,9 @@ void ASpaceEnemyPawn::OnDamageTaken(ASpacecraftPawn* DamageCauser)
 
 		OnNewEnemyFound(DamageCauser);
 	}
+
+	// Display a floating damage widget.
+	Cast<ASpaceHUD>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetHUD())->OnSpacecraftTookDamage(GetActorLocation(), DamageTaken, FColor::White);
 }
 
 void ASpaceEnemyPawn::PreDestroy(bool & bShouldPlayDestroyEffects, bool & bShouldBeDestroyed)

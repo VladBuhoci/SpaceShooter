@@ -160,7 +160,7 @@ protected:
 	 * Called after taking damage, a value not great enough to be destroyed yet.
 	 * Damage has already been applied and checks done at the time of this method being called.
 	 */
-	virtual void OnDamageTaken(ASpacecraftPawn* DamageCauser) override;
+	virtual void OnDamageTaken(ASpacecraftPawn* DamageCauser, int32 DamageTaken) override;
 
 	/**
 	 * Called right before the spacecraft is removed from the world.

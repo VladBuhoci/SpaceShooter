@@ -15,8 +15,8 @@ void ACampaignHUD::CreateAndAddWidgets(TArray<UUserWidget*> & GameTimeVisibleWid
 {
 	Super::CreateAndAddWidgets(GameTimeVisibleWidgets);
 
-	TryCreateAndAddWidget(ChapterEndStatsMenuWidgetType, ChapterEndStatsMenuWidget, ESlateVisibility::Collapsed);
-	TryCreateAndAddWidget(ChapterGoalWidgetType, GoalWidget, ESlateVisibility::Visible);
+	TryCreateAndAddWidgetToViewport(ChapterEndStatsMenuWidgetType, ChapterEndStatsMenuWidget, ESlateVisibility::Collapsed);
+	TryCreateAndAddWidgetToViewport(ChapterGoalWidgetType, GoalWidget, ESlateVisibility::Visible);
 
 	GameTimeVisibleWidgets.Add(GoalWidget);
 }

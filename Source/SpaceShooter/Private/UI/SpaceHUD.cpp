@@ -1,6 +1,7 @@
 // This application is the final year project (2018-2019) of a Computer Science student (me - Vlad Buhoci).
 
 #include "UI/SpaceHUD.h"
+#include "UI/FloatingNumberWidgetInterface.h"
 #include "Controllers/SpacePlayerController.h"
 
 #include "ConstructorHelpers.h"
@@ -56,6 +57,29 @@ void ASpaceHUD::UpdateCrosshairIconPosition(float newPosX, float newPosY)
 {
 	CrosshairParams.PosX = newPosX;
 	CrosshairParams.PosY = newPosY;
+}
+
+void ASpaceHUD::OnSpacecraftTookDamage(const FVector & TargetPositionInSpace, int32 DamageTaken, const FColor & Colour)
+{
+	UUserWidget* FloatingDamageWidget = nullptr;
+
+	if (SpacecraftFloatingDamageTakenWidgetType)
+	{
+		TryCreateWidget(SpacecraftFloatingDamageTakenWidgetType, FloatingDamageWidget);
+
+		if (FloatingDamageWidget)
+		{
+			FVector2D TargetPositionProjectedOnScreen;
+
+			UGameplayStatics::ProjectWorldToScreen(SpacePlayerController, TargetPositionInSpace, TargetPositionProjectedOnScreen);
+
+			IFloatingNumberWidgetInterface::Execute_SetInitialPosition(FloatingDamageWidget, TargetPositionProjectedOnScreen);
+			IFloatingNumberWidgetInterface::Execute_SetDisplayedNumberValue(FloatingDamageWidget, DamageTaken);
+			IFloatingNumberWidgetInterface::Execute_SetDisplayedNumberColour(FloatingDamageWidget, Colour);
+
+			FloatingDamageWidget->AddToViewport();
+		}
+	}
 }
 
 void ASpaceHUD::ToggleInventoryInterface()
@@ -140,19 +164,25 @@ void ASpaceHUD::CreateAndAddWidgets(TArray<UUserWidget*> & GameTimeVisibleWidget
 
 	SpacePlayerController->SetInputMode(FInputModeGameOnly());
 	
-	TryCreateAndAddWidget(AllInOneGameHUDWidgetType, AllInOneGameHUDWidget, ESlateVisibility::Visible);
-	TryCreateAndAddWidget(InventoryWidgetType, InventoryWidget, ESlateVisibility::Collapsed);
-	TryCreateAndAddWidget(InGamePauseMenuWidgetType, InGamePauseMenuWidget, ESlateVisibility::Collapsed);
-	TryCreateAndAddWidget(GameEndStatsMenuWidgetType, GameEndStatsMenuWidget, ESlateVisibility::Collapsed);
+	TryCreateAndAddWidgetToViewport(AllInOneGameHUDWidgetType, AllInOneGameHUDWidget, ESlateVisibility::Visible);
+	TryCreateAndAddWidgetToViewport(InventoryWidgetType, InventoryWidget, ESlateVisibility::Collapsed);
+	TryCreateAndAddWidgetToViewport(InGamePauseMenuWidgetType, InGamePauseMenuWidget, ESlateVisibility::Collapsed);
+	TryCreateAndAddWidgetToViewport(GameEndStatsMenuWidgetType, GameEndStatsMenuWidget, ESlateVisibility::Collapsed);
 
 	GameTimeVisibleWidgets.Add(AllInOneGameHUDWidget);
 }
 
-void ASpaceHUD::TryCreateAndAddWidget(TSubclassOf<UUserWidget> WidgetClass, UUserWidget* & Widget, ESlateVisibility Visbility)
+void ASpaceHUD::TryCreateWidget(TSubclassOf<UUserWidget> WidgetClass, UUserWidget* & Widget)
+{
+	Widget = CreateWidget<UUserWidget>(SpacePlayerController, WidgetClass);
+}
+
+void ASpaceHUD::TryCreateAndAddWidgetToViewport(TSubclassOf<UUserWidget> WidgetClass, UUserWidget* & Widget, ESlateVisibility Visbility)
 {
 	if (WidgetClass)
 	{
-		Widget = CreateWidget<UUserWidget>(SpacePlayerController, WidgetClass);
+		TryCreateWidget(WidgetClass, Widget);
+
 		if (Widget)
 		{
 			Widget->AddToViewport();

@@ -192,7 +192,7 @@ void ASpacePlayerPawn::OnTurboModeDeactivated()
 	
 }
 
-void ASpacePlayerPawn::OnDamageTaken(ASpacecraftPawn* DamageCauser)
+void ASpacePlayerPawn::OnDamageTaken(ASpacecraftPawn* DamageCauser, int32 DamageTaken)
 {
 	// TODO: add some hit effects perhaps?
 
