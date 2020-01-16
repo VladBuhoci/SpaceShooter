@@ -196,6 +196,8 @@ void ASpacePlayerPawn::OnDamageTaken(ASpacecraftPawn* DamageCauser, int32 Damage
 {
 	// TODO: add some hit effects perhaps?
 
+	// Display a floating damage widget.
+	Cast<ASpaceHUD>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetHUD())->OnSpacecraftTookDamage(GetActorLocation(), DamageTaken, FColor::Red);
 }
 
 void ASpacePlayerPawn::PreDestroy(bool & bShouldPlayDestroyEffects, bool & bShouldBeDestroyed)
