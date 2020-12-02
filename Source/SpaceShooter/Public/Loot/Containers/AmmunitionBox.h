@@ -31,7 +31,7 @@ private:
 
 public:
 	/** Returns the item wrapped by this box. */
-	UFUNCTION(BlueprintPure, Category = "Item Box | Ammunition Box")
+//	UFUNCTION(BlueprintPure, Category = "Item Box | Ammunition Box")
 	virtual AItem* GetContainedItem() const override;
 
 	/**********************************
@@ -40,6 +40,6 @@ public:
 
 public:
 	/** Sets the item wrapped by this box. */
-	UFUNCTION(BlueprintCallable, Category = "Item Box | Ammunition Box")
+//	UFUNCTION(BlueprintCallable, Category = "Item Box | Ammunition Box")
 	virtual void SetContainedItem(AItem* NewItem) override;
 };

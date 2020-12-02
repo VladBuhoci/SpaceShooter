@@ -15,7 +15,7 @@ class ACampaignHUD;
 class ASpacePlayerPawn;
 
 class UUserWidget;
-class UNavigationSystem;
+class UNavigationSystemV1;
 
 
 /**
@@ -29,7 +29,7 @@ class SPACESHOOTER_API ACampaignGameMode : public ASpaceGameMode, public IGoalLi
 
 	USpaceGameInstance* SpaceGameInstance;
 	ACampaignHUD* CampaignHUD;
-	UNavigationSystem* NavSystem;
+	UNavigationSystemV1* NavSystem;
 	ASpacePlayerPawn* PlayerPawn;
 
 	/** Time (in seconds) until the end level stats widget appears. */

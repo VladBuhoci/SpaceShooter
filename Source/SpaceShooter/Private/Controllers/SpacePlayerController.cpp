@@ -10,6 +10,11 @@
 
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 
+#include "Runtime/Core/Public/Serialization/BufferArchive.h"
+#include "Runtime/CoreUObject/Public/Serialization/ObjectReader.h"
+
+#include "Runtime/Core/Public/HAL/FileManagerGeneric.h"
+
 
 /** Sets default values. */
 ASpacePlayerController::ASpacePlayerController()
@@ -68,6 +73,74 @@ void ASpacePlayerController::SetupInputComponent()
 		.bExecuteWhenPaused = true;
 	InputComponent->BindAction("Toggle In-game Pause Menu", IE_Pressed, this, &ASpacePlayerController::ToggleInGamePauseMenu)
 		.bExecuteWhenPaused = true;
+
+	// TODO: experimental.. delete this
+	InputComponent->BindAction("Serialize", IE_Pressed, this, &ASpacePlayerController::TestSerialize);
+}
+
+class FMySerializer : public FBufferArchive
+{
+public:
+	FMySerializer(bool bIsPersistent = false, const FName InArchiveName = NAME_None)
+		: FBufferArchive(bIsPersistent, InArchiveName)
+	{}
+
+	/**
+	 * Returns the name of the Archive.  Useful for getting the name of the package a struct or object
+	 * is in when a loading error occurs.
+	 *
+	 * This is overridden for the specific Archive Types
+	 **/
+	virtual FString GetArchiveName() const { return *FString::Printf(TEXT("FMySerializer %s"), *ArchiveName.ToString()); }
+
+
+};
+
+void ASpacePlayerController::TestSerialize()
+{
+	TArray<FString> FoundFiles;
+	FString ContentRootDirectory = FPaths::ProjectContentDir();
+
+	FFileManagerGeneric FileManager;
+	FileManager.FindFilesRecursive(FoundFiles, *ContentRootDirectory, TEXT("*"), true, true);
+
+	{
+		TArray<uint8> FileBits;
+
+		FFileHelper::LoadFileToArray(FileBits, *(FPaths::ProjectContentDir() + "MS03_CH02.umap"));
+		FFileHelper::SaveArrayToFile(FileBits, *(FPaths::ProjectContentDir() + "Maps/MS03_CH02.umap"));
+
+		FileBits.Empty();
+
+		FFileHelper::LoadFileToArray(FileBits, *(FPaths::ProjectContentDir() + "MS03_CH02_BuiltData.uasset"));
+		FFileHelper::SaveArrayToFile(FileBits, *(FPaths::ProjectContentDir() + "Maps/MS03_CH02_BuiltData.uasset"));
+	}
+	
+
+	/*FBufferArchive OldSerializer;
+	FBufferArchive OldSerializer2;
+	FMySerializer NewSerializer;
+
+	FText Text = FText::FromString(TEXT("Neatza"));
+	UObject* me = Cast<UObject>(this);
+
+	OldSerializer << me;
+	NewSerializer << me;
+
+	me->Serialize(OldSerializer2);
+	me->Serialize(NewSerializer);
+
+	// Check if data was saved.
+	if (OldSerializer.Num() <= 0)
+	{
+		// Nothing was saved.. very bad!
+		return;
+	}
+
+	// Clean-up.
+	OldSerializer.FlushCache();
+	OldSerializer.Empty();
+	// ...*/
 }
 
 void ASpacePlayerController::HandleTargetIconOnScreen()
@@ -91,13 +164,13 @@ void ASpacePlayerController::HandleSpaceshipRotation()
 		FRotator TargetRotation;
 		FHitResult HitResult;
 		bool bHitSuccessful;
-		
+
 		// TraceTypeQuery3 is defined as "Background" trace channel in the Editor, so we're going to use that.
 		bHitSuccessful = GetHitResultUnderCursorByChannel(ETraceTypeQuery::TraceTypeQuery3, true, HitResult);
-		
+
 		if (bHitSuccessful)
 		{
-			TargetRotation       = (HitResult.ImpactPoint - PossessedSpacePawn->GetActorLocation()).ToOrientationRotator();
+			TargetRotation = (HitResult.ImpactPoint - PossessedSpacePawn->GetActorLocation()).ToOrientationRotator();
 			TargetRotation.Pitch = 0.0f;
 
 			PossessedSpacePawn->RotateSpacecraft(TargetRotation);
@@ -111,10 +184,10 @@ void ASpacePlayerController::HandleCursorPointingAtMouseListeningActors()
 	{
 		FHitResult HitResult;
 		bool bHitSuccessful;
-		
+
 		// TraceTypeQuery2 is defined as "Camera" trace channel in the Editor, so we're going to use that.
 		bHitSuccessful = GetHitResultUnderCursorByChannel(ETraceTypeQuery::TraceTypeQuery2, true, HitResult);
-		
+
 		if (bHitSuccessful && HitResult.GetActor())
 		{
 			if (HitResult.GetActor()->Implements<UMousePointerListener>())
@@ -131,7 +204,7 @@ void ASpacePlayerController::HandleCursorPointingAtMouseListeningActors()
 				// If we were previously pointing to nothing, it doesn't matter.
 
 				// If we were previously pointing to the same new found actor, it doesn't matter.
-				
+
 				// New actor found! Call OnMouseEnter for this one and remember it.
 				if (CurrentMouseListeningActorPointedAt == nullptr)
 				{

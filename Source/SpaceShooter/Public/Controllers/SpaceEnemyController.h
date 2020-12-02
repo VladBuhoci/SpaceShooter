@@ -10,7 +10,7 @@
 class ASpaceGameMode;
 class ASpaceEnemyPawn;
 class ASpacecraftPawn;
-class UNavigationSystem;
+class UNavigationSystemV1;
 
 
 UENUM(BlueprintType)
@@ -40,7 +40,7 @@ class SPACESHOOTER_API ASpaceEnemyController : public AAIController
 	
 private:
 	/** The navigation system is used to gather navigation mesh data. */
-	UNavigationSystem* NavSystem;
+	UNavigationSystemV1* NavSystem;
 
 	/** Timer Handle used to manage timing for random idle/flight actions. */
 	FTimerHandle NonAggressiveStateMovementTimerHandle;

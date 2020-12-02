@@ -14,7 +14,7 @@
 
 #include "Kismet/GameplayStatics.h"
 
-#include "AI/Navigation/NavigationSystem.h"
+#include "NavigationSystem.h"
 
 
 ACampaignGameMode::ACampaignGameMode()
@@ -31,7 +31,7 @@ void ACampaignGameMode::BeginPlay()
 	{
 		SpaceGameInstance = Cast<USpaceGameInstance>(UGameplayStatics::GetGameInstance(WorldPtr));
 		CampaignHUD       = Cast<ACampaignHUD>(UGameplayStatics::GetPlayerController(WorldPtr, 0)->GetHUD());
-		NavSystem         = WorldPtr->GetNavigationSystem();
+		NavSystem         = UNavigationSystemV1::GetCurrent(WorldPtr);
 		PlayerPawn        = Cast<ASpacePlayerPawn>(UGameplayStatics::GetPlayerPawn(WorldPtr, 0));
 	}
 

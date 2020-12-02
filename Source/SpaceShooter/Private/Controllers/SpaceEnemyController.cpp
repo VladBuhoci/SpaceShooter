@@ -6,7 +6,7 @@
 
 #include "Kismet/KismetMathLibrary.h"
 
-#include "AI/Navigation/NavigationSystem.h"
+#include "NavigationSystem.h"
 
 #include "Engine/World.h"
 
@@ -38,7 +38,7 @@ void ASpaceEnemyController::BeginPlay()
 		// Store the game mode for later usage.
 		SpaceGameMode = Cast<ASpaceGameMode>(UGameplayStatics::GetGameMode(World));
 
-		NavSystem = World->GetNavigationSystem();
+		NavSystem = UNavigationSystemV1::GetCurrent(World);
 	}
 }
 

@@ -31,7 +31,7 @@ class SPACESHOOTER_API AWeaponBox : public AItemBox
 
 public:
 	/** Returns the item wrapped by this box. */
-	UFUNCTION(BlueprintPure, Category = "Item Box | Weapon Box")
+//	UFUNCTION(BlueprintPure, Category = "Item Box | Weapon Box")
 	virtual AItem* GetContainedItem() const override;
 
 	/**********************************
@@ -40,6 +40,6 @@ public:
 
 public:
 	/** Sets the item wrapped by this box. */
-	UFUNCTION(BlueprintCallable, Category = "Item Box | Weapon Box")
+//	UFUNCTION(BlueprintCallable, Category = "Item Box | Weapon Box")
 	virtual void SetContainedItem(AItem* NewItem) override;
 };

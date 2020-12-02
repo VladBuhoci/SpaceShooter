@@ -41,7 +41,7 @@ ALootChest::ALootChest()
 
 	BeginPhysicsSimulation();
 
-	ChestMeshComponent->bGenerateOverlapEvents = true;
+	ChestMeshComponent->SetGenerateOverlapEvents(true);
 
 	PointLightComponent->SetupAttachment(RootComponent);
 	PointLightComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 100.0f));

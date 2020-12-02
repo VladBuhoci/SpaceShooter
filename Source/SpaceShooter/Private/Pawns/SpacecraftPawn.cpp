@@ -138,7 +138,7 @@ void ASpacecraftPawn::Tick(float DeltaTime)
 		{
 			FrontSideThrusterParticleEmitter->DeactivateSystem();
 			
-			if (BackSideThrusterParticleEmitter->Template && !BackSideThrusterParticleEmitter->bIsActive)
+			if (BackSideThrusterParticleEmitter->Template && !BackSideThrusterParticleEmitter->IsActive())
 			{
 				BackSideThrusterParticleEmitter->ActivateSystem();
 			}
@@ -147,7 +147,7 @@ void ASpacecraftPawn::Tick(float DeltaTime)
 		{
 			BackSideThrusterParticleEmitter->DeactivateSystem();
 
-			if (FrontSideThrusterParticleEmitter->Template && !FrontSideThrusterParticleEmitter->bIsActive)
+			if (FrontSideThrusterParticleEmitter->Template && !FrontSideThrusterParticleEmitter->IsActive())
 			{
 				FrontSideThrusterParticleEmitter->ActivateSystem();
 			}
@@ -300,7 +300,7 @@ void ASpacecraftPawn::RotateSpacecraftClockwise(FRotator NewRotation)
 {
 	RightSideThrusterParticleEmitter->DeactivateSystem();
 	
-	if (LeftSideThrusterParticleEmitter->Template && !LeftSideThrusterParticleEmitter->bIsActive)
+	if (LeftSideThrusterParticleEmitter->Template && !LeftSideThrusterParticleEmitter->IsActive())
 	{
 		LeftSideThrusterParticleEmitter->ActivateSystem();
 	}
@@ -312,7 +312,7 @@ void ASpacecraftPawn::RotateSpacecraftCounterclockwise(FRotator NewRotation)
 {
 	LeftSideThrusterParticleEmitter->DeactivateSystem();
 
-	if (RightSideThrusterParticleEmitter->Template && !RightSideThrusterParticleEmitter->bIsActive)
+	if (RightSideThrusterParticleEmitter->Template && !RightSideThrusterParticleEmitter->IsActive())
 	{
 		RightSideThrusterParticleEmitter->ActivateSystem();
 	}
@@ -510,7 +510,7 @@ bool ASpacecraftPawn::IsNotDestroyed() const
 void ASpacecraftPawn::DestroySpacecraft()
 {
 	// Disable physical interactions so future projectiles overlapping this ship will ignore it.
-	SpacecraftMeshComponent->bGenerateOverlapEvents = false;
+	SpacecraftMeshComponent->SetGenerateOverlapEvents(false);
 
 	// Give subclasses a chance to react before the spacecraft is destroyed.
 	bool bShouldPlayDestroyEffects = false;

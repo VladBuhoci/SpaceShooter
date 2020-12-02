@@ -119,4 +119,7 @@ private:
 private:
 	void ToggleHUDInventory();
 	void ToggleInGamePauseMenu();
+
+private:
+	void TestSerialize();
 };

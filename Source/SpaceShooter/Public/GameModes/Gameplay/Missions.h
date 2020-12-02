@@ -44,7 +44,7 @@ public:
 	**********************************/
 
 public:
-	UFUNCTION(BlueprintCallable, Category = "Mission Description")
+//	UFUNCTION(BlueprintCallable, Category = "Mission Description")
 	virtual void GetCampaignChaptersAvailable(TArray<UChapterDescription*> & Chapters) override
 	{
 		Chapters.Append(CampaignChapters);
